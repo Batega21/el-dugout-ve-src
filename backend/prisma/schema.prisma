@@ -1,0 +1,91 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum SubscriptionTier {
+  FREE
+  BASIC
+  PREMIUM
+}
+
+enum BillingPeriod {
+  MONTHLY
+  ANNUAL
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  TRIALING
+  PAST_DUE
+  CANCELED
+  EXPIRED
+}
+
+model User {
+  id               String        @id @default(uuid())
+  firstName        String        @map("first_name")
+  lastName         String        @map("last_name")
+  email            String        @unique
+  mobileNumber     String?       @map("mobile_number")
+  password         String?
+  role             Role          @default(USER)
+  isActive         Boolean       @default(true)
+  createdAt        DateTime      @default(now()) @map("created_at")
+  updatedAt        DateTime      @updatedAt @map("updated_at")
+  avatarUrl        String?       @map("avatar_url")
+  twoFactorEnabled Boolean       @default(false) @map("two_factor_enabled")
+  twoFactorSecret  String?       @map("two_factor_secret")
+
+  // Relations
+  projects         Project[]
+  subscription     Subscription?
+
+  @@map("users")
+}
+
+model Project {
+  id          String   @id @default(uuid())
+  title       String
+  description String?
+  isPublic    Boolean  @default(false) @map("is_public")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  // Foreign keys
+  ownerId     String   @map("owner_id")
+  owner       User     @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+
+  @@map("projects")
+}
+
+model Subscription {
+  id             String             @id @default(uuid())
+  plan           SubscriptionTier   @default(FREE)
+  billingPeriod  BillingPeriod      @default(MONTHLY) @map("billing_period")
+  renewalConsent Boolean            @default(true) @map("renewal_consent")
+  termsAccepted  Boolean            @default(true) @map("terms_accepted")
+  status         SubscriptionStatus @default(ACTIVE)
+
+  // One-to-One relationship with User
+  userId         String             @unique @map("user_id")
+  user           User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt      DateTime           @default(now()) @map("created_at")
+  updatedAt      DateTime           @updatedAt @map("updated_at")
+
+  @@map("subscriptions")
+}
+

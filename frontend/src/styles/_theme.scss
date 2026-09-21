@@ -1,0 +1,211 @@
+// =============================================================================
+// GLOBAL APPLICATION THEME CONFIGURATION
+// =============================================================================
+// Main theme configuration file for global design tokens, brand palette,
+// typography, surfaces, elevations, and semantic variables.
+//
+// Design system:
+// - Typography: DM Sans (Body / Editorial) & Space Grotesk (Metrics / Numbers / Mono)
+// - Palette: Andean Peak & Night aesthetics (Deep obsidian, glacier ice-blue, vibrant tech blue)
+// - Elements: Arch Portal, Bento Grid, Floating Metrics, Parallax Scrims
+// =============================================================================
+
+// -----------------------------------------------------------------------------
+// 1. CONFIGURABLE SCSS PALETTE DEFAULTS
+// Users can easily customize or override these values at build/compile time.
+// -----------------------------------------------------------------------------
+
+// Brand & Accent Colors
+$theme-primary: #3b82f6 !default;                  // Andean sky / tech blue
+$theme-primary-hover: #2563eb !default;            // Primary interactive hover state
+$theme-primary-active: #1d4ed8 !default;           // Primary pressed state
+$theme-primary-light: rgba(59, 130, 246, 0.15) !default; // Subtle blue container/pill tint
+
+$theme-secondary: #38bdf8 !default;                // Glacier cyan / sky
+$theme-secondary-hover: #0ea5e9 !default;          // Secondary interactive hover
+$theme-secondary-light: rgba(56, 189, 248, 0.15) !default;
+
+// Andean Mountain Signature Accents (from index.html)
+$theme-ice-blue: #7dd3fc !default;                 // Ice Blue accent for numbers, badges & icons
+$theme-ice-blue-glow: rgba(125, 211, 252, 0.25) !default; // Subtle neon glow for key metrics
+
+// Background & Surface Canvas (Andina Studio Dark Theme)
+$theme-bg-main: #0b0f19 !default;                  // Primary canvas background
+$theme-bg-card: #111827 !default;                  // Bento card / container surface
+$theme-bg-card-hover: #1f2937 !default;            // Bento card hover state
+$theme-bg-overlay: rgba(11, 15, 25, 0.75) !default;// Arch card overlay / scrims
+$theme-bg-subtle: #161f30 !default;                // Table headers / subtle panels
+
+// Typography Colors (from index.html)
+$theme-text-primary: #f9fafb !default;             // High-contrast primary text
+$theme-text-secondary: #9ca3af !default;           // Secondary body text
+$theme-text-muted: #6b7280 !default;               // Muted metadata, coordinates, footnotes
+$theme-text-inverse: #0b0f19 !default;             // Inverted text on light badges
+
+// Borders & Dividers
+$theme-border-color: #1f293d !default;             // Standard card & divider border
+$theme-border-subtle: rgba(255, 255, 255, 0.08) !default; // Ultra-fine card borders
+$theme-border-strong: rgba(255, 255, 255, 0.2) !default;  // Interactive hover borders
+
+// Semantic & Status Colors
+$theme-color-success: #10b981 !default;            // Operational green
+$theme-color-warning: #f59e0b !default;            // Amber alert
+$theme-color-danger: #ef4444 !default;             // Error red
+$theme-color-info: #0284c7 !default;                // Info blue
+
+// Font Families (loaded in index.html)
+$theme-font-sans: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif !default;
+$theme-font-display: 'Space Grotesk', monospace !default;
+$theme-font-mono: 'Space Grotesk', 'JetBrains Mono', monospace !default;
+
+// -----------------------------------------------------------------------------
+// 2. GLOBAL CSS CUSTOM PROPERTIES (:root)
+// Exposed to the entire DOM for runtime styles, dynamic theming, and overrides.
+// -----------------------------------------------------------------------------
+
+:root {
+  /* --- Typography Families --- */
+  --font-sans: #{$theme-font-sans};
+  --font-primary: #{$theme-font-sans};
+  --font-display: #{$theme-font-display};
+  --font-mono: #{$theme-font-mono};
+
+  /* --- Font Sizes & Scale --- */
+  --font-size-xs: 0.75rem;          /* 12px */
+  --font-size-sm: 0.85rem;          /* 13.6px - Coordinates, metadata, small tags */
+  --font-size-base: 1rem;           /* 16px - Base body text */
+  --font-size-md: 1.125rem;         /* 18px */
+  --font-size-lg: 1.2rem;           /* 19.2px - Hero lead description */
+  --font-size-xl: 1.5rem;           /* 24px - Section & card headings */
+  --font-size-2xl: 2rem;            /* 32px */
+  --font-size-3xl: 2.5rem;          /* 40px */
+  --font-size-4xl: 3.5rem;          /* 56px - Hero display titles */
+  --font-size-metric: 2.75rem;      /* Bento grid metric highlights */
+
+  /* --- Font Weights --- */
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  --font-weight-extrabold: 800;
+
+  /* --- Line Heights --- */
+  --line-height-tight: 1.15;
+  --line-height-snug: 1.35;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.65;
+
+  /* --- Core Theme Palette --- */
+  --primary: #{$theme-primary};
+  --primary-hover: #{$theme-primary-hover};
+  --primary-active: #{$theme-primary-active};
+  --primary-light: #{$theme-primary-light};
+
+  --secondary: #{$theme-secondary};
+  --secondary-hover: #{$theme-secondary-hover};
+  --secondary-light: #{$theme-secondary-light};
+
+  /* Ecosystem Brand Accents */
+  --gcp-blue: #4285f4;
+  --nest-red: #ea2845;
+  --angular-red: #dd0031;
+
+  /* Andean Ice Blue Accent (from index.html) */
+  --ice-blue: #{$theme-ice-blue};
+  --ice-blue-glow: #{$theme-ice-blue-glow};
+
+  /* Surfaces & Backgrounds */
+  --background-primary-color: #{$theme-bg-main};
+  --background-secondary-color: #{$theme-bg-card};
+  --background-tertiary-color: #{$theme-bg-card-hover};
+  --background-overlay: #{$theme-bg-overlay};
+  --background-subtle: #{$theme-bg-subtle};
+
+  /* Shorthand Surface Aliases */
+  --bg-main: var(--background-primary-color);
+  --bg-card: var(--background-secondary-color);
+  --bg-card-hover: var(--background-tertiary-color);
+  --bg-surface: var(--background-secondary-color);
+
+  /* Text & Typography Colors */
+  --text-primary: #{$theme-text-primary};
+  --text-secondary: #{$theme-text-secondary};
+  --text-muted: #{$theme-text-muted};
+  --text-inverse: #{$theme-text-inverse};
+
+  /* Borders & Dividers */
+  --border-color: #{$theme-border-color};
+  --border-subtle: #{$theme-border-subtle};
+  --border-strong: #{$theme-border-strong};
+  --border-focus: var(--primary);
+
+  /* Status & Semantic Feedback */
+  --success: #{$theme-color-success};
+  --warning: #{$theme-color-warning};
+  --danger: #{$theme-color-danger};
+  --info: #{$theme-color-info};
+
+  // ---------------------------------------------------------------------------
+  // GLOBAL SEMANTIC THEME ALIASES (Matching user configuration pattern)
+  // ---------------------------------------------------------------------------
+  --primary-color: var(--primary);
+  --secondary-color: var(--secondary);
+  --background-color: var(--background-primary-color);
+  --background-card-color: var(--background-secondary-color);
+  --background-hover-color: var(--background-tertiary-color);
+  --text-color: var(--text-primary);
+  --text-primary-color: var(--text-primary);
+  --text-secondary-color: var(--text-secondary);
+  --text-muted-color: var(--text-muted);
+  --border-theme-color: var(--border-color);
+  --ice-blue-color: var(--ice-blue);
+  --accent-color: var(--ice-blue);
+
+  /* --- Geometry, Shapes & Border Radii --- */
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-pill: 9999px;
+  --radius-arch: 160px 160px 0 0;  /* Andean arch portal cutout */
+
+  /* --- Elevations, Shadows & Blurs --- */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -4px rgba(0, 0, 0, 0.3);
+  --shadow-card: 0 20px 40px -15px rgba(0, 0, 0, 0.7);
+  --shadow-glow: 0 0 20px rgba(56, 189, 248, 0.25);
+  --backdrop-blur: 12px;
+
+  /* --- Spacing & Layout Tokens --- */
+  --wrap-max-width: 1200px;
+  --wrap-padding-x: 1.5rem;
+  --header-height: 72px;
+
+  /* --- Animation & Transitions --- */
+  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-normal: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 400ms cubic-bezier(0.4, 0, 0.2, 1);
+  --parallax-ratio: 0.25;
+}
+
+// -----------------------------------------------------------------------------
+// 3. SCSS VARIABLE ALIASES (For direct SCSS usage in stylesheets)
+// -----------------------------------------------------------------------------
+
+$primary-color: var(--primary);
+$secondary-color: var(--secondary);
+$background-color: var(--background-primary-color);
+$background-card-color: var(--background-secondary-color);
+$background-hover-color: var(--background-tertiary-color);
+$text-color: var(--text-primary);
+$text-primary-color: var(--text-primary);
+$text-secondary-color: var(--text-secondary);
+$text-muted-color: var(--text-muted);
+$border-theme-color: var(--border-color);
+$ice-blue-color: var(--ice-blue);
+$accent-color: var(--ice-blue);
+$font-family-primary: var(--font-primary);
+$font-family-display: var(--font-display);
+$radius-arch: var(--radius-arch);

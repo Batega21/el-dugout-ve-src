@@ -1,0 +1,160 @@
+@use '@angular/material' as mat;
+@use './styles/theme' as *;
+
+@include mat.core();
+
+$app-theme: mat.define-theme((
+  color: (
+    theme-type: color-scheme,
+    primary: mat.$azure-palette,
+    tertiary: mat.$blue-palette,
+  ),
+  typography: (
+    plain-family: 'DM Sans, Inter, sans-serif',
+    brand-family: 'Space Grotesk, DM Sans, sans-serif',
+  ),
+  density: (
+    scale: 0,
+  ),
+));
+
+html {
+  color-scheme: dark light;
+  @include mat.all-component-themes($app-theme);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--bg-main);
+  color: var(--text-primary);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+}
+
+a {
+  color: var(--primary);
+  text-decoration: none;
+  transition: color 0.15s ease;
+  &:hover {
+    color: var(--primary-hover);
+  }
+}
+
+code, pre {
+  font-family: var(--font-mono);
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1.25rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border-radius: var(--radius-sm);
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all 0.15s ease;
+
+  &.btn-primary {
+    background-color: var(--primary);
+    color: white;
+    &:hover {
+      background-color: var(--primary-hover);
+    }
+  }
+
+  &.btn-outline {
+    background-color: transparent;
+    border-color: var(--border-color);
+    color: var(--text-primary);
+    &:hover {
+      background-color: var(--bg-card-hover);
+      border-color: var(--text-secondary);
+    }
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+/* Subscription & Login Dialog Panels & Overlay */
+.subscription-dialog-panel,
+.login-dialog-panel {
+  .mat-mdc-dialog-surface {
+    border-radius: 1.25rem !important;
+    background-color: #0b0f19 !important;
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7) !important;
+    padding: 0 !important;
+    color: #f8fafc !important;
+  }
+
+  .mat-mdc-form-field {
+    --mdc-outlined-text-field-input-text-color: #f1f5f9;
+    --mdc-outlined-text-field-input-text-placeholder-color: #94a3b8;
+    --mdc-outlined-text-field-label-text-color: #94a3b8;
+    --mdc-outlined-text-field-focus-label-text-color: #38bdf8;
+    --mdc-outlined-text-field-outline-color: rgba(255, 255, 255, 0.2);
+    --mdc-outlined-text-field-focus-outline-color: #38bdf8;
+
+    input.mat-mdc-input-element {
+      color: #f1f5f9 !important;
+      caret-color: #38bdf8 !important;
+
+      &::placeholder {
+        color: #94a3b8 !important;
+        opacity: 0 !important;
+        transition: opacity 0.2s ease;
+      }
+
+      &:focus::placeholder {
+        opacity: 0.75 !important;
+      }
+    }
+
+    &:not(.mat-focused) input.mat-mdc-input-element::placeholder {
+      opacity: 0 !important;
+    }
+
+    &.mat-focused input.mat-mdc-input-element::placeholder {
+      opacity: 0.75 !important;
+    }
+
+    .mat-icon {
+      color: #94a3b8 !important;
+    }
+  }
+}
+
+.custom-scrollbar {
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 9999px;
+  }
+  &::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.3);
+  }
+}
