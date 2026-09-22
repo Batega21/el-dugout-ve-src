@@ -2,6 +2,7 @@ import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { HeroComponent } from '../../shared/components/hero/hero.component';
+import { StatsStripComponent } from '../../shared/components/stats-strip/stats-strip.component';
 import { SectionComponent } from '../../shared/components/section/section.component';
 import { SectionCardsComponent } from '../../shared/components/section-cards/section-cards.component';
 import { SectionConfig } from '../../shared/components/section/section.interface';
@@ -13,7 +14,7 @@ import { AuthService } from '../../core/services/auth.service';
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [HeroComponent, SectionComponent, SectionCardsComponent],
+  imports: [HeroComponent, StatsStripComponent, SectionComponent, SectionCardsComponent],
   template: `
     <div class="home-page">
       <!-- Hero Component matching wireframe reference -->
@@ -21,6 +22,9 @@ import { AuthService } from '../../core/services/auth.service';
         (primaryAction)="onSubscribe()"
         (secondaryAction)="onCall()">
       </app-hero>
+
+      <!-- Stats Strip Component: Top Records of Each Category -->
+      <app-stats-strip></app-stats-strip>
 
       <!-- Section Components (Config-Driven 60/40 Split, Alignment & Layered Media) -->
       <app-section [config]="section1Config"></app-section>
@@ -70,9 +74,9 @@ import { AuthService } from '../../core/services/auth.service';
       .badge-pill {
         display: inline-block;
         padding: 0.35rem 0.9rem;
-        background: var(--primary-light, rgba(59, 130, 246, 0.15));
+        background: var(--primary-light, rgba(239, 68, 68, 0.15));
         color: var(--primary-color, var(--primary));
-        border: 1px solid var(--border-theme-color, rgba(59, 130, 246, 0.3));
+        border: 1px solid var(--border-theme-color, rgba(239, 68, 68, 0.3));
         border-radius: var(--radius-pill, 9999px);
         font-size: var(--font-size-xs, 0.8rem);
         font-weight: var(--font-weight-semibold, 600);
@@ -86,9 +90,7 @@ import { AuthService } from '../../core/services/auth.service';
         letter-spacing: -0.025em;
         line-height: var(--line-height-tight, 1.15);
         margin-bottom: 1.25rem;
-        background: linear-gradient(135deg, #ffffff 0%, #9ca3af 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
+        color: var(--hero-title-color, var(--text-color, var(--text-primary)));
       }
 
       .subtitle {
@@ -154,7 +156,8 @@ import { AuthService } from '../../core/services/auth.service';
         }
 
         h4 {
-          font-family: var(--font-display);
+          font-family: var(--font-sans);
+          font-weight: var(--font-weight-semibold, 600);
           font-size: var(--font-size-md, 1.1rem);
           color: var(--text-color, var(--text-primary));
           margin-bottom: 0.5rem;

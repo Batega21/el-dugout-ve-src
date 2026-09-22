@@ -1,47 +1,74 @@
-import { Component, input, output, ChangeDetectionStrategy } from '@angular/core';
+import {
+  Component,
+  input,
+  output,
+  computed,
+  inject,
+  ChangeDetectionStrategy,
+} from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { ThemeService } from '../../../core/services/theme.service';
 
 @Component({
   selector: 'app-hero',
   standalone: true,
-  imports: [MatButtonModule, MatIconModule],
+  imports: [CommonModule, MatButtonModule, MatIconModule],
   template: `
     <section class="hero-section">
       <div class="hero-container">
-        <!-- 2.1 Tagline Text (Pill / Badge) -->
-        <div class="tagline-badge">
-          <span class="tagline-dot"></span>
-          <span class="tagline-text">{{ tagline() }}</span>
+        <!-- Content Column (Left on desktop) -->
+        <div class="hero-content">
+          <!-- 2.1 Tagline Text (Pill / Badge) -->
+          <div class="tagline-badge">
+            <span class="tagline-dot"></span>
+            <span class="tagline-text">{{ tagline() }}</span>
+          </div>
+
+          <!-- 2.2 Main Heading or Title -->
+          <h1 class="hero-title">{{ title() }}</h1>
+
+          <!-- 2.3 Copy for Company Context -->
+          <p class="hero-description">{{ description() }}</p>
+
+          <!-- CTA Buttons Group (Dual Pill Buttons matching wireframe) -->
+          <div class="hero-actions">
+            <!-- 2.4 Secondary CTA Button -->
+            <button
+              mat-stroked-button
+              type="button"
+              class="pill-btn secondary-btn"
+              (click)="onSecondaryClick()">
+              <mat-icon class="btn-icon">phone_in_talk</mat-icon>
+              <span>{{ secondaryCta() }}</span>
+            </button>
+
+            <!-- 2.5 Primary CTA Button -->
+            <button
+              mat-flat-button
+              type="button"
+              class="pill-btn primary-btn"
+              (click)="onPrimaryClick()">
+              <mat-icon class="btn-icon">mark_email_read</mat-icon>
+              <span>{{ primaryCta() }}</span>
+            </button>
+          </div>
         </div>
 
-        <!-- 2.2 Main Heading or Title -->
-        <h1 class="hero-title">{{ title() }}</h1>
-
-        <!-- 2.3 Copy for Company Context -->
-        <p class="hero-description">{{ description() }}</p>
-
-        <!-- CTA Buttons Group (Dual Pill Buttons matching wireframe) -->
-        <div class="hero-actions">
-          <!-- 2.4 Secondary CTA Button -->
-          <button
-            mat-stroked-button
-            type="button"
-            class="pill-btn secondary-btn"
-            (click)="onSecondaryClick()">
-            <mat-icon class="btn-icon">phone_in_talk</mat-icon>
-            <span>{{ secondaryCta() }}</span>
-          </button>
-
-          <!-- 2.5 Primary CTA Button -->
-          <button
-            mat-flat-button
-            type="button"
-            class="pill-btn primary-btn"
-            (click)="onPrimaryClick()">
-            <mat-icon class="btn-icon">mark_email_read</mat-icon>
-            <span>{{ primaryCta() }}</span>
-          </button>
+        <!-- Media Column (Right on desktop) -->
+        <div class="hero-media">
+          <div class="hero-image-card">
+            <img
+              [src]="currentImage()"
+              [alt]="imageAlt()"
+              class="hero-image"
+              fetchpriority="high"
+              loading="eager"
+              decoding="async"
+            />
+            <div class="hero-image-glare" aria-hidden="true"></div>
+          </div>
         </div>
       </div>
     </section>
@@ -54,11 +81,23 @@ import { MatIconModule } from '@angular/material/icon';
     }
 
     .hero-section {
-      padding: 4.5rem 0 3.5rem 0;
+      padding: 3.5rem 0 3rem 0;
     }
 
     .hero-container {
-      max-width: 820px;
+      width: 100%;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 2.5rem;
+      align-items: center;
+
+      @media (min-width: 992px) {
+        grid-template-columns: 1.15fr 0.85fr;
+        gap: 3rem;
+      }
+    }
+
+    .hero-content {
       display: flex;
       flex-direction: column;
       align-items: flex-start;
@@ -99,7 +138,7 @@ import { MatIconModule } from '@angular/material/icon';
       letter-spacing: -0.03em;
       color: var(--text-color, #ffffff);
       margin: 0 0 1.25rem 0;
-      background: linear-gradient(180deg, #ffffff 30%, #94a3b8 100%);
+      background: var(--hero-title-gradient, linear-gradient(180deg, #ffffff 30%, #94a3b8 100%));
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
@@ -157,15 +196,63 @@ import { MatIconModule } from '@angular/material/icon';
 
     /* 2.5 Primary CTA Button */
     .primary-btn {
-      background-color: var(--primary-color, #3b82f6) !important;
+      background-color: var(--primary-color, var(--primary, #ef4444)) !important;
       color: #ffffff !important;
-      box-shadow: 0 4px 14px rgba(59, 130, 246, 0.4);
+      box-shadow: 0 4px 14px var(--primary-glow, rgba(239, 68, 68, 0.4));
 
       &:hover {
-        background-color: var(--primary-hover, #2563eb) !important;
-        box-shadow: var(--shadow-glow, 0 6px 20px rgba(59, 130, 246, 0.6));
+        background-color: var(--primary-hover, #dc2626) !important;
+        box-shadow: var(--shadow-glow, 0 6px 20px var(--primary-glow, rgba(239, 68, 68, 0.6)));
         transform: translateY(-1px);
       }
+    }
+
+    /* 2.6 Hero Media Column & Card */
+    .hero-media {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .hero-image-card {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      border-radius: var(--radius-lg, 16px);
+      overflow: hidden;
+      background-color: var(--background-secondary-color, #111827);
+      border: 1px solid var(--border-theme-color, rgba(255, 255, 255, 0.1));
+      box-shadow: 0 16px 36px -8px rgba(0, 0, 0, 0.4), 0 0 24px var(--primary-glow, rgba(239, 68, 68, 0.15));
+      transition: transform var(--transition-normal, 250ms ease),
+                  box-shadow var(--transition-normal, 250ms ease),
+                  border-color var(--transition-normal, 250ms ease);
+
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 20px 44px -8px rgba(0, 0, 0, 0.5), 0 0 32px var(--primary-glow, rgba(239, 68, 68, 0.25));
+        border-color: var(--border-strong, rgba(255, 255, 255, 0.25));
+      }
+    }
+
+    .hero-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: opacity 0.3s ease;
+    }
+
+    .hero-image-glare {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background: linear-gradient(
+        135deg,
+        rgba(255, 255, 255, 0.08) 0%,
+        transparent 50%,
+        rgba(0, 0, 0, 0.2) 100%
+      );
     }
 
     @media (max-width: 640px) {
@@ -182,6 +269,8 @@ import { MatIconModule } from '@angular/material/icon';
   `],
 })
 export class HeroComponent {
+  readonly themeService = inject(ThemeService);
+
   // 2.1 Tagline text
   readonly tagline = input<string>('Enciclopedia del Béisbol Profesional Venezolano');
 
@@ -198,6 +287,18 @@ export class HeroComponent {
 
   // 2.5 Primary CTA button placeholder
   readonly primaryCta = input<string>('Suscríbete');
+
+  // 2.6 Hero banner images for dark and light themes
+  readonly darkImage = input<string>('/images/hero_banner-09-2026-dark.jpeg');
+  readonly lightImage = input<string>('/images/hero_banner-09-2026-light.jpeg');
+  readonly imageAlt = input<string>('El Dugout Ve - Béisbol Profesional Venezolano');
+
+  /**
+   * Dynamically resolved hero image path according to active theme.
+   */
+  readonly currentImage = computed(() => {
+    return this.themeService.isDark() ? this.darkImage() : this.lightImage();
+  });
 
   readonly primaryAction = output<void>();
   readonly secondaryAction = output<void>();

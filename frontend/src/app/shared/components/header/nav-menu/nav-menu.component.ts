@@ -11,6 +11,8 @@ import { LoginDialogComponent } from '../../login-dialog/login-dialog.component'
 import { AvatarComponent } from '../avatar/avatar.component';
 import { AuthService } from '../../../../core/services/auth.service';
 
+import { ThemeToggleComponent } from '../theme-toggle/theme-toggle.component';
+
 export interface NavItem {
   label: string;
   link: string;
@@ -20,7 +22,16 @@ export interface NavItem {
 @Component({
   selector: 'app-nav-menu',
   standalone: true,
-  imports: [RouterLink, RouterLinkActive, MatButtonModule, MatIconModule, MatMenuModule, MatDividerModule, AvatarComponent],
+  imports: [
+    RouterLink,
+    RouterLinkActive,
+    MatButtonModule,
+    MatIconModule,
+    MatMenuModule,
+    MatDividerModule,
+    AvatarComponent,
+    ThemeToggleComponent,
+  ],
   template: `
     <nav class="desktop-nav" aria-label="Main Navigation">
       <ul class="nav-list">
@@ -40,6 +51,9 @@ export interface NavItem {
       </ul>
 
       <div class="cta-group">
+        <!-- Baseball Ball Theme Toggle -->
+        <app-theme-toggle></app-theme-toggle>
+
         <!-- 1. Not Logged In: Display "Login" and "Sign up" buttons -->
         @if (!authService.isLoggedIn()) {
           <button
@@ -68,6 +82,9 @@ export interface NavItem {
 
     <!-- Mobile Navigation Toggle -->
     <div class="mobile-nav">
+      <!-- Baseball Ball Theme Toggle -->
+      <app-theme-toggle></app-theme-toggle>
+
       @if (authService.isLoggedIn()) {
         <app-avatar></app-avatar>
       }
@@ -199,15 +216,15 @@ export interface NavItem {
       font-size: var(--font-size-sm, 0.9rem);
       text-transform: capitalize;
       letter-spacing: 0.02em;
-      background-color: var(--primary-color, var(--primary, #3b82f6)) !important;
+      background-color: var(--primary-color, var(--primary, #ef4444)) !important;
       color: #ffffff !important;
-      box-shadow: 0 2px 8px rgba(59, 130, 246, 0.35);
+      box-shadow: 0 2px 8px var(--primary-glow, rgba(239, 68, 68, 0.35));
       transition: transform 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease !important;
 
       &:hover {
         transform: translateY(-1px);
-        background-color: var(--primary-hover, #2563eb) !important;
-        box-shadow: var(--shadow-glow, 0 4px 14px rgba(59, 130, 246, 0.5));
+        background-color: var(--primary-hover, #dc2626) !important;
+        box-shadow: var(--shadow-glow, 0 4px 14px var(--primary-glow, rgba(239, 68, 68, 0.5)));
       }
     }
 
