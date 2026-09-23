@@ -6,12 +6,13 @@ import {
   booleanAttribute,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { TranslatePipe } from '@ngx-translate/core';
 import { SectionConfig, DEFAULT_SECTION_CONFIG } from './section.interface';
 
 @Component({
   selector: 'app-section',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, TranslatePipe],
   template: `
     <section
       class="section-container"
@@ -24,10 +25,10 @@ import { SectionConfig, DEFAULT_SECTION_CONFIG } from './section.interface';
         <!-- 60% Div: Section Title & Description -->
         <div class="section-portion portion-60">
           @if (resolvedTitle()) {
-            <h2 class="section-title">{{ resolvedTitle() }}</h2>
+            <h2 class="section-title">{{ resolvedTitle() | translate }}</h2>
           }
           @if (resolvedDescription()) {
-            <p class="section-description">{{ resolvedDescription() }}</p>
+            <p class="section-description">{{ resolvedDescription() | translate }}</p>
           }
           <div class="section-extra-content">
             <ng-content select="[section-body],:not([media-content])"></ng-content>
@@ -41,7 +42,7 @@ import { SectionConfig, DEFAULT_SECTION_CONFIG } from './section.interface';
             @if (resolvedMediaImage()) {
               <img
                 [src]="resolvedMediaImage()"
-                [alt]="resolvedMediaAlt()"
+                [alt]="resolvedMediaAlt() | translate"
                 class="media-bg-image"
                 loading="lazy"
               />
@@ -53,7 +54,7 @@ import { SectionConfig, DEFAULT_SECTION_CONFIG } from './section.interface';
             <!-- Element 2: Text content over the image (z-index: 2) -->
             <div class="media-text-content">
               @if (resolvedMediaText()) {
-                <p class="media-caption">{{ resolvedMediaText() }}</p>
+                <p class="media-caption">{{ resolvedMediaText() | translate }}</p>
               }
               <ng-content select="[media-content]"></ng-content>
             </div>

@@ -9,6 +9,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { TranslatePipe } from '@ngx-translate/core';
 import { AuthService } from '../../core/services/auth.service';
 import { UpdateProfileInput } from '../../core/models/user.model';
 
@@ -26,6 +27,7 @@ import { UpdateProfileInput } from '../../core/models/user.model';
     MatSlideToggleModule,
     MatDividerModule,
     MatProgressSpinnerModule,
+    TranslatePipe,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
@@ -35,31 +37,31 @@ import { UpdateProfileInput } from '../../core/models/user.model';
         <header class="page-header">
           <a routerLink="/" class="back-link">
             <mat-icon class="back-icon">arrow_back</mat-icon>
-            <span>Back to Home</span>
+            <span>{{ 'PROFILE.BACK_HOME' | translate }}</span>
           </a>
-          <h1 class="page-title">Account Profile</h1>
-          <p class="page-subtitle">Manage your personal information, security credentials, and preferences.</p>
+          <h1 class="page-title">{{ 'PROFILE.TITLE' | translate }}</h1>
+          <p class="page-subtitle">{{ 'PROFILE.SUBTITLE' | translate }}</p>
         </header>
 
         <!-- Feedback Alerts -->
         @if (successMessage()) {
           <div class="alert success" role="alert">
             <mat-icon class="alert-icon">check_circle</mat-icon>
-            <span>{{ successMessage() }}</span>
+            <span>{{ successMessage() | translate }}</span>
           </div>
         }
 
         @if (errorMessage()) {
           <div class="alert error" role="alert">
             <mat-icon class="alert-icon">error_outline</mat-icon>
-            <span>{{ errorMessage() }}</span>
+            <span>{{ errorMessage() | translate }}</span>
           </div>
         }
 
         <form [formGroup]="profileForm" (ngSubmit)="onSubmit()" class="profile-card">
           <!-- 1. Avatar Section -->
           <section class="section-block avatar-section">
-            <h2 class="section-title">Profile Picture</h2>
+            <h2 class="section-title">{{ 'PROFILE.PICTURE_SECTION' | translate }}</h2>
 
             <div class="avatar-row">
               <div class="avatar-preview-circle">
@@ -90,7 +92,7 @@ import { UpdateProfileInput } from '../../core/models/user.model';
                     class="upload-btn"
                     (click)="fileInput.click()">
                     <mat-icon>upload</mat-icon>
-                    <span>Upload Image</span>
+                    <span>{{ 'PROFILE.UPLOAD_IMAGE' | translate }}</span>
                   </button>
 
                   @if (avatarPreviewUrl()) {
@@ -101,13 +103,13 @@ import { UpdateProfileInput } from '../../core/models/user.model';
                       class="remove-avatar-btn"
                       (click)="removeAvatar()">
                       <mat-icon>delete_outline</mat-icon>
-                      <span>Remove</span>
+                      <span>{{ 'PROFILE.REMOVE' | translate }}</span>
                     </button>
                   }
                 </div>
 
                 <mat-form-field appearance="outline" class="avatar-url-field">
-                  <mat-label>Or image URL</mat-label>
+                  <mat-label>{{ 'PROFILE.OR_IMAGE_URL' | translate }}</mat-label>
                   <input
                     matInput
                     formControlName="avatarUrl"
@@ -122,33 +124,33 @@ import { UpdateProfileInput } from '../../core/models/user.model';
 
           <!-- 2. Personal Information -->
           <section class="section-block">
-            <h2 class="section-title">Personal Information</h2>
+            <h2 class="section-title">{{ 'PROFILE.PERSONAL_INFO' | translate }}</h2>
 
             <div class="form-grid">
               <mat-form-field appearance="outline">
-                <mat-label>First Name</mat-label>
-                <input matInput formControlName="firstName" placeholder="First Name" />
+                <mat-label>{{ 'PROFILE.FIRST_NAME' | translate }}</mat-label>
+                <input matInput formControlName="firstName" [placeholder]="'PROFILE.FIRST_NAME' | translate" />
                 @if (profileForm.get('firstName')?.hasError('required')) {
-                  <mat-error>First name is required</mat-error>
+                  <mat-error>{{ 'PROFILE.FIRST_NAME_REQUIRED' | translate }}</mat-error>
                 }
               </mat-form-field>
 
               <mat-form-field appearance="outline">
-                <mat-label>Last Name</mat-label>
-                <input matInput formControlName="lastName" placeholder="Last Name" />
+                <mat-label>{{ 'PROFILE.LAST_NAME' | translate }}</mat-label>
+                <input matInput formControlName="lastName" [placeholder]="'PROFILE.LAST_NAME' | translate" />
                 @if (profileForm.get('lastName')?.hasError('required')) {
-                  <mat-error>Last name is required</mat-error>
+                  <mat-error>{{ 'PROFILE.LAST_NAME_REQUIRED' | translate }}</mat-error>
                 }
               </mat-form-field>
 
               <mat-form-field appearance="outline">
-                <mat-label>Email Address</mat-label>
+                <mat-label>{{ 'PROFILE.EMAIL_ADDRESS' | translate }}</mat-label>
                 <input matInput [value]="authService.currentUser()?.email" disabled />
-                <mat-hint>Email is managed through authentication</mat-hint>
+                <mat-hint>{{ 'PROFILE.EMAIL_HINT' | translate }}</mat-hint>
               </mat-form-field>
 
               <mat-form-field appearance="outline">
-                <mat-label>Mobile Number</mat-label>
+                <mat-label>{{ 'PROFILE.MOBILE_NUMBER' | translate }}</mat-label>
                 <input matInput formControlName="mobileNumber" placeholder="+1 (555) 000-0000" />
               </mat-form-field>
             </div>
@@ -158,12 +160,12 @@ import { UpdateProfileInput } from '../../core/models/user.model';
 
           <!-- 3. Security & Two-Factor Authentication -->
           <section class="section-block">
-            <h2 class="section-title">Two-Factor Authentication (2FA)</h2>
+            <h2 class="section-title">{{ 'PROFILE.2FA_SECTION' | translate }}</h2>
             <div class="two-factor-card">
               <div class="two-factor-info">
-                <span class="two-factor-label">Enable Two-Factor Authentication</span>
+                <span class="two-factor-label">{{ 'PROFILE.2FA_ENABLE' | translate }}</span>
                 <span class="two-factor-desc">
-                  Add an extra layer of security to your account during login.
+                  {{ 'PROFILE.2FA_DESC' | translate }}
                 </span>
               </div>
               <mat-slide-toggle formControlName="twoFactorEnabled" color="primary"></mat-slide-toggle>
@@ -174,12 +176,12 @@ import { UpdateProfileInput } from '../../core/models/user.model';
 
           <!-- 4. Change Password -->
           <section class="section-block">
-            <h2 class="section-title">Change Password</h2>
-            <p class="section-hint">Leave blank if you do not wish to change your password.</p>
+            <h2 class="section-title">{{ 'PROFILE.CHANGE_PASSWORD' | translate }}</h2>
+            <p class="section-hint">{{ 'PROFILE.PASSWORD_HINT' | translate }}</p>
 
             <div class="form-grid">
               <mat-form-field appearance="outline">
-                <mat-label>Current Password</mat-label>
+                <mat-label>{{ 'PROFILE.CURRENT_PASSWORD' | translate }}</mat-label>
                 <input
                   matInput
                   [type]="showCurrentPassword() ? 'text' : 'password'"
@@ -195,7 +197,7 @@ import { UpdateProfileInput } from '../../core/models/user.model';
               </mat-form-field>
 
               <mat-form-field appearance="outline">
-                <mat-label>New Password</mat-label>
+                <mat-label>{{ 'PROFILE.NEW_PASSWORD' | translate }}</mat-label>
                 <input
                   matInput
                   [type]="showNewPassword() ? 'text' : 'password'"
@@ -209,12 +211,12 @@ import { UpdateProfileInput } from '../../core/models/user.model';
                   <mat-icon>{{ showNewPassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
                 </button>
                 @if (profileForm.get('newPassword')?.hasError('minlength')) {
-                  <mat-error>Must be at least 8 characters</mat-error>
+                  <mat-error>{{ 'PROFILE.MIN_8_CHARS' | translate }}</mat-error>
                 }
               </mat-form-field>
 
               <mat-form-field appearance="outline">
-                <mat-label>Confirm New Password</mat-label>
+                <mat-label>{{ 'PROFILE.CONFIRM_PASSWORD' | translate }}</mat-label>
                 <input
                   matInput
                   [type]="showConfirmPassword() ? 'text' : 'password'"
@@ -233,7 +235,7 @@ import { UpdateProfileInput } from '../../core/models/user.model';
             @if (passwordMismatch()) {
               <div class="inline-error">
                 <mat-icon class="inline-error-icon">warning</mat-icon>
-                <span>New password and confirm password do not match.</span>
+                <span>{{ 'PROFILE.PASSWORD_MISMATCH' | translate }}</span>
               </div>
             }
           </section>
@@ -248,9 +250,9 @@ import { UpdateProfileInput } from '../../core/models/user.model';
               [disabled]="isSaving() || profileForm.invalid || passwordMismatch()">
               @if (isSaving()) {
                 <mat-spinner diameter="20" class="btn-spinner"></mat-spinner>
-                <span>Saving Changes...</span>
+                <span>{{ 'PROFILE.SAVING' | translate }}</span>
               } @else {
-                <span>Save Changes</span>
+                <span>{{ 'PROFILE.SAVE_CHANGES' | translate }}</span>
               }
             </button>
           </div>

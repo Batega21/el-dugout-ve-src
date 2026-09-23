@@ -8,7 +8,7 @@ import {
   output,
   ChangeDetectionStrategy,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { TranslatePipe } from '@ngx-translate/core';
 import { HealthService } from '../../../core/services/health.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { StatusBadgeComponent } from '../status-badge/status-badge.component';
@@ -22,7 +22,7 @@ import {
 @Component({
   selector: 'app-section-cards',
   standalone: true,
-  imports: [CommonModule, StatusBadgeComponent],
+  imports: [StatusBadgeComponent, TranslatePipe],
   template: `
     @if (canView()) {
       <div class="section-cards-container">
@@ -30,7 +30,7 @@ import {
           <div class="admin-indicator">
             <span class="admin-badge">
               <span class="admin-badge-dot"></span>
-              {{ indicator }}
+              {{ indicator | translate }}
             </span>
           </div>
         }
@@ -39,10 +39,10 @@ import {
           @for (card of effectiveConfig().cards; track card.id || card.title) {
             <div class="card status-card">
               <div class="card-header">
-                <h3>{{ card.title }}</h3>
+                <h3>{{ card.title | translate }}</h3>
                 @if (getCardBadge(card); as badge) {
                   <app-status-badge
-                    [text]="badge.text"
+                    [text]="badge.text | translate"
                     [type]="badge.type || 'neutral'">
                   </app-status-badge>
                 }
@@ -50,14 +50,14 @@ import {
 
               @if (card.description) {
                 <p class="card-desc">
-                  {{ card.description }}
+                  {{ card.description | translate }}
                 </p>
               }
 
               @if (card.footerCode || card.footerButton || card.footerText) {
                 <div class="card-footer">
                   @if (card.footerCode) {
-                    <code>{{ card.footerCode }}</code>
+                    <code>{{ card.footerCode | translate }}</code>
                   }
 
                   @if (card.footerButton) {
@@ -66,12 +66,12 @@ import {
                       (click)="onCardButtonClick(card)"
                       class="btn-refresh"
                       [disabled]="isCardButtonDisabled(card)">
-                      {{ getCardButtonLabel(card) }}
+                      {{ getCardButtonLabel(card) | translate }}
                     </button>
                   }
 
                   @if (card.footerText) {
-                    <span class="footer-text">{{ card.footerText }}</span>
+                    <span class="footer-text">{{ card.footerText | translate }}</span>
                   }
                 </div>
               }

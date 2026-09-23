@@ -17,6 +17,7 @@ import {
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { TranslatePipe } from '@ngx-translate/core';
 import { SubscriptionsService } from '../../../core/services/subscriptions.service';
 import { CreateSubscriptionInput, Subscription } from '../../../core/models/subscription.model';
 
@@ -30,22 +31,23 @@ import { CreateSubscriptionInput, Subscription } from '../../../core/models/subs
     MatButtonModule,
     MatIconModule,
     MatCheckboxModule,
+    TranslatePipe,
   ],
   template: `
     <div class="subscription-modal-wrapper">
       <!-- Modal Header -->
       <div class="modal-header">
         <div class="header-content">
-          <span class="header-badge">Membresía</span>
-          <h2 mat-dialog-title class="dialog-title">Elige tu Suscripción</h2>
+          <span class="header-badge">{{ 'SUBSCRIPTION.BADGE' | translate }}</span>
+          <h2 mat-dialog-title class="dialog-title">{{ 'SUBSCRIPTION.TITLE' | translate }}</h2>
           <p class="dialog-subtitle">
-            Accede a estadísticas avanzadas, reportes históricos y cobertura exclusiva en eldugoutve.com.
+            {{ 'SUBSCRIPTION.SUBTITLE' | translate }}
           </p>
         </div>
         <button
           mat-icon-button
           type="button"
-          aria-label="Close dialog"
+          [attr.aria-label]="'COMMON.ACTIONS.CLOSE' | translate"
           class="close-btn"
           (click)="onCancel()">
           <mat-icon>close</mat-icon>
@@ -58,7 +60,7 @@ import { CreateSubscriptionInput, Subscription } from '../../../core/models/subs
           <section class="form-section">
             <h3 class="section-title">
               <mat-icon class="section-icon">workspace_premium</mat-icon>
-              1. Plan Selection
+              {{ 'SUBSCRIPTION.SECTION_PLAN' | translate }}
             </h3>
 
             <div class="tier-cards-grid">
@@ -68,7 +70,7 @@ import { CreateSubscriptionInput, Subscription } from '../../../core/models/subs
                 [class.selected]="subscriptionForm.controls.plan.value === 'free'"
                 (click)="selectPlan('free')">
                 <div class="tier-card-header">
-                  <span class="tier-name">Free Plan</span>
+                  <span class="tier-name">{{ 'SUBSCRIPTION.FREE_PLAN' | translate }}</span>
                   <div class="radio-indicator">
                     <span class="radio-dot"></span>
                   </div>
@@ -76,13 +78,13 @@ import { CreateSubscriptionInput, Subscription } from '../../../core/models/subs
                 <div class="tier-price">
                   <span class="currency">$</span>
                   <span class="amount">0</span>
-                  <span class="period">/ forever</span>
+                  <span class="period">{{ 'SUBSCRIPTION.FREE_PRICE_PERIOD' | translate }}</span>
                 </div>
-                <p class="tier-desc">Core frontend template, local PostgreSQL & sample NestJS REST APIs.</p>
+                <p class="tier-desc">{{ 'SUBSCRIPTION.FREE_DESC' | translate }}</p>
                 <ul class="tier-features">
-                  <li><mat-icon class="feature-icon">check</mat-icon> Angular Standalone Architecture</li>
-                  <li><mat-icon class="feature-icon">check</mat-icon> Local Docker PostgreSQL</li>
-                  <li><mat-icon class="feature-icon">check</mat-icon> Community Support</li>
+                  <li><mat-icon class="feature-icon">check</mat-icon> {{ 'SUBSCRIPTION.FREE_FEATURE1' | translate }}</li>
+                  <li><mat-icon class="feature-icon">check</mat-icon> {{ 'SUBSCRIPTION.FREE_FEATURE2' | translate }}</li>
+                  <li><mat-icon class="feature-icon">check</mat-icon> {{ 'SUBSCRIPTION.FREE_FEATURE3' | translate }}</li>
                 </ul>
               </div>
 
@@ -91,9 +93,9 @@ import { CreateSubscriptionInput, Subscription } from '../../../core/models/subs
                 class="tier-card"
                 [class.selected]="subscriptionForm.controls.plan.value === 'premium'"
                 (click)="selectPlan('premium')">
-                <div class="tier-badge">Recommended</div>
+                <div class="tier-badge">{{ 'SUBSCRIPTION.RECOMMENDED' | translate }}</div>
                 <div class="tier-card-header">
-                  <span class="tier-name">Premium Plan</span>
+                  <span class="tier-name">{{ 'SUBSCRIPTION.PREMIUM_PLAN' | translate }}</span>
                   <div class="radio-indicator">
                     <span class="radio-dot"></span>
                   </div>
@@ -101,14 +103,14 @@ import { CreateSubscriptionInput, Subscription } from '../../../core/models/subs
                 <div class="tier-price">
                   <span class="currency">$</span>
                   <span class="amount">{{ subscriptionForm.controls.billingPeriod.value === 'annual' ? '15' : '19' }}</span>
-                  <span class="period">/ month</span>
+                  <span class="period">{{ 'SUBSCRIPTION.PER_MONTH' | translate }}</span>
                 </div>
-                <p class="tier-desc">Full Google Cloud Run deployment, Cloud SQL auth, and live telemetry.</p>
+                <p class="tier-desc">{{ 'SUBSCRIPTION.PREMIUM_DESC' | translate }}</p>
                 <ul class="tier-features">
-                  <li><mat-icon class="feature-icon">check</mat-icon> GCP Cloud Run CI/CD Pipelines</li>
-                  <li><mat-icon class="feature-icon">check</mat-icon> Cloud SQL Auth Socket Ready</li>
-                  <li><mat-icon class="feature-icon">check</mat-icon> Terminus Health Diagnostics</li>
-                  <li><mat-icon class="feature-icon">check</mat-icon> 24/7 Priority SLA & Telemetry</li>
+                  <li><mat-icon class="feature-icon">check</mat-icon> {{ 'SUBSCRIPTION.PREMIUM_FEATURE1' | translate }}</li>
+                  <li><mat-icon class="feature-icon">check</mat-icon> {{ 'SUBSCRIPTION.PREMIUM_FEATURE2' | translate }}</li>
+                  <li><mat-icon class="feature-icon">check</mat-icon> {{ 'SUBSCRIPTION.PREMIUM_FEATURE3' | translate }}</li>
+                  <li><mat-icon class="feature-icon">check</mat-icon> {{ 'SUBSCRIPTION.PREMIUM_FEATURE4' | translate }}</li>
                 </ul>
               </div>
             </div>
@@ -119,7 +121,7 @@ import { CreateSubscriptionInput, Subscription } from '../../../core/models/subs
             <section class="form-section">
               <h3 class="section-title">
                 <mat-icon class="section-icon">calendar_month</mat-icon>
-                2. Billing Frequency
+                {{ 'SUBSCRIPTION.SECTION_BILLING' | translate }}
               </h3>
 
               <div class="billing-cards-grid">
@@ -129,11 +131,11 @@ import { CreateSubscriptionInput, Subscription } from '../../../core/models/subs
                   [class.selected]="subscriptionForm.controls.billingPeriod.value === 'monthly'"
                   (click)="selectBillingPeriod('monthly')">
                   <div class="billing-header">
-                    <span class="billing-title">Monthly Billing</span>
+                    <span class="billing-title">{{ 'SUBSCRIPTION.MONTHLY_BILLING' | translate }}</span>
                     <span class="radio-dot"></span>
                   </div>
-                  <div class="billing-rate">$19 / month</div>
-                  <p class="billing-subtitle">Billed monthly. Cancel anytime with no penalties.</p>
+                  <div class="billing-rate">$19 {{ 'SUBSCRIPTION.PER_MONTH' | translate }}</div>
+                  <p class="billing-subtitle">{{ 'SUBSCRIPTION.MONTHLY_SUB' | translate }}</p>
                 </div>
 
                 <!-- Annual Billing -->
@@ -141,13 +143,13 @@ import { CreateSubscriptionInput, Subscription } from '../../../core/models/subs
                   class="billing-card"
                   [class.selected]="subscriptionForm.controls.billingPeriod.value === 'annual'"
                   (click)="selectBillingPeriod('annual')">
-                  <span class="discount-pill">Save 20%</span>
+                  <span class="discount-pill">{{ 'SUBSCRIPTION.SAVE_20' | translate }}</span>
                   <div class="billing-header">
-                    <span class="billing-title">Annual Billing</span>
+                    <span class="billing-title">{{ 'SUBSCRIPTION.ANNUAL_BILLING' | translate }}</span>
                     <span class="radio-dot"></span>
                   </div>
-                  <div class="billing-rate">$15 / month</div>
-                  <p class="billing-subtitle">Billed annually ($180/year). Includes 2 months free.</p>
+                  <div class="billing-rate">$15 {{ 'SUBSCRIPTION.PER_MONTH' | translate }}</div>
+                  <p class="billing-subtitle">{{ 'SUBSCRIPTION.ANNUAL_SUB' | translate }}</p>
                 </div>
               </div>
             </section>
@@ -157,7 +159,7 @@ import { CreateSubscriptionInput, Subscription } from '../../../core/models/subs
           <section class="form-section legal-section">
             <h3 class="section-title">
               <mat-icon class="section-icon">gavel</mat-icon>
-              3. Terms & Disclosures
+              {{ 'SUBSCRIPTION.SECTION_TERMS' | translate }}
             </h3>
 
             <div class="checkbox-container">
@@ -166,27 +168,27 @@ import { CreateSubscriptionInput, Subscription } from '../../../core/models/subs
                 color="primary"
                 class="renewal-checkbox">
                 <span class="checkbox-label">
-                  Subscription automatically renews unless canceled at least 24 hours before the end of the current period.
+                  {{ 'SUBSCRIPTION.RENEWAL_CONSENT' | translate }}
                 </span>
               </mat-checkbox>
             </div>
 
             <div class="legal-links">
-              <span>By subscribing, you agree to our</span>
+              <span>{{ 'SUBSCRIPTION.AGREE_TEXT' | translate }}</span>
               <a
                 href="https://policies.google.com/terms"
                 target="_blank"
                 rel="noopener noreferrer"
                 class="legal-link">
-                Terms of Service
+                {{ 'SUBSCRIPTION.TERMS_OF_SERVICE' | translate }}
               </a>
-              <span>and</span>
+              <span>{{ 'SUBSCRIPTION.AND' | translate }}</span>
               <a
                 href="https://policies.google.com/privacy"
                 target="_blank"
                 rel="noopener noreferrer"
                 class="legal-link">
-                Privacy Policy
+                {{ 'SUBSCRIPTION.PRIVACY_POLICY' | translate }}
               </a>.
             </div>
           </section>
@@ -208,7 +210,7 @@ import { CreateSubscriptionInput, Subscription } from '../../../core/models/subs
           type="button"
           class="cancel-btn"
           (click)="onCancel()">
-          Cancel
+          {{ 'COMMON.ACTIONS.CANCEL' | translate }}
         </button>
 
         <button
@@ -218,11 +220,11 @@ import { CreateSubscriptionInput, Subscription } from '../../../core/models/subs
           class="submit-cta-btn"
           [disabled]="subscriptionForm.invalid || isSubmitting()">
           @if (isSubmitting()) {
-            <span>Processing...</span>
+            <span>{{ 'SUBSCRIPTION.PROCESSING' | translate }}</span>
           } @else if (subscriptionForm.controls.plan.value === 'free') {
-            <span>Activate Free Plan</span>
+            <span>{{ 'SUBSCRIPTION.ACTIVATE_FREE' | translate }}</span>
           } @else {
-            <span>Start 7-Day Free Trial</span>
+            <span>{{ 'SUBSCRIPTION.START_TRIAL' | translate }}</span>
           }
           <mat-icon class="btn-arrow">arrow_forward</mat-icon>
         </button>

@@ -2,6 +2,7 @@ import { Component, OnInit, signal, inject, ChangeDetectionStrategy } from '@ang
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { RouterLink } from '@angular/router';
+import { TranslatePipe } from '@ngx-translate/core';
 import { StatusBadgeComponent } from '../../shared/components/status-badge/status-badge.component';
 
 interface AdminMetrics {
@@ -42,20 +43,20 @@ interface SubscriptionRecord {
 @Component({
   selector: 'app-admin-dashboard',
   standalone: true,
-  imports: [CommonModule, RouterLink, StatusBadgeComponent],
+  imports: [CommonModule, RouterLink, StatusBadgeComponent, TranslatePipe],
   template: `
     <div class="admin-dashboard">
       <div class="dashboard-header">
         <div>
-          <span class="admin-badge">Admin Workspace</span>
-          <h1>System Health Matrix & Subscriptions</h1>
-          <p class="subtitle">Real-time system telemetry and subscriber entitlement control.</p>
+          <span class="admin-badge">{{ 'ADMIN.WORKSPACE_BADGE' | translate }}</span>
+          <h1>{{ 'ADMIN.TITLE' | translate }}</h1>
+          <p class="subtitle">{{ 'ADMIN.SUBTITLE' | translate }}</p>
         </div>
         <div class="header-actions">
-          <a routerLink="/admin/imports" class="btn btn-outline">⚾ Ingest Leaderboards</a>
-          <a routerLink="/users" class="btn btn-outline">Manage Users</a>
+          <a routerLink="/admin/imports" class="btn btn-outline">{{ 'ADMIN.INGEST_LEADERBOARDS' | translate }}</a>
+          <a routerLink="/users" class="btn btn-outline">{{ 'ADMIN.MANAGE_USERS' | translate }}</a>
           <button (click)="loadAll()" class="btn btn-primary" [disabled]="loading()">
-            {{ loading() ? 'Refreshing...' : 'Refresh Metrics ↻' }}
+            {{ (loading() ? 'ADMIN.REFRESHING' : 'ADMIN.REFRESH_METRICS') | translate }}
           </button>
         </div>
       </div>
@@ -68,32 +69,32 @@ interface SubscriptionRecord {
       <!-- System Health Matrix Section -->
       <section class="metrics-grid">
         <div class="metric-card">
-          <span class="metric-label">System Status</span>
+          <span class="metric-label">{{ 'ADMIN.SYSTEM_STATUS' | translate }}</span>
           <div class="metric-value status-active">
             <span class="status-dot"></span>
             {{ metrics()?.status || 'ONLINE' | uppercase }}
           </div>
-          <span class="metric-detail">Uptime: {{ metrics()?.uptimeSeconds || 0 }}s</span>
+          <span class="metric-detail">{{ 'ADMIN.UPTIME' | translate }}: {{ metrics()?.uptimeSeconds || 0 }}s</span>
         </div>
 
         <div class="metric-card">
-          <span class="metric-label">Heap Memory Used</span>
+          <span class="metric-label">{{ 'ADMIN.HEAP_USED' | translate }}</span>
           <div class="metric-value">{{ metrics()?.system?.heapUsedMb || 0 }} MB</div>
-          <span class="metric-detail">Total: {{ metrics()?.system?.heapTotalMb || 0 }} MB (RSS: {{ metrics()?.system?.rssMb || 0 }} MB)</span>
+          <span class="metric-detail">{{ 'ADMIN.TOTAL' | translate }}: {{ metrics()?.system?.heapTotalMb || 0 }} MB (RSS: {{ metrics()?.system?.rssMb || 0 }} MB)</span>
         </div>
 
         <div class="metric-card">
-          <span class="metric-label">Total Users</span>
+          <span class="metric-label">{{ 'ADMIN.TOTAL_USERS' | translate }}</span>
           <div class="metric-value">{{ metrics()?.businessTelemetry?.totalUsers || 0 }}</div>
-          <span class="metric-detail">System Identity Accounts</span>
+          <span class="metric-detail">{{ 'ADMIN.SYSTEM_ACCOUNTS' | translate }}</span>
         </div>
 
         <div class="metric-card">
-          <span class="metric-label">Active Subscriptions</span>
+          <span class="metric-label">{{ 'ADMIN.ACTIVE_SUBSCRIPTIONS' | translate }}</span>
           <div class="metric-value highlight">{{ metrics()?.businessTelemetry?.activeSubscriptions || 0 }}</div>
           <span class="metric-detail">
-            Basic: {{ metrics()?.businessTelemetry?.subscriptionsByTier?.['BASIC'] || 0 }} | 
-            Premium: {{ metrics()?.businessTelemetry?.subscriptionsByTier?.['PREMIUM'] || 0 }}
+            {{ 'ADMIN.BASIC' | translate }}: {{ metrics()?.businessTelemetry?.subscriptionsByTier?.['BASIC'] || 0 }} | 
+            {{ 'ADMIN.PREMIUM' | translate }}: {{ metrics()?.businessTelemetry?.subscriptionsByTier?.['PREMIUM'] || 0 }}
           </span>
         </div>
       </section>
@@ -101,16 +102,16 @@ interface SubscriptionRecord {
       <!-- Subscriptions Management Table -->
       <section class="table-card">
         <div class="card-header">
-          <h2>Subscriber Management Table ({{ subscriptions().length }})</h2>
-          <span class="card-hint">Isolated billing entities linked 1:1 to user identities</span>
+          <h2>{{ 'ADMIN.TABLE_TITLE' | translate }} ({{ subscriptions().length }})</h2>
+          <span class="card-hint">{{ 'ADMIN.TABLE_HINT' | translate }}</span>
         </div>
 
         @if (loading() && subscriptions().length === 0) {
-          <div class="empty-state">Loading subscribers...</div>
+          <div class="empty-state">{{ 'ADMIN.LOADING_SUBS' | translate }}</div>
         }
 
         @if (!loading() && subscriptions().length === 0) {
-          <div class="empty-state">No subscribers found in database.</div>
+          <div class="empty-state">{{ 'ADMIN.NO_SUBS' | translate }}</div>
         }
 
         @if (subscriptions().length > 0) {
@@ -118,12 +119,12 @@ interface SubscriptionRecord {
             <table class="data-table">
               <thead>
                 <tr>
-                  <th>Subscriber</th>
-                  <th>Tier Plan</th>
-                  <th>Billing Frequency</th>
-                  <th>Status</th>
-                  <th>Linked User</th>
-                  <th>Created</th>
+                  <th>{{ 'ADMIN.COL_SUBSCRIBER' | translate }}</th>
+                  <th>{{ 'ADMIN.COL_TIER' | translate }}</th>
+                  <th>{{ 'ADMIN.COL_BILLING' | translate }}</th>
+                  <th>{{ 'ADMIN.COL_STATUS' | translate }}</th>
+                  <th>{{ 'ADMIN.COL_LINKED' | translate }}</th>
+                  <th>{{ 'ADMIN.COL_CREATED' | translate }}</th>
                 </tr>
               </thead>
               <tbody>
@@ -131,8 +132,8 @@ interface SubscriptionRecord {
                   <tr>
                     <td>
                       <div class="subscriber-info">
-                        <span class="sub-name">{{ sub.user ? (sub.user.firstName + ' ' + sub.user.lastName) : 'Subscriber' }}</span>
-                        <span class="sub-email">{{ sub.user?.email || 'No email' }}</span>
+                        <span class="sub-name">{{ sub.user ? (sub.user.firstName + ' ' + sub.user.lastName) : ('ADMIN.COL_SUBSCRIBER' | translate) }}</span>
+                        <span class="sub-email">{{ sub.user?.email || ('ADMIN.NO_EMAIL' | translate) }}</span>
                       </div>
                     </td>
                     <td>
@@ -151,7 +152,7 @@ interface SubscriptionRecord {
                       @if (sub.user) {
                         <span class="linked-user-tag">✓ {{ sub.user.email }}</span>
                       } @else {
-                        <span class="unlinked-tag">Unlinked</span>
+                        <span class="unlinked-tag">{{ 'ADMIN.UNLINKED' | translate }}</span>
                       }
                     </td>
                     <td>{{ sub.createdAt | date:'shortDate' }}</td>

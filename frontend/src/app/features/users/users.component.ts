@@ -1,6 +1,7 @@
 import { Component, OnInit, signal, inject, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { TranslatePipe } from '@ngx-translate/core';
 import { UsersService } from '../../core/services/users.service';
 import { User, CreateUserInput } from '../../core/models/user.model';
 import { StatusBadgeComponent } from '../../shared/components/status-badge/status-badge.component';
@@ -8,16 +9,16 @@ import { StatusBadgeComponent } from '../../shared/components/status-badge/statu
 @Component({
   selector: 'app-users',
   standalone: true,
-  imports: [CommonModule, FormsModule, StatusBadgeComponent],
+  imports: [CommonModule, FormsModule, StatusBadgeComponent, TranslatePipe],
   template: `
     <div class="users-page">
       <div class="page-header">
         <div>
-          <h1>User Management</h1>
-          <p class="subtitle">Real-time interaction with NestJS REST API and PostgreSQL database.</p>
+          <h1>{{ 'USERS.TITLE' | translate }}</h1>
+          <p class="subtitle">{{ 'USERS.SUBTITLE' | translate }}</p>
         </div>
         <button (click)="loadUsers()" class="btn btn-outline" [disabled]="loading()">
-          {{ loading() ? 'Refreshing...' : 'Refresh Users ↻' }}
+          {{ (loading() ? 'ADMIN.REFRESHING' : 'USERS.REFRESH_USERS') | translate }}
         </button>
       </div>
     
@@ -37,18 +38,18 @@ import { StatusBadgeComponent } from '../../shared/components/status-badge/statu
         <!-- Users List -->
         <div class="card list-card">
           <div class="card-title-row">
-            <h2>Registered Users ({{ users().length }})</h2>
+            <h2>{{ 'USERS.REGISTERED_USERS' | translate }} ({{ users().length }})</h2>
           </div>
     
           @if (loading() && users().length === 0) {
             <div class="loading-state">
-              <p>Loading records from PostgreSQL...</p>
+              <p>{{ 'USERS.LOADING_USERS' | translate }}</p>
             </div>
           }
     
           @if (!loading() && users().length === 0) {
             <div class="empty-state">
-              <p>No users found. Make sure the database is running and seeded, or create one below!</p>
+              <p>{{ 'USERS.NO_USERS' | translate }}</p>
             </div>
           }
     
@@ -57,12 +58,12 @@ import { StatusBadgeComponent } from '../../shared/components/status-badge/statu
               <table class="data-table">
                 <thead>
                   <tr>
-                    <th>Name / Email</th>
-                    <th>Role</th>
-                    <th>Projects</th>
-                    <th>Status</th>
-                    <th>Created</th>
-                    <th>Actions</th>
+                    <th>{{ 'USERS.COL_NAME_EMAIL' | translate }}</th>
+                    <th>{{ 'USERS.COL_ROLE' | translate }}</th>
+                    <th>{{ 'USERS.COL_PROJECTS' | translate }}</th>
+                    <th>{{ 'USERS.COL_STATUS' | translate }}</th>
+                    <th>{{ 'USERS.COL_CREATED' | translate }}</th>
+                    <th>{{ 'USERS.COL_ACTIONS' | translate }}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -70,7 +71,7 @@ import { StatusBadgeComponent } from '../../shared/components/status-badge/statu
                     <tr>
                       <td>
                         <div class="user-cell">
-                          <span class="user-name">{{ user.name || 'Unnamed User' }}</span>
+                          <span class="user-name">{{ user.name || ('COMMON.TIERS.USER' | translate) }}</span>
                           <span class="user-email">{{ user.email }}</span>
                         </div>
                       </td>
@@ -80,11 +81,11 @@ import { StatusBadgeComponent } from '../../shared/components/status-badge/statu
                         </span>
                       </td>
                       <td>
-                        <span class="projects-count">{{ user.projects?.length || 0 }} projects</span>
+                        <span class="projects-count">{{ user.projects?.length || 0 }} {{ 'USERS.PROJECTS_COUNT' | translate }}</span>
                       </td>
                       <td>
                         <app-status-badge
-                          [text]="user.isActive ? 'Active' : 'Inactive'"
+                          [text]="(user.isActive ? 'USERS.ACTIVE' : 'USERS.INACTIVE') | translate"
                           [type]="user.isActive ? 'success' : 'neutral'">
                         </app-status-badge>
                       </td>
@@ -95,9 +96,9 @@ import { StatusBadgeComponent } from '../../shared/components/status-badge/statu
                         <button
                           (click)="deleteUser(user)"
                           class="btn-delete"
-                          title="Delete User"
+                          [title]="'USERS.DELETE' | translate"
                           [disabled]="deletingId() === user.id">
-                          {{ deletingId() === user.id ? '...' : 'Delete' }}
+                          {{ deletingId() === user.id ? '...' : ('USERS.DELETE' | translate) }}
                         </button>
                       </td>
                     </tr>
@@ -110,12 +111,12 @@ import { StatusBadgeComponent } from '../../shared/components/status-badge/statu
     
         <!-- Create User Form -->
         <div class="card form-card">
-          <h2>Create New User</h2>
-          <p class="form-desc">Demonstrates DTO validation, bcrypt hashing, and Prisma insertion.</p>
+          <h2>{{ 'USERS.CREATE_TITLE' | translate }}</h2>
+          <p class="form-desc">{{ 'USERS.CREATE_DESC' | translate }}</p>
     
           <form (ngSubmit)="onSubmit()" #userForm="ngForm">
             <div class="form-group">
-              <label for="name">Full Name</label>
+              <label for="name">{{ 'USERS.FULL_NAME' | translate }}</label>
               <input
                 id="name"
                 name="name"
@@ -127,7 +128,7 @@ import { StatusBadgeComponent } from '../../shared/components/status-badge/statu
             </div>
     
             <div class="form-group">
-              <label for="email">Email Address *</label>
+              <label for="email">{{ 'USERS.EMAIL_REQUIRED' | translate }}</label>
               <input
                 id="email"
                 name="email"
@@ -140,13 +141,13 @@ import { StatusBadgeComponent } from '../../shared/components/status-badge/statu
             </div>
     
             <div class="form-group">
-              <label for="password">Password *</label>
+              <label for="password">{{ 'USERS.PASSWORD_REQUIRED' | translate }}</label>
               <input
                 id="password"
                 name="password"
                 type="password"
                 class="form-control"
-                placeholder="Min 6 characters"
+                [placeholder]="'USERS.PASSWORD_MIN' | translate"
                 required
                 minlength="6"
                 [(ngModel)]="formData.password"
@@ -157,13 +158,13 @@ import { StatusBadgeComponent } from '../../shared/components/status-badge/statu
               type="submit"
               class="btn btn-primary btn-block"
               [disabled]="submitting() || !userForm.form.valid">
-              {{ submitting() ? 'Creating User...' : 'Add User' }}
+              {{ (submitting() ? 'USERS.CREATING' : 'USERS.ADD_USER') | translate }}
             </button>
           </form>
         </div>
       </div>
     </div>
-    `,
+  `,
   changeDetection: ChangeDetectionStrategy.Eager,
   styles: [`
     .users-page {

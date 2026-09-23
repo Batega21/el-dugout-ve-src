@@ -5,13 +5,14 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatDialog } from '@angular/material/dialog';
+import { TranslatePipe } from '@ngx-translate/core';
 import { AuthService } from '../../../../core/services/auth.service';
 import { SubscriptionDialogComponent } from '../../subscription-dialog/subscription-dialog.component';
 
 @Component({
   selector: 'app-avatar',
   standalone: true,
-  imports: [RouterLink, MatMenuModule, MatButtonModule, MatIconModule, MatDividerModule],
+  imports: [RouterLink, MatMenuModule, MatButtonModule, MatIconModule, MatDividerModule, TranslatePipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="avatar-container">
@@ -20,7 +21,7 @@ import { SubscriptionDialogComponent } from '../../subscription-dialog/subscript
         [matMenuTriggerFor]="avatarMenu"
         class="avatar-trigger-btn"
         [attr.aria-label]="userAriaLabel()"
-        [title]="authService.currentUser()?.email || 'User Account'">
+        [title]="authService.currentUser()?.email || ('COMMON.TIERS.USER' | translate)">
         <div class="avatar-circle">
           @if (avatarUrl()) {
             <img
@@ -44,7 +45,7 @@ import { SubscriptionDialogComponent } from '../../subscription-dialog/subscript
           <span class="user-display-name">{{ userName() }}</span>
           <span class="user-email-text">{{ authService.currentUser()?.email }}</span>
           <span class="user-tier-tag" [class.paid]="authService.hasActiveSubscription()">
-            {{ tierTagLabel() }}
+            {{ tierTagLabel() | translate }}
           </span>
         </div>
 
@@ -53,14 +54,14 @@ import { SubscriptionDialogComponent } from '../../subscription-dialog/subscript
         <!-- Profile option -->
         <a mat-menu-item routerLink="/profile" class="avatar-menu-item">
           <mat-icon class="menu-icon">person</mat-icon>
-          <span>Profile</span>
+          <span>{{ 'COMMON.NAV.PROFILE' | translate }}</span>
         </a>
 
         <!-- Subscribe option (Only for Free Tier User without paid plan) -->
         @if (!authService.hasActiveSubscription() && !authService.isAdmin()) {
           <button mat-menu-item (click)="onSubscribeClick()" class="avatar-menu-item subscribe-option">
             <mat-icon class="menu-icon gold">star</mat-icon>
-            <span>Subscribe</span>
+            <span>{{ 'COMMON.NAV.SUBSCRIBE' | translate }}</span>
           </button>
         }
 
@@ -68,7 +69,7 @@ import { SubscriptionDialogComponent } from '../../subscription-dialog/subscript
         @if (authService.isAdmin()) {
           <a mat-menu-item routerLink="/admin" class="avatar-menu-item">
             <mat-icon class="menu-icon">admin_panel_settings</mat-icon>
-            <span>System Matrix</span>
+            <span>{{ 'COMMON.NAV.SYSTEM_MATRIX' | translate }}</span>
           </a>
         }
 
@@ -77,7 +78,7 @@ import { SubscriptionDialogComponent } from '../../subscription-dialog/subscript
         <!-- Logout option -->
         <button mat-menu-item (click)="onLogoutClick()" class="avatar-menu-item logout-option">
           <mat-icon class="menu-icon">logout</mat-icon>
-          <span>Logout</span>
+          <span>{{ 'COMMON.NAV.LOGOUT' | translate }}</span>
         </button>
       </mat-menu>
     </div>

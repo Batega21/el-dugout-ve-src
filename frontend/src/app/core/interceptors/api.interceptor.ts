@@ -12,9 +12,15 @@ export const apiInterceptor: HttpInterceptorFn = (req, next) => {
     headers = headers.set('Authorization', `Bearer ${token}`);
   }
 
-  // Only prefix if URL does not start with http/https
+  // Only prefix if URL does not start with http/https and is not a local static asset
   let url = req.url;
-  if (!req.url.startsWith('http://') && !req.url.startsWith('https://')) {
+  const isStaticAsset =
+    req.url.startsWith('./assets/') ||
+    req.url.startsWith('assets/') ||
+    req.url.startsWith('/assets/') ||
+    req.url.endsWith('.json');
+
+  if (!isStaticAsset && !req.url.startsWith('http://') && !req.url.startsWith('https://')) {
     const baseUrl = environment.apiUrl.replace(/\/$/, '');
     const cleanPath = req.url.replace(/^\//, '');
     url = `${baseUrl}/${cleanPath}`;

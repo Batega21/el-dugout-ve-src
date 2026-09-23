@@ -24,6 +24,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { ErrorStateMatcher } from '@angular/material/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { AuthService } from '../../../core/services/auth.service';
 import { LoginDialogComponent } from '../login-dialog/login-dialog.component';
 
@@ -58,22 +59,23 @@ export function passwordMatchValidator(control: AbstractControl): ValidationErro
     MatInputModule,
     MatButtonModule,
     MatIconModule,
+    TranslatePipe,
   ],
   template: `
     <div class="signup-modal-wrapper">
       <!-- Modal Header -->
       <div class="modal-header">
         <div class="header-content">
-          <span class="header-badge">Únete</span>
-          <h2 mat-dialog-title class="dialog-title">Crear Cuenta</h2>
+          <span class="header-badge">{{ 'AUTH.SIGNUP_BADGE' | translate }}</span>
+          <h2 mat-dialog-title class="dialog-title">{{ 'AUTH.SIGNUP_TITLE' | translate }}</h2>
           <p class="dialog-subtitle">
-            Únete a la mayor enciclopedia y comunidad del béisbol profesional venezolano (LVBP).
+            {{ 'AUTH.SIGNUP_SUBTITLE' | translate }}
           </p>
         </div>
         <button
           mat-icon-button
           type="button"
-          aria-label="Close sign-up dialog"
+          [attr.aria-label]="'COMMON.ACTIONS.CLOSE' | translate"
           class="close-btn"
           (click)="onCancel()">
           <mat-icon>close</mat-icon>
@@ -94,7 +96,7 @@ export function passwordMatchValidator(control: AbstractControl): ValidationErro
           <!-- First and Last Name Inputs -->
           <div class="names-row">
             <mat-form-field appearance="outline" class="form-field">
-              <mat-label>First Name</mat-label>
+              <mat-label>{{ 'AUTH.FIRST_NAME' | translate }}</mat-label>
               <input
                 matInput
                 type="text"
@@ -104,12 +106,12 @@ export function passwordMatchValidator(control: AbstractControl): ValidationErro
                 required />
               <mat-icon matSuffix class="field-icon">person</mat-icon>
               @if (signUpForm.controls.firstName.hasError('required') && signUpForm.controls.firstName.touched) {
-                <mat-error>First name is required</mat-error>
+                <mat-error>{{ 'AUTH.FIRST_NAME_REQUIRED' | translate }}</mat-error>
               }
             </mat-form-field>
 
             <mat-form-field appearance="outline" class="form-field">
-              <mat-label>Last Name</mat-label>
+              <mat-label>{{ 'AUTH.LAST_NAME' | translate }}</mat-label>
               <input
                 matInput
                 type="text"
@@ -119,14 +121,14 @@ export function passwordMatchValidator(control: AbstractControl): ValidationErro
                 required />
               <mat-icon matSuffix class="field-icon">person_outline</mat-icon>
               @if (signUpForm.controls.lastName.hasError('required') && signUpForm.controls.lastName.touched) {
-                <mat-error>Last name is required</mat-error>
+                <mat-error>{{ 'AUTH.LAST_NAME_REQUIRED' | translate }}</mat-error>
               }
             </mat-form-field>
           </div>
 
           <!-- Email Input -->
           <mat-form-field appearance="outline" class="form-field full-width">
-            <mat-label>Email Address</mat-label>
+            <mat-label>{{ 'AUTH.EMAIL' | translate }}</mat-label>
             <input
               matInput
               type="email"
@@ -136,21 +138,21 @@ export function passwordMatchValidator(control: AbstractControl): ValidationErro
               required />
             <mat-icon matSuffix class="field-icon">email</mat-icon>
             @if (signUpForm.controls.email.hasError('required') && signUpForm.controls.email.touched) {
-              <mat-error>Email address is required</mat-error>
+              <mat-error>{{ 'AUTH.EMAIL_REQUIRED' | translate }}</mat-error>
             }
             @if (signUpForm.controls.email.hasError('email') && signUpForm.controls.email.touched) {
-              <mat-error>Please enter a valid email address</mat-error>
+              <mat-error>{{ 'AUTH.EMAIL_INVALID' | translate }}</mat-error>
             }
           </mat-form-field>
 
           <!-- Password Input with Show/Hide Toggle -->
           <mat-form-field appearance="outline" class="form-field full-width">
-            <mat-label>Password</mat-label>
+            <mat-label>{{ 'AUTH.PASSWORD' | translate }}</mat-label>
             <input
               matInput
               [type]="hidePassword() ? 'password' : 'text'"
               formControlName="password"
-              placeholder="Enter at least 6 characters"
+              [placeholder]="'AUTH.PASSWORD_MIN_SIGNUP' | translate"
               autocomplete="new-password"
               required />
             <button
@@ -159,29 +161,29 @@ export function passwordMatchValidator(control: AbstractControl): ValidationErro
               type="button"
               class="toggle-password-btn"
               (click)="togglePasswordVisibility()"
-              [attr.aria-label]="hidePassword() ? 'Show password' : 'Hide password'"
+              [attr.aria-label]="(hidePassword() ? 'AUTH.PASSWORD_SHOW' : 'AUTH.PASSWORD_HIDE') | translate"
               [attr.aria-pressed]="!hidePassword()">
               <mat-icon class="field-icon">
                 {{ hidePassword() ? 'visibility_off' : 'visibility' }}
               </mat-icon>
             </button>
             @if (signUpForm.controls.password.hasError('required') && signUpForm.controls.password.touched) {
-              <mat-error>Password is required</mat-error>
+              <mat-error>{{ 'AUTH.PASSWORD_REQUIRED' | translate }}</mat-error>
             }
             @if (signUpForm.controls.password.hasError('minlength') && signUpForm.controls.password.touched) {
-              <mat-error>Password must be at least 6 characters long</mat-error>
+              <mat-error>{{ 'AUTH.PASSWORD_MIN_SIGNUP' | translate }}</mat-error>
             }
           </mat-form-field>
 
           <!-- Confirm Password Input with Show/Hide Toggle -->
           <mat-form-field appearance="outline" class="form-field full-width">
-            <mat-label>Confirm Password</mat-label>
+            <mat-label>{{ 'AUTH.CONFIRM_PASSWORD' | translate }}</mat-label>
             <input
               matInput
               [type]="hideConfirmPassword() ? 'password' : 'text'"
               formControlName="confirmPassword"
               [errorStateMatcher]="confirmPasswordMatcher"
-              placeholder="Re-enter your password"
+              placeholder="••••••••"
               autocomplete="new-password"
               required />
             <button
@@ -190,31 +192,31 @@ export function passwordMatchValidator(control: AbstractControl): ValidationErro
               type="button"
               class="toggle-password-btn"
               (click)="toggleConfirmPasswordVisibility()"
-              [attr.aria-label]="hideConfirmPassword() ? 'Show password' : 'Hide password'"
+              [attr.aria-label]="(hideConfirmPassword() ? 'AUTH.PASSWORD_SHOW' : 'AUTH.PASSWORD_HIDE') | translate"
               [attr.aria-pressed]="!hideConfirmPassword()">
               <mat-icon class="field-icon">
                 {{ hideConfirmPassword() ? 'visibility_off' : 'visibility' }}
               </mat-icon>
             </button>
             @if (signUpForm.controls.confirmPassword.hasError('passwordMismatch') && signUpForm.controls.confirmPassword.touched) {
-              <mat-error>Passwords do not match</mat-error>
+              <mat-error>{{ 'AUTH.PASSWORDS_DONT_MATCH' | translate }}</mat-error>
             }
             @if (signUpForm.controls.confirmPassword.hasError('required') && signUpForm.controls.confirmPassword.touched) {
-              <mat-error>Please confirm your password</mat-error>
+              <mat-error>{{ 'AUTH.CONFIRM_PASSWORD_REQUIRED' | translate }}</mat-error>
             }
             @if (signUpForm.hasError('passwordMismatch') && (signUpForm.controls.confirmPassword.dirty || signUpForm.controls.confirmPassword.touched) && !signUpForm.controls.confirmPassword.hasError('required')) {
-              <mat-error>Passwords do not match</mat-error>
+              <mat-error>{{ 'AUTH.PASSWORDS_DONT_MATCH' | translate }}</mat-error>
             }
           </mat-form-field>
 
           <!-- Mobile Number (Optional, numbers and dashes only) -->
           <mat-form-field appearance="outline" class="form-field full-width">
-            <mat-label>Mobile Number (Optional)</mat-label>
+            <mat-label>{{ 'PROFILE.MOBILE_NUMBER' | translate }}</mat-label>
             <input
               matInput
               type="tel"
               formControlName="mobileNumber"
-              placeholder="e.g. 555-123-4567"
+              placeholder="555-123-4567"
               autocomplete="tel"
               (keydown)="onMobileKeyDown($event)"
               (input)="onMobileInput($event)" />
@@ -231,9 +233,9 @@ export function passwordMatchValidator(control: AbstractControl): ValidationErro
             class="submit-cta-btn"
             [disabled]="signUpForm.invalid || isLoading()">
             @if (isLoading()) {
-              <span>Creating Account...</span>
+              <span>{{ 'AUTH.CREATING_ACCOUNT' | translate }}</span>
             } @else {
-              <span>Sign Up</span>
+              <span>{{ 'AUTH.SIGN_UP_BTN' | translate }}</span>
             }
             <mat-icon class="btn-arrow">arrow_forward</mat-icon>
           </button>
@@ -242,7 +244,7 @@ export function passwordMatchValidator(control: AbstractControl): ValidationErro
         <!-- Social Login Divider -->
         <div class="social-divider">
           <span class="divider-line"></span>
-          <span class="divider-text">or continue with</span>
+          <span class="divider-text">{{ 'AUTH.OR_CONTINUE' | translate }}</span>
           <span class="divider-line"></span>
         </div>
 
@@ -287,12 +289,12 @@ export function passwordMatchValidator(control: AbstractControl): ValidationErro
 
         <!-- Login Option: Clickable text closing Sign-up and opening Login modal -->
         <div class="login-footer-row">
-          <span class="login-prompt">Already have an account?</span>
+          <span class="login-prompt">{{ 'AUTH.ALREADY_HAVE_ACCOUNT' | translate }}</span>
           <button
             type="button"
             class="login-link-btn"
             (click)="onLoginClick()">
-            Log in
+            {{ 'AUTH.LOG_IN_NOW' | translate }}
           </button>
         </div>
       </mat-dialog-content>

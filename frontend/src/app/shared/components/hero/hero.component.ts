@@ -9,12 +9,13 @@ import {
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { TranslatePipe } from '@ngx-translate/core';
 import { ThemeService } from '../../../core/services/theme.service';
 
 @Component({
   selector: 'app-hero',
   standalone: true,
-  imports: [CommonModule, MatButtonModule, MatIconModule],
+  imports: [CommonModule, MatButtonModule, MatIconModule, TranslatePipe],
   host: {
     '[class.full-width]': 'fullWidth()',
   },
@@ -23,7 +24,7 @@ import { ThemeService } from '../../../core/services/theme.service';
       class="hero-section"
       [style.background-image]="'url(' + currentImage() + ')'"
       role="banner"
-      [attr.aria-label]="title()">
+      [attr.aria-label]="title() | translate">
       <!-- Subtle backdrop scrim overlay for text legibility and contrast -->
       <div class="hero-backdrop-overlay" aria-hidden="true"></div>
 
@@ -31,16 +32,16 @@ import { ThemeService } from '../../../core/services/theme.service';
         <!-- Content Column overlaying background (Left aligned) -->
         <div class="hero-content">
           <!-- 2.1 Main Heading or Title -->
-          <h1 class="hero-title">{{ title() }}</h1>
+          <h1 class="hero-title">{{ title() | translate }}</h1>
 
           <!-- 2.2 Tagline Text (Pill / Badge) -->
           <div class="tagline-badge">
             <span class="tagline-dot"></span>
-            <span class="tagline-text">{{ tagline() }}</span>
+            <span class="tagline-text">{{ tagline() | translate }}</span>
           </div>
 
           <!-- 2.3 Copy for Company Context -->
-          <p class="hero-description">{{ description() }}</p>
+          <p class="hero-description">{{ description() | translate }}</p>
 
           <!-- CTA Buttons Group (Dual Pill Buttons matching wireframe) -->
           <div class="hero-actions">
@@ -51,7 +52,7 @@ import { ThemeService } from '../../../core/services/theme.service';
               class="pill-btn secondary-btn"
               (click)="onSecondaryClick()">
               <mat-icon class="btn-icon">phone_in_talk</mat-icon>
-              <span>{{ secondaryCta() }}</span>
+              <span>{{ secondaryCta() | translate }}</span>
             </button>
 
             <!-- 2.5 Primary CTA Button -->
@@ -61,7 +62,7 @@ import { ThemeService } from '../../../core/services/theme.service';
               class="pill-btn primary-btn"
               (click)="onPrimaryClick()">
               <mat-icon class="btn-icon">mark_email_read</mat-icon>
-              <span>{{ primaryCta() }}</span>
+              <span>{{ primaryCta() | translate }}</span>
             </button>
           </div>
         </div>

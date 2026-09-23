@@ -12,6 +12,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatChipsModule } from '@angular/material/chips';
+import { TranslatePipe } from '@ngx-translate/core';
 import { LeaderboardsService } from '../../../core/services/leaderboards.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { ImportResult } from '../../../core/models/leaderboard.model';
@@ -36,6 +37,7 @@ export interface StagedFileItem {
     MatProgressBarModule,
     MatChipsModule,
     StatusBadgeComponent,
+    TranslatePipe,
   ],
   template: `
     <div class="leaderboard-import-container">
@@ -43,20 +45,20 @@ export interface StagedFileItem {
       <header class="import-header">
         <div>
           <nav class="breadcrumb-nav" aria-label="Breadcrumbs">
-            <a routerLink="/admin" class="breadcrumb-link">Admin Dashboard</a>
+            <a routerLink="/admin" class="breadcrumb-link">{{ 'LEADERBOARD_IMPORT.BREADCRUMB_DASHBOARD' | translate }}</a>
             <span class="breadcrumb-sep">/</span>
-            <span class="breadcrumb-current">Historical Leaderboards Ingestion</span>
+            <span class="breadcrumb-current">{{ 'LEADERBOARD_IMPORT.BREADCRUMB_CURRENT' | translate }}</span>
           </nav>
-          <span class="admin-badge">Admin Facility</span>
-          <h1>LVBP Historical Leaderboards Ingestion</h1>
+          <span class="admin-badge">{{ 'ADMIN.FACILITY_BADGE' | translate }}</span>
+          <h1>{{ 'LEADERBOARD_IMPORT.TITLE' | translate }}</h1>
           <p class="subtitle">
-            Upload and normalize Excel sheets (1946–2026) for batting averages, hits, doubles, triples, home runs, and runs scored.
+            {{ 'LEADERBOARD_IMPORT.SUBTITLE' | translate }}
           </p>
         </div>
         <div class="header-actions">
           <a routerLink="/admin" class="btn btn-outline">
             <mat-icon>arrow_back</mat-icon>
-            Back to Dashboard
+            {{ 'LEADERBOARD_IMPORT.BACK_DASHBOARD' | translate }}
           </a>
         </div>
       </header>
@@ -66,7 +68,7 @@ export interface StagedFileItem {
         <div class="alert alert-danger" role="alert">
           <mat-icon>gpp_bad</mat-icon>
           <div>
-            <strong>Restricted Access:</strong> Only administrators with elevated privileges are authorized to ingest database records.
+            <strong>{{ 'LEADERBOARD_IMPORT.RESTRICTED_ACCESS' | translate }}</strong>
           </div>
         </div>
       } @else {
@@ -75,7 +77,7 @@ export interface StagedFileItem {
           <div class="alert alert-danger" role="alert">
             <mat-icon>error_outline</mat-icon>
             <div class="alert-content">
-              <strong>Import Error:</strong> {{ errorMessage() }}
+              <strong>{{ 'LEADERBOARD_IMPORT.IMPORT_ERROR' | translate }}:</strong> {{ errorMessage() }}
             </div>
           </div>
         }
@@ -84,7 +86,7 @@ export interface StagedFileItem {
           <div class="alert alert-warning" role="alert">
             <mat-icon>warning_amber</mat-icon>
             <div class="alert-content">
-              <strong>File Notice:</strong>
+              <strong>{{ 'LEADERBOARD_IMPORT.FILE_NOTICE' | translate }}:</strong>
               <ul>
                 @for (vErr of validationErrors(); track vErr) {
                   <li>{{ vErr }}</li>
@@ -101,34 +103,33 @@ export interface StagedFileItem {
               <div class="title-group">
                 <mat-icon class="icon-success">check_circle</mat-icon>
                 <div>
-                  <h2>Ingestion Run Completed Successfully</h2>
+                  <h2>{{ 'LEADERBOARD_IMPORT.SUCCESS_TITLE' | translate }}</h2>
                   <p class="results-meta">
-                    Processed {{ importResult()?.processedFiles }} of {{ importResult()?.totalFiles }} workbooks
-                    • {{ importResult()?.totalRecordsProcessed }} total records evaluated
+                    {{ 'LEADERBOARD_IMPORT.SUCCESS_META' | translate:{ processed: importResult()?.processedFiles, total: importResult()?.totalFiles, records: importResult()?.totalRecordsProcessed } }}
                   </p>
                 </div>
               </div>
               <button mat-flat-button color="primary" (click)="resetForm()">
                 <mat-icon>upload_file</mat-icon>
-                Upload More Files
+                {{ 'LEADERBOARD_IMPORT.UPLOAD_MORE' | translate }}
               </button>
             </div>
 
             <div class="metrics-grid">
               <div class="metric-box">
-                <span class="metric-label">Workbooks Processed</span>
+                <span class="metric-label">{{ 'LEADERBOARD_IMPORT.WORKBOOKS_PROCESSED' | translate }}</span>
                 <span class="metric-number">{{ importResult()?.processedFiles }}</span>
-                <span class="metric-sub">Out of {{ importResult()?.totalFiles }} total</span>
+                <span class="metric-sub">{{ 'LEADERBOARD_IMPORT.OUT_OF_TOTAL' | translate:{ total: importResult()?.totalFiles } }}</span>
               </div>
               <div class="metric-box highlight">
-                <span class="metric-label">New Records Inserted</span>
+                <span class="metric-label">{{ 'LEADERBOARD_IMPORT.NEW_RECORDS' | translate }}</span>
                 <span class="metric-number text-success">+{{ importResult()?.totalRecordsInserted }}</span>
-                <span class="metric-sub">Stored in seasons & leaders</span>
+                <span class="metric-sub">{{ 'LEADERBOARD_IMPORT.STORED_DESC' | translate }}</span>
               </div>
               <div class="metric-box">
-                <span class="metric-label">Records Updated (Idempotent)</span>
+                <span class="metric-label">{{ 'LEADERBOARD_IMPORT.RECORDS_UPDATED' | translate }}</span>
                 <span class="metric-number text-info">{{ importResult()?.totalRecordsUpdated }}</span>
-                <span class="metric-sub">Refreshed on conflict</span>
+                <span class="metric-sub">{{ 'LEADERBOARD_IMPORT.REFRESHED_DESC' | translate }}</span>
               </div>
             </div>
 
@@ -137,12 +138,12 @@ export interface StagedFileItem {
               <table class="data-table">
                 <thead>
                   <tr>
-                    <th>File Name</th>
-                    <th>Category</th>
-                    <th>Extracted Rows</th>
-                    <th>Inserted</th>
-                    <th>Updated</th>
-                    <th>Status</th>
+                    <th>{{ 'LEADERBOARD_IMPORT.COL_FILENAME' | translate }}</th>
+                    <th>{{ 'LEADERBOARD_IMPORT.COL_CATEGORY' | translate }}</th>
+                    <th>{{ 'LEADERBOARD_IMPORT.COL_EXTRACTED' | translate }}</th>
+                    <th>{{ 'LEADERBOARD_IMPORT.COL_INSERTED' | translate }}</th>
+                    <th>{{ 'LEADERBOARD_IMPORT.COL_UPDATED' | translate }}</th>
+                    <th>{{ 'LEADERBOARD_IMPORT.COL_STATUS' | translate }}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -184,7 +185,7 @@ export interface StagedFileItem {
             role="button"
             (keydown.enter)="fileInput.click()"
             (keydown.space)="fileInput.click()"
-            aria-label="Drop Excel files here or click to select">
+            [attr.aria-label]="'LEADERBOARD_IMPORT.DRAG_DROP_TITLE' | translate">
             <input
               #fileInput
               type="file"
@@ -198,10 +199,10 @@ export interface StagedFileItem {
                 <mat-icon class="drop-icon">cloud_upload</mat-icon>
               </div>
 
-              <h3>Drag & drop LVBP Excel files here</h3>
+              <h3>{{ 'LEADERBOARD_IMPORT.DRAG_DROP_TITLE' | translate }}</h3>
               <p class="drop-hint">
-                Supported formats: <strong>.xlsx</strong>, <strong>.xls</strong> (up to 10 MB per file).
-                Target datasets: <code>lider-bate.xlsx</code>, <code>lider-hits.xlsx</code>, <code>lider-homerun.xlsx</code>, etc.
+                {{ 'LEADERBOARD_IMPORT.SUPPORTED_FORMATS' | translate }}
+                {{ 'LEADERBOARD_IMPORT.TARGET_DATASETS' | translate }}
               </p>
 
               <button
@@ -210,7 +211,7 @@ export interface StagedFileItem {
                 [disabled]="isUploading()"
                 (click)="$event.stopPropagation(); fileInput.click()">
                 <mat-icon>folder_open</mat-icon>
-                Browse Files
+                {{ 'LEADERBOARD_IMPORT.BROWSE_FILES' | translate }}
               </button>
             </div>
           </div>
@@ -220,8 +221,8 @@ export interface StagedFileItem {
             <section class="queue-card" aria-label="Staged Files Queue">
               <div class="queue-header">
                 <div>
-                  <h2>Staged Workbooks ({{ stagedFiles().length }})</h2>
-                  <span class="card-hint">Review categories before initiating ingestion</span>
+                  <h2>{{ 'LEADERBOARD_IMPORT.STAGED_TITLE' | translate }} ({{ stagedFiles().length }})</h2>
+                  <span class="card-hint">{{ 'LEADERBOARD_IMPORT.STAGED_HINT' | translate }}</span>
                 </div>
                 <button
                   mat-button
@@ -229,7 +230,7 @@ export interface StagedFileItem {
                   [disabled]="isUploading()"
                   (click)="clearAllFiles()">
                   <mat-icon>delete_sweep</mat-icon>
-                  Clear All
+                  {{ 'LEADERBOARD_IMPORT.CLEAR_ALL' | translate }}
                 </button>
               </div>
 
@@ -252,7 +253,7 @@ export interface StagedFileItem {
                     <button
                       mat-icon-button
                       color="warn"
-                      aria-label="Remove file"
+                      [attr.aria-label]="'LEADERBOARD_IMPORT.REMOVE_FILE' | translate"
                       [disabled]="isUploading()"
                       (click)="removeFile(item.file)">
                       <mat-icon>close</mat-icon>
@@ -265,7 +266,7 @@ export interface StagedFileItem {
               @if (isUploading()) {
                 <div class="progress-section">
                   <div class="progress-meta">
-                    <span>Uploading and parsing workbooks...</span>
+                    <span>{{ 'LEADERBOARD_IMPORT.UPLOADING_PROGRESS' | translate }}</span>
                     <span>{{ uploadProgress() }}%</span>
                   </div>
                   <mat-progress-bar mode="determinate" [value]="uploadProgress()"></mat-progress-bar>
@@ -279,7 +280,7 @@ export interface StagedFileItem {
                   [disabled]="!canUpload()"
                   (click)="startUpload()">
                   <mat-icon>play_arrow</mat-icon>
-                  {{ isUploading() ? 'Processing & Ingesting...' : 'Start Ingestion Pipeline' }}
+                  {{ (isUploading() ? 'LEADERBOARD_IMPORT.PROCESSING' : 'LEADERBOARD_IMPORT.START_PIPELINE') | translate }}
                 </button>
               </div>
             </section>
