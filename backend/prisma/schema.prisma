@@ -89,3 +89,75 @@ model Subscription {
   @@map("subscriptions")
 }
 
+enum StatCategory {
+  BATTING_AVERAGE
+  HITS
+  DOUBLES
+  TRIPLES
+  HOME_RUNS
+  RUNS
+}
+
+model Season {
+  id        String   @id @default(uuid())
+  code      String   @unique
+  startYear Int      @map("start_year")
+  endYear   Int      @map("end_year")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  leaders   SeasonLeader[]
+
+  @@map("seasons")
+}
+
+model Team {
+  id           String   @id @default(uuid())
+  name         String   @unique
+  abbreviation String?
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  leaders      SeasonLeader[]
+
+  @@map("teams")
+}
+
+model Player {
+  id        String   @id @default(uuid())
+  fullName  String   @map("full_name")
+  slug      String   @unique
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  leaders   SeasonLeader[]
+
+  @@map("players")
+}
+
+model SeasonLeader {
+  id              String       @id @default(uuid())
+  seasonId        String       @map("season_id")
+  playerId        String       @map("player_id")
+  teamRaw         String       @map("team_raw")
+  teamId          String?      @map("team_id")
+  category        StatCategory
+  statValue       Decimal      @map("stat_value") @db.Decimal(6, 3)
+  extraAttributes Json?        @default("{}") @map("extra_attributes")
+  createdAt       DateTime     @default(now()) @map("created_at")
+  updatedAt       DateTime     @updatedAt @map("updated_at")
+
+  // Relations
+  season          Season       @relation(fields: [seasonId], references: [id], onDelete: Cascade)
+  player          Player       @relation(fields: [playerId], references: [id], onDelete: Cascade)
+  team            Team?        @relation(fields: [teamId], references: [id], onDelete: SetNull)
+
+  @@unique([seasonId, playerId, category], name: "season_player_category")
+  @@index([category, seasonId])
+  @@index([playerId])
+  @@map("season_leaders")
+}
+

@@ -15,10 +15,20 @@ import { ThemeService } from '../../../core/services/theme.service';
   selector: 'app-hero',
   standalone: true,
   imports: [CommonModule, MatButtonModule, MatIconModule],
+  host: {
+    '[class.full-width]': 'fullWidth()',
+  },
   template: `
-    <section class="hero-section">
+    <section
+      class="hero-section"
+      [style.background-image]="'url(' + currentImage() + ')'"
+      role="banner"
+      [attr.aria-label]="title()">
+      <!-- Subtle backdrop scrim overlay for text legibility and contrast -->
+      <div class="hero-backdrop-overlay" aria-hidden="true"></div>
+
       <div class="hero-container">
-        <!-- Content Column (Left on desktop) -->
+        <!-- Content Column overlaying background (Left aligned) -->
         <div class="hero-content">
           <!-- 2.1 Tagline Text (Pill / Badge) -->
           <div class="tagline-badge">
@@ -55,21 +65,6 @@ import { ThemeService } from '../../../core/services/theme.service';
             </button>
           </div>
         </div>
-
-        <!-- Media Column (Right on desktop) -->
-        <div class="hero-media">
-          <div class="hero-image-card">
-            <img
-              [src]="currentImage()"
-              [alt]="imageAlt()"
-              class="hero-image"
-              fetchpriority="high"
-              loading="eager"
-              decoding="async"
-            />
-            <div class="hero-image-glare" aria-hidden="true"></div>
-          </div>
-        </div>
       </div>
     </section>
   `,
@@ -78,26 +73,86 @@ import { ThemeService } from '../../../core/services/theme.service';
     :host {
       display: block;
       width: 100%;
-    }
 
-    .hero-section {
-      padding: 3.5rem 0 3rem 0;
-    }
-
-    .hero-container {
-      width: 100%;
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 2.5rem;
-      align-items: center;
-
-      @media (min-width: 992px) {
-        grid-template-columns: 1.15fr 0.85fr;
-        gap: 3rem;
+      &.full-width {
+        width: 100vw;
+        position: relative;
+        left: 50%;
+        right: 50%;
+        margin-left: -50vw;
+        margin-right: -50vw;
       }
     }
 
+    .hero-section {
+      position: relative;
+      width: 100%;
+      min-height: 520px;
+      padding: 5rem 0;
+      display: flex;
+      align-items: center;
+      background-size: cover;
+      background-position: right center;
+      background-repeat: no-repeat;
+      background-color: var(--background-primary-color, #0b0f19);
+      overflow: hidden;
+      transition: background-image 0.3s ease, background-color var(--transition-normal, 250ms ease);
+    }
+
+    .hero-backdrop-overlay {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1;
+      background: linear-gradient(
+        90deg,
+        rgba(11, 15, 25, 0.92) 0%,
+        rgba(11, 15, 25, 0.6) 42%,
+        rgba(11, 15, 25, 0.1) 68%,
+        transparent 100%
+      );
+
+      @media (max-width: 991px) {
+        background: linear-gradient(
+          90deg,
+          rgba(11, 15, 25, 0.95) 0%,
+          rgba(11, 15, 25, 0.82) 50%,
+          rgba(11, 15, 25, 0.65) 100%
+        );
+      }
+    }
+
+    :host-context(.light) .hero-backdrop-overlay,
+    :host-context([data-theme='light']) .hero-backdrop-overlay {
+      background: linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 0.95) 0%,
+        rgba(255, 255, 255, 0.65) 42%,
+        rgba(255, 255, 255, 0.15) 68%,
+        transparent 100%
+      );
+
+      @media (max-width: 991px) {
+        background: linear-gradient(
+          90deg,
+          rgba(255, 255, 255, 0.96) 0%,
+          rgba(255, 255, 255, 0.88) 50%,
+          rgba(255, 255, 255, 0.7) 100%
+        );
+      }
+    }
+
+    .hero-container {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      max-width: var(--wrap-max-width, 1200px);
+      margin: 0 auto;
+      padding: 0 var(--wrap-padding-x, 1.5rem);
+    }
+
     .hero-content {
+      max-width: 580px;
       display: flex;
       flex-direction: column;
       align-items: flex-start;
@@ -149,7 +204,7 @@ import { ThemeService } from '../../../core/services/theme.service';
       font-size: clamp(1rem, 2vw, var(--font-size-lg, 1.15rem));
       line-height: var(--line-height-relaxed, 1.65);
       color: var(--text-secondary-color, #94a3b8);
-      max-width: 680px;
+      max-width: 580px;
       margin: 0 0 2.5rem 0;
     }
 
@@ -207,55 +262,12 @@ import { ThemeService } from '../../../core/services/theme.service';
       }
     }
 
-    /* 2.6 Hero Media Column & Card */
-    .hero-media {
-      width: 100%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-
-    .hero-image-card {
-      position: relative;
-      width: 100%;
-      aspect-ratio: 16 / 9;
-      border-radius: var(--radius-lg, 16px);
-      overflow: hidden;
-      background-color: var(--background-secondary-color, #111827);
-      border: 1px solid var(--border-theme-color, rgba(255, 255, 255, 0.1));
-      box-shadow: 0 16px 36px -8px rgba(0, 0, 0, 0.4), 0 0 24px var(--primary-glow, rgba(239, 68, 68, 0.15));
-      transition: transform var(--transition-normal, 250ms ease),
-                  box-shadow var(--transition-normal, 250ms ease),
-                  border-color var(--transition-normal, 250ms ease);
-
-      &:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 20px 44px -8px rgba(0, 0, 0, 0.5), 0 0 32px var(--primary-glow, rgba(239, 68, 68, 0.25));
-        border-color: var(--border-strong, rgba(255, 255, 255, 0.25));
-      }
-    }
-
-    .hero-image {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-      transition: opacity 0.3s ease;
-    }
-
-    .hero-image-glare {
-      position: absolute;
-      inset: 0;
-      pointer-events: none;
-      background: linear-gradient(
-        135deg,
-        rgba(255, 255, 255, 0.08) 0%,
-        transparent 50%,
-        rgba(0, 0, 0, 0.2) 100%
-      );
-    }
-
     @media (max-width: 640px) {
+      .hero-section {
+        min-height: 460px;
+        padding: 3.5rem 0;
+      }
+
       .hero-actions {
         flex-direction: column;
         width: 100%;
@@ -288,17 +300,29 @@ export class HeroComponent {
   // 2.5 Primary CTA button placeholder
   readonly primaryCta = input<string>('Suscríbete');
 
-  // 2.6 Hero banner images for dark and light themes
+  // 2.6 Hero banner images for dark and light themes (covering background)
   readonly darkImage = input<string>('/images/hero_banner-09-2026-dark.jpeg');
   readonly lightImage = input<string>('/images/hero_banner-09-2026-light.jpeg');
   readonly imageAlt = input<string>('El Dugout Ve - Béisbol Profesional Venezolano');
 
   /**
-   * Dynamically resolved hero image path according to active theme.
+   * Whether to stretch the hero background to full viewport width. Defaults to true.
+   */
+  readonly fullWidth = input<boolean>(true);
+
+  /**
+   * Dynamically resolved hero background image path according to active theme.
    */
   readonly currentImage = computed(() => {
     return this.themeService.isDark() ? this.darkImage() : this.lightImage();
   });
+
+  /**
+   * Computed style object for hero section background.
+   */
+  readonly heroBgStyle = computed(() => ({
+    'background-image': `url('${this.currentImage()}')`,
+  }));
 
   readonly primaryAction = output<void>();
   readonly secondaryAction = output<void>();

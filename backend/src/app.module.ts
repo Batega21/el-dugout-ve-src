@@ -10,6 +10,7 @@ import { UsersModule } from './modules/users/users.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { SubscriptionsModule } from './modules/subscriptions/subscriptions.module';
 import { FeaturesModule } from './modules/features/features.module';
+import { LeaderboardsModule } from './modules/leaderboards/leaderboards.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { FeaturesModule } from './modules/features/features.module';
     AuthModule,
     SubscriptionsModule,
     FeaturesModule,
+    LeaderboardsModule,
   ],
   providers: [
     {

@@ -58,15 +58,21 @@ describe('HeroComponent', () => {
     expect(component.primaryCta()).toBe('Suscríbete');
   });
 
-  it('should default to dark banner image when dark theme is active', () => {
+  it('should default to dark banner background image when dark theme is active', () => {
     expect(component.darkImage()).toBe('/images/hero_banner-09-2026-dark.jpeg');
     expect(component.lightImage()).toBe('/images/hero_banner-09-2026-light.jpeg');
     expect(component.currentImage()).toBe('/images/hero_banner-09-2026-dark.jpeg');
+    expect(component.heroBgStyle()).toEqual({
+      'background-image': "url('/images/hero_banner-09-2026-dark.jpeg')",
+    });
   });
 
-  it('should reactively switch to light banner image when light theme is active', () => {
+  it('should reactively switch background image to light banner when light theme is active', () => {
     mockThemeService.setTheme('light');
     expect(component.currentImage()).toBe('/images/hero_banner-09-2026-light.jpeg');
+    expect(component.heroBgStyle()).toEqual({
+      'background-image': "url('/images/hero_banner-09-2026-light.jpeg')",
+    });
   });
 
   it('should accept custom dark and light images via signal inputs', () => {
@@ -74,9 +80,19 @@ describe('HeroComponent', () => {
     (component as any).lightImage = signal('/custom/light.jpeg');
 
     expect(component.currentImage()).toBe('/custom/dark.jpeg');
+    expect(component.heroBgStyle()).toEqual({
+      'background-image': "url('/custom/dark.jpeg')",
+    });
 
     mockThemeService.setTheme('light');
     expect(component.currentImage()).toBe('/custom/light.jpeg');
+    expect(component.heroBgStyle()).toEqual({
+      'background-image': "url('/custom/light.jpeg')",
+    });
+  });
+
+  it('should default fullWidth to true', () => {
+    expect(component.fullWidth()).toBe(true);
   });
 
   it('should emit primaryAction when onPrimaryClick is called', () => {
