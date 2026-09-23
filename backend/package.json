@@ -16,6 +16,7 @@
     "prisma:studio": "prisma studio",
     "prisma:seed": "ts-node prisma/seed.ts",
     "bootstrap:admin": "ts-node src/scripts/bootstrap-admin.ts",
+    "test:db": "ts-node src/scripts/validate-leaderboard-tables.ts",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",

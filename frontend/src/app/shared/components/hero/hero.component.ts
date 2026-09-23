@@ -30,14 +30,14 @@ import { ThemeService } from '../../../core/services/theme.service';
       <div class="hero-container">
         <!-- Content Column overlaying background (Left aligned) -->
         <div class="hero-content">
-          <!-- 2.1 Tagline Text (Pill / Badge) -->
+          <!-- 2.1 Main Heading or Title -->
+          <h1 class="hero-title">{{ title() }}</h1>
+
+          <!-- 2.2 Tagline Text (Pill / Badge) -->
           <div class="tagline-badge">
             <span class="tagline-dot"></span>
             <span class="tagline-text">{{ tagline() }}</span>
           </div>
-
-          <!-- 2.2 Main Heading or Title -->
-          <h1 class="hero-title">{{ title() }}</h1>
 
           <!-- 2.3 Copy for Company Context -->
           <p class="hero-description">{{ description() }}</p>
@@ -150,32 +150,7 @@ import { ThemeService } from '../../../core/services/theme.service';
       text-align: left;
     }
 
-    /* 2.1 Tagline Badge */
-    .tagline-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.6rem;
-      padding: 0.45rem 1rem;
-      border-radius: var(--radius-pill, 9999px);
-      background-color: var(--background-card-color, rgba(31, 41, 55, 0.7));
-      border: 1px solid var(--border-theme-color, rgba(255, 255, 255, 0.1));
-      color: var(--text-secondary-color, #cbd5e1);
-      font-size: var(--font-size-sm, 0.85rem);
-      font-weight: var(--font-weight-medium, 500);
-      letter-spacing: 0.02em;
-      margin-bottom: 1.5rem;
-      backdrop-filter: blur(var(--backdrop-blur, 8px));
-
-      .tagline-dot {
-        width: 0.5rem;
-        height: 0.5rem;
-        border-radius: 50%;
-        background-color: var(--ice-blue, #38bdf8);
-        box-shadow: 0 0 8px var(--ice-blue, #38bdf8);
-      }
-    }
-
-    /* 2.2 Main Heading / Title */
+    /* 2.1 Main Heading / Title */
     .hero-title {
       font-family: var(--font-display);
       font-size: clamp(4rem, 7vw, var(--font-size-4xl, 5rem));
@@ -184,6 +159,20 @@ import { ThemeService } from '../../../core/services/theme.service';
       letter-spacing: -0.03em;
       color: var(--text-color, #ffffff);
       margin: 0 0 1.25rem 0;
+    }
+
+    /* 2.2 Tagline Badge */
+    .tagline-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.45rem 1rem;
+      color: var(--text-secondary-color, #cbd5e1);
+      font-family: var(--font-special);
+      font-size: var(--font-size-sm, 0.85rem);
+      font-weight: var(--font-weight-medium, 500);
+      letter-spacing: 0.02em;
+      margin-bottom: 1.5rem;
     }
 
     /* 2.3 Copy for Company Context */

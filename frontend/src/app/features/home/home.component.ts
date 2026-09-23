@@ -5,6 +5,7 @@ import { HeroComponent } from '../../shared/components/hero/hero.component';
 import { StatsStripComponent } from '../../shared/components/stats-strip/stats-strip.component';
 import { SectionComponent } from '../../shared/components/section/section.component';
 import { SectionCardsComponent } from '../../shared/components/section-cards/section-cards.component';
+import { GuideSectionComponent } from '../../shared/components/guide-section/guide-section.component';
 import { SectionConfig } from '../../shared/components/section/section.interface';
 import { SectionCardsConfig, DEFAULT_SECTION_CARDS_CONFIG } from '../../shared/components/section-cards/section-cards.interface';
 import { SubscriptionDialogComponent } from '../../shared/components/subscription-dialog/subscription-dialog.component';
@@ -14,7 +15,13 @@ import { AuthService } from '../../core/services/auth.service';
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [HeroComponent, StatsStripComponent, SectionComponent, SectionCardsComponent],
+  imports: [
+    HeroComponent,
+    StatsStripComponent,
+    SectionComponent,
+    SectionCardsComponent,
+    GuideSectionComponent,
+  ],
   template: `
     <div class="home-page">
       <!-- Hero Component matching wireframe reference -->
@@ -34,30 +41,8 @@ import { AuthService } from '../../core/services/auth.service';
       <!-- System Health Matrix (Config-Driven, Visible for Logged Admin Users) -->
       <app-section-cards [config]="systemHealthCardsConfig"></app-section-cards>
 
-      <!-- Quick Setup Guide -->
-      <section class="guide-section">
-        <h2>Developer Quickstart</h2>
-        <div class="steps-grid">
-          <div class="card step-card">
-            <span class="step-number">01</span>
-            <h4>Start Database</h4>
-            <p>Launch PostgreSQL 16 container with local persistence and Adminer GUI.</p>
-            <pre><code>npm run docker:db</code></pre>
-          </div>
-          <div class="card step-card">
-            <span class="step-number">02</span>
-            <h4>Start Backend</h4>
-            <p>Run NestJS in watch mode with automatic schema migration.</p>
-            <pre><code>npm run dev:backend</code></pre>
-          </div>
-          <div class="card step-card">
-            <span class="step-number">03</span>
-            <h4>Start Frontend</h4>
-            <p>Launch Angular dev server with hot reload and proxying.</p>
-            <pre><code>npm run dev:frontend</code></pre>
-          </div>
-        </div>
-      </section>
+      <!-- Quick Setup Guide (Config-Driven / Embedded, Visible for Logged Admin Users) -->
+      <app-guide-section></app-guide-section>
     </div>
   `,
   changeDetection: ChangeDetectionStrategy.Eager,
@@ -109,76 +94,6 @@ import { AuthService } from '../../core/services/auth.service';
         display: flex;
         justify-content: center;
         gap: 1rem;
-      }
-    }
-
-    .card {
-      background-color: var(--background-card-color, var(--bg-card));
-      border: 1px solid var(--border-theme-color, var(--border-color));
-      border-radius: var(--radius-md);
-      padding: 1.5rem;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      transition: border-color 0.2s ease, transform 0.2s ease;
-
-      &:hover {
-        border-color: var(--border-strong, var(--text-muted));
-        transform: translateY(-2px);
-      }
-    }
-
-    .guide-section {
-      h2 {
-        font-family: var(--font-display);
-        font-size: var(--font-size-xl, 1.5rem);
-        font-weight: var(--font-weight-bold, 700);
-        color: var(--text-color, var(--text-primary));
-        margin-bottom: 1.5rem;
-        text-align: center;
-      }
-
-      .steps-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-        gap: 1.5rem;
-      }
-
-      .step-card {
-        position: relative;
-        .step-number {
-          font-family: var(--font-display);
-          font-size: var(--font-size-xl, 1.5rem);
-          font-weight: var(--font-weight-extrabold, 800);
-          color: var(--ice-blue, var(--primary));
-          margin-bottom: 0.5rem;
-          display: block;
-        }
-
-        h4 {
-          font-family: var(--font-sans);
-          font-weight: var(--font-weight-semibold, 600);
-          font-size: var(--font-size-md, 1.1rem);
-          color: var(--text-color, var(--text-primary));
-          margin-bottom: 0.5rem;
-        }
-
-        p {
-          font-family: var(--font-sans);
-          color: var(--text-secondary-color, var(--text-secondary));
-          font-size: var(--font-size-sm, 0.875rem);
-          margin-bottom: 1rem;
-        }
-
-        pre {
-          background-color: var(--background-primary-color, var(--bg-main));
-          padding: 0.75rem;
-          border-radius: var(--radius-sm);
-          font-family: var(--font-mono);
-          font-size: var(--font-size-xs, 0.8rem);
-          color: var(--ice-blue, #38bdf8);
-          overflow-x: auto;
-        }
       }
     }
   `],
