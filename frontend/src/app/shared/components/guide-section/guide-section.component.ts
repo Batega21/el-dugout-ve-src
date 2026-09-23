@@ -6,31 +6,33 @@ import {
   computed,
 } from '@angular/core';
 import { AuthService } from '../../../core/services/auth.service';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-guide-section',
   standalone: true,
+  imports: [TranslatePipe],
   template: `
     @if (canView()) {
       <section class="guide-section">
-        <h2>Developer Quickstart</h2>
+        <h2>{{ 'SECTIONS.QUICKSTART_TITLE' | translate }}</h2>
         <div class="steps-grid">
           <div class="card step-card">
             <span class="step-number">01</span>
-            <h4>Start Database</h4>
-            <p>Launch PostgreSQL 16 container with local persistence and Adminer GUI.</p>
+            <h4>{{ 'SECTIONS.QUICKSTART_STEP1_TITLE' | translate }}</h4>
+            <p>{{ 'SECTIONS.QUICKSTART_STEP1_DESC' | translate }}</p>
             <pre><code>npm run docker:db</code></pre>
           </div>
           <div class="card step-card">
             <span class="step-number">02</span>
-            <h4>Start Backend</h4>
-            <p>Run NestJS in watch mode with automatic schema migration.</p>
+            <h4>{{ 'SECTIONS.QUICKSTART_STEP2_TITLE' | translate }}</h4>
+            <p>{{ 'SECTIONS.QUICKSTART_STEP2_DESC' | translate }}</p>
             <pre><code>npm run dev:backend</code></pre>
           </div>
           <div class="card step-card">
             <span class="step-number">03</span>
-            <h4>Start Frontend</h4>
-            <p>Launch Angular dev server with hot reload and proxying.</p>
+            <h4>{{ 'SECTIONS.QUICKSTART_STEP3_TITLE' | translate }}</h4>
+            <p>{{ 'SECTIONS.QUICKSTART_STEP3_DESC' | translate }}</p>
             <pre><code>npm run dev:frontend</code></pre>
           </div>
         </div>

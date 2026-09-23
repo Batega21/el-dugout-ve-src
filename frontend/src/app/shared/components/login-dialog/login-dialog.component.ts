@@ -19,6 +19,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { TranslatePipe } from '@ngx-translate/core';
 import { AuthService } from '../../../core/services/auth.service';
 import { SignUpDialogComponent } from '../sign-up-dialog/sign-up-dialog.component';
 
@@ -33,22 +34,23 @@ import { SignUpDialogComponent } from '../sign-up-dialog/sign-up-dialog.componen
     MatInputModule,
     MatButtonModule,
     MatIconModule,
+    TranslatePipe,
   ],
   template: `
     <div class="login-modal-wrapper">
       <!-- Modal Header -->
       <div class="modal-header">
         <div class="header-content">
-          <span class="header-badge">Authentication</span>
-          <h2 mat-dialog-title class="dialog-title">Welcome Back</h2>
+          <span class="header-badge">{{ 'AUTH.LOGIN_BADGE' | translate }}</span>
+          <h2 mat-dialog-title class="dialog-title">{{ 'AUTH.LOGIN_TITLE' | translate }}</h2>
           <p class="dialog-subtitle">
-            Sign in to access your administrative telemetry, database models, and projects.
+            {{ 'AUTH.LOGIN_SUBTITLE' | translate }}
           </p>
         </div>
         <button
           mat-icon-button
           type="button"
-          aria-label="Close login dialog"
+          [attr.aria-label]="'COMMON.ACTIONS.CLOSE' | translate"
           class="close-btn"
           (click)="onCancel()">
           <mat-icon>close</mat-icon>
@@ -68,7 +70,7 @@ import { SignUpDialogComponent } from '../sign-up-dialog/sign-up-dialog.componen
         @if (resetPasswordSent()) {
           <div class="alert-banner alert-success">
             <mat-icon class="alert-icon">check_circle_outline</mat-icon>
-            <span>Password reset instructions have been sent to your email.</span>
+            <span>{{ 'AUTH.RESET_SENT' | translate }}</span>
           </div>
         }
 
@@ -76,7 +78,7 @@ import { SignUpDialogComponent } from '../sign-up-dialog/sign-up-dialog.componen
         <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" id="loginForm">
           <!-- 1. Email Input -->
           <mat-form-field appearance="outline" class="form-field full-width">
-            <mat-label>Email Address</mat-label>
+            <mat-label>{{ 'AUTH.EMAIL' | translate }}</mat-label>
             <input
               matInput
               type="email"
@@ -86,21 +88,21 @@ import { SignUpDialogComponent } from '../sign-up-dialog/sign-up-dialog.componen
               required />
             <mat-icon matSuffix class="field-icon">email</mat-icon>
             @if (loginForm.controls.email.hasError('required') && loginForm.controls.email.touched) {
-              <mat-error>Email address is required</mat-error>
+              <mat-error>{{ 'AUTH.EMAIL_REQUIRED' | translate }}</mat-error>
             }
             @if (loginForm.controls.email.hasError('email') && loginForm.controls.email.touched) {
-              <mat-error>Please enter a valid email address</mat-error>
+              <mat-error>{{ 'AUTH.EMAIL_INVALID' | translate }}</mat-error>
             }
           </mat-form-field>
 
           <!-- 2. Password Input with Show/Hide Toggle -->
           <mat-form-field appearance="outline" class="form-field full-width">
-            <mat-label>Password</mat-label>
+            <mat-label>{{ 'AUTH.PASSWORD' | translate }}</mat-label>
             <input
               matInput
               [type]="hidePassword() ? 'password' : 'text'"
               formControlName="password"
-              placeholder="Enter your password"
+              placeholder="••••••••"
               autocomplete="current-password"
               required />
             <button
@@ -109,14 +111,14 @@ import { SignUpDialogComponent } from '../sign-up-dialog/sign-up-dialog.componen
               type="button"
               class="toggle-password-btn"
               (click)="togglePasswordVisibility()"
-              [attr.aria-label]="hidePassword() ? 'Show password' : 'Hide password'"
+              [attr.aria-label]="(hidePassword() ? 'AUTH.PASSWORD_SHOW' : 'AUTH.PASSWORD_HIDE') | translate"
               [attr.aria-pressed]="!hidePassword()">
               <mat-icon class="field-icon">
                 {{ hidePassword() ? 'visibility_off' : 'visibility' }}
               </mat-icon>
             </button>
             @if (loginForm.controls.password.hasError('required') && loginForm.controls.password.touched) {
-              <mat-error>Password is required</mat-error>
+              <mat-error>{{ 'AUTH.PASSWORD_REQUIRED' | translate }}</mat-error>
             }
           </mat-form-field>
 
@@ -126,7 +128,7 @@ import { SignUpDialogComponent } from '../sign-up-dialog/sign-up-dialog.componen
               type="button"
               class="forgot-password-link"
               (click)="onForgotPassword()">
-              Forgot password?
+              {{ 'AUTH.FORGOT_PASSWORD' | translate }}
             </button>
           </div>
 
@@ -137,9 +139,9 @@ import { SignUpDialogComponent } from '../sign-up-dialog/sign-up-dialog.componen
             class="submit-cta-btn"
             [disabled]="loginForm.invalid || isLoading()">
             @if (isLoading()) {
-              <span>Signing In...</span>
+              <span>{{ 'AUTH.SIGNING_IN' | translate }}</span>
             } @else {
-              <span>Log In</span>
+              <span>{{ 'AUTH.SIGN_IN_BTN' | translate }}</span>
             }
             <mat-icon class="btn-arrow">arrow_forward</mat-icon>
           </button>
@@ -148,7 +150,7 @@ import { SignUpDialogComponent } from '../sign-up-dialog/sign-up-dialog.componen
         <!-- Social Login Divider -->
         <div class="social-divider">
           <span class="divider-line"></span>
-          <span class="divider-text">or continue with</span>
+          <span class="divider-text">{{ 'AUTH.OR_CONTINUE' | translate }}</span>
           <span class="divider-line"></span>
         </div>
 
@@ -193,12 +195,12 @@ import { SignUpDialogComponent } from '../sign-up-dialog/sign-up-dialog.componen
 
         <!-- Sign-up Option Link -->
         <div class="signup-footer-row">
-          <span class="signup-prompt">Don't have an account?</span>
+          <span class="signup-prompt">{{ 'AUTH.NO_ACCOUNT' | translate }}</span>
           <button
             type="button"
             class="signup-link-btn"
             (click)="onSignUpClick()">
-            Sign up now
+            {{ 'AUTH.SIGN_UP_NOW' | translate }}
           </button>
         </div>
       </mat-dialog-content>

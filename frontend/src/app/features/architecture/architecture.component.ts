@@ -1,44 +1,44 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
-
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-architecture',
   standalone: true,
-  imports: [],
+  imports: [TranslatePipe],
   template: `
     <div class="arch-page">
       <div class="page-header">
-        <h1>Cloud & System Architecture</h1>
-        <p class="subtitle">Designed for enterprise scalability, security, and velocity on Google Cloud Platform.</p>
+        <h1>{{ 'ARCHITECTURE.TITLE' | translate }}</h1>
+        <p class="subtitle">{{ 'ARCHITECTURE.SUBTITLE' | translate }}</p>
       </div>
 
       <!-- Architecture Diagram Card -->
       <div class="card diagram-card">
-        <h2>Deployment Topology (Google Cloud Platform)</h2>
+        <h2>{{ 'ARCHITECTURE.TOPOLOGY_TITLE' | translate }}</h2>
         <div class="diagram-flow">
           <div class="node client-node">
             <span class="icon">🌐</span>
-            <strong>Web Browser</strong>
-            <span class="sub">HTTPS Traffic</span>
+            <strong>{{ 'ARCHITECTURE.BROWSER' | translate }}</strong>
+            <span class="sub">{{ 'ARCHITECTURE.HTTPS' | translate }}</span>
           </div>
 
           <div class="arrow">↓</div>
 
           <div class="cluster gcp-cluster">
-            <div class="cluster-label">Google Cloud Platform (GCP)</div>
+            <div class="cluster-label">{{ 'ARCHITECTURE.GCP' | translate }}</div>
 
             <div class="services-row">
               <div class="node service-node">
                 <span class="icon">🅰️</span>
-                <strong>Frontend: Cloud Run</strong>
-                <span class="sub">Angular 19 + Nginx SPA Container</span>
+                <strong>{{ 'ARCHITECTURE.FRONTEND_NODE' | translate }}</strong>
+                <span class="sub">{{ 'ARCHITECTURE.FRONTEND_DESC' | translate }}</span>
                 <span class="badge">Port 8080</span>
               </div>
 
               <div class="node service-node">
                 <span class="icon">🦁</span>
-                <strong>Backend: Cloud Run</strong>
-                <span class="sub">NestJS REST API Container</span>
+                <strong>{{ 'ARCHITECTURE.BACKEND_NODE' | translate }}</strong>
+                <span class="sub">{{ 'ARCHITECTURE.BACKEND_DESC' | translate }}</span>
                 <span class="badge">Port 8080</span>
               </div>
             </div>
@@ -47,18 +47,18 @@ import { Component, ChangeDetectionStrategy } from '@angular/core';
 
             <div class="node db-node">
               <span class="icon">🐘</span>
-              <strong>Google Cloud SQL (PostgreSQL 16)</strong>
-              <span class="sub">Managed automated backups, high availability, point-in-time recovery</span>
+              <strong>{{ 'ARCHITECTURE.DB_NODE' | translate }}</strong>
+              <span class="sub">{{ 'ARCHITECTURE.DB_DESC' | translate }}</span>
             </div>
 
             <div class="side-services">
               <div class="mini-node">
-                <strong>GCP Secret Manager</strong>
-                <span>Secure injection of DATABASE_URL & JWT_SECRET</span>
+                <strong>{{ 'ARCHITECTURE.SECRET_MANAGER' | translate }}</strong>
+                <span>{{ 'ARCHITECTURE.SECRET_DESC' | translate }}</span>
               </div>
               <div class="mini-node">
-                <strong>Artifact Registry & Cloud Build</strong>
-                <span>Automated container builds, migrations & deployment</span>
+                <strong>{{ 'ARCHITECTURE.REGISTRY_BUILD' | translate }}</strong>
+                <span>{{ 'ARCHITECTURE.REGISTRY_DESC' | translate }}</span>
               </div>
             </div>
           </div>
@@ -68,38 +68,38 @@ import { Component, ChangeDetectionStrategy } from '@angular/core';
       <!-- Architecture Pillars -->
       <div class="pillars-grid">
         <div class="card pillar-card">
-          <h3>1. Clean Frontend Architecture</h3>
+          <h3>{{ 'ARCHITECTURE.PILLAR1_TITLE' | translate }}</h3>
           <ul>
-            <li><strong>Standalone Components:</strong> Zero NgModules, lean bundle sizes, and tree-shaking.</li>
-            <li><strong>Angular Signals:</strong> Fine-grained reactivity without over-triggering change detection.</li>
-            <li><strong>Hardened Nginx:</strong> Multi-stage Docker build serving static assets with gzip, SPA fallback, and security headers.</li>
+            <li>{{ 'ARCHITECTURE.PILLAR1_DESC1' | translate }}</li>
+            <li>{{ 'ARCHITECTURE.PILLAR1_DESC2' | translate }}</li>
+            <li>{{ 'ARCHITECTURE.PILLAR1_DESC3' | translate }}</li>
           </ul>
         </div>
 
         <div class="card pillar-card">
-          <h3>2. Robust Backend Foundation</h3>
+          <h3>{{ 'ARCHITECTURE.PILLAR2_TITLE' | translate }}</h3>
           <ul>
-            <li><strong>NestJS Clean Architecture:</strong> Controllers, Services, DTOs, and global exception filters.</li>
-            <li><strong>Class Validation:</strong> Strict payload validation with <code>class-validator</code>.</li>
-            <li><strong>OpenAPI / Swagger:</strong> Built-in interactive documentation at <code>/api/docs</code>.</li>
+            <li>{{ 'ARCHITECTURE.PILLAR2_DESC1' | translate }}</li>
+            <li>{{ 'ARCHITECTURE.PILLAR2_DESC2' | translate }}</li>
+            <li>{{ 'ARCHITECTURE.PILLAR2_DESC3' | translate }}</li>
           </ul>
         </div>
 
         <div class="card pillar-card">
-          <h3>3. Cloud SQL & Prisma ORM</h3>
+          <h3>{{ 'ARCHITECTURE.PILLAR3_TITLE' | translate }}</h3>
           <ul>
-            <li><strong>Type-safe ORM:</strong> Prisma schema with automatic migrations and client generation.</li>
-            <li><strong>Cloud SQL Connector:</strong> Native Unix socket connection (<code>/cloudsql/INSTANCE_CONNECTION_NAME</code>) avoiding public IP exposure.</li>
-            <li><strong>Zero Downtime Migrations:</strong> <code>prisma migrate deploy</code> runs via Cloud Build before traffic switch.</li>
+            <li>{{ 'ARCHITECTURE.PILLAR3_DESC1' | translate }}</li>
+            <li>{{ 'ARCHITECTURE.PILLAR3_DESC2' | translate }}</li>
+            <li>{{ 'ARCHITECTURE.PILLAR3_DESC3' | translate }}</li>
           </ul>
         </div>
 
         <div class="card pillar-card">
-          <h3>4. Google Cloud Run Optimization</h3>
+          <h3>{{ 'ARCHITECTURE.PILLAR4_TITLE' | translate }}</h3>
           <ul>
-            <li><strong>Serverless Scale-to-Zero:</strong> Pay only for requests, handling traffic spikes seamlessly.</li>
-            <li><strong>Terminus Health Probes:</strong> Native liveness and readiness probes checking database ping.</li>
-            <li><strong>Least Privilege IAM:</strong> Service account with Cloud SQL Client and Secret Accessor roles only.</li>
+            <li>{{ 'ARCHITECTURE.PILLAR4_DESC1' | translate }}</li>
+            <li>{{ 'ARCHITECTURE.PILLAR4_DESC2' | translate }}</li>
+            <li>{{ 'ARCHITECTURE.PILLAR4_DESC3' | translate }}</li>
           </ul>
         </div>
       </div>

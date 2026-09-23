@@ -1,20 +1,21 @@
 import { Component, input, ChangeDetectionStrategy } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-logo',
   standalone: true,
-  imports: [RouterLink, MatIconModule],
+  imports: [RouterLink, MatIconModule, TranslatePipe],
   template: `
-    <a routerLink="/" class="logo-link" aria-label="Home">
+    <a routerLink="/" class="logo-link" [attr.aria-label]="'COMMON.NAV.HOME' | translate">
       <div class="logo-mark">
         <mat-icon class="logo-icon">layers</mat-icon>
       </div>
       <div class="logo-details">
         <span class="logo-title">{{ title() }}</span>
         @if (subtitle()) {
-          <span class="logo-subtitle">{{ subtitle() }}</span>
+          <span class="logo-subtitle">{{ subtitle() | translate }}</span>
         }
       </div>
     </a>

@@ -2,12 +2,13 @@ import { Component, ChangeDetectionStrategy, input, output, signal } from '@angu
 import { RouterLink } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
+import { TranslatePipe } from '@ngx-translate/core';
 import { FooterConfig, DEFAULT_FOOTER_CONFIG } from './footer.interface';
 
 @Component({
   selector: 'app-footer',
   standalone: true,
-  imports: [RouterLink, MatIconModule, MatButtonModule],
+  imports: [RouterLink, MatIconModule, MatButtonModule, TranslatePipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <footer class="site-footer">
@@ -18,19 +19,19 @@ import { FooterConfig, DEFAULT_FOOTER_CONFIG } from './footer.interface';
           @if (config().brand; as brand) {
             <div class="footer-col brand-col">
               <div class="brand-block">
-                <h2 class="brand-name">{{ brand.name }}</h2>
+                <h2 class="brand-name">{{ brand.name | translate }}</h2>
                 @if (brand.slogan) {
-                  <p class="brand-slogan">{{ brand.slogan }}</p>
+                  <p class="brand-slogan">{{ brand.slogan | translate }}</p>
                 }
               </div>
 
               @if (brand.aboutTitle || brand.aboutText) {
                 <div class="about-block">
                   @if (brand.aboutTitle) {
-                    <h3 class="col-title">{{ brand.aboutTitle }}</h3>
+                    <h3 class="col-title">{{ brand.aboutTitle | translate }}</h3>
                   }
                   @if (brand.aboutText) {
-                    <p class="about-text">{{ brand.aboutText }}</p>
+                    <p class="about-text">{{ brand.aboutText | translate }}</p>
                   }
                 </div>
               }
@@ -41,17 +42,17 @@ import { FooterConfig, DEFAULT_FOOTER_CONFIG } from './footer.interface';
           @if (config().sections; as sections) {
             @for (section of sections; track section.title) {
               <div class="footer-col links-col">
-                <h3 class="col-title">{{ section.title }}</h3>
+                <h3 class="col-title">{{ section.title | translate }}</h3>
                 <ul class="bullet-list">
                   @for (link of section.links; track link.label) {
                     <li class="bullet-item">
                       @if (link.external) {
                         <a [href]="link.url" target="_blank" rel="noopener" class="footer-link">
-                          {{ link.label }}
+                          {{ link.label | translate }}
                         </a>
                       } @else {
                         <a [routerLink]="link.url" class="footer-link">
-                          {{ link.label }}
+                          {{ link.label | translate }}
                         </a>
                       }
                     </li>
@@ -64,11 +65,11 @@ import { FooterConfig, DEFAULT_FOOTER_CONFIG } from './footer.interface';
           <!-- Column 4: Contact Information -->
           @if (config().contact; as contact) {
             <div class="footer-col contact-col">
-              <h3 class="col-title">{{ contact.title }}</h3>
+              <h3 class="col-title">{{ contact.title | translate }}</h3>
               <div class="contact-items">
                 @for (item of contact.items; track item.label) {
                   <div class="contact-entry">
-                    <span class="contact-label">{{ item.label }}</span>
+                    <span class="contact-label">{{ item.label | translate }}</span>
                     @if (item.href) {
                       <a [href]="item.href" class="contact-value link">{{ item.value }}</a>
                     } @else {
@@ -90,16 +91,16 @@ import { FooterConfig, DEFAULT_FOOTER_CONFIG } from './footer.interface';
                 <input
                   type="email"
                   class="newsletter-input"
-                  [placeholder]="newsletter.placeholder || 'Write Email'"
+                  [placeholder]="(newsletter.placeholder || 'Write Email') | translate"
                   [value]="newsletterEmail()"
                   (input)="onEmailInput($event)"
                   (keydown.enter)="onNewsletterSubmit()"
-                  aria-label="Email address for newsletter"
+                  [attr.aria-label]="(newsletter.placeholder || 'Write Email') | translate"
                 />
                 <button
                   type="button"
                   class="newsletter-submit-btn"
-                  [attr.aria-label]="newsletter.buttonAriaLabel || 'Subscribe'"
+                  [attr.aria-label]="(newsletter.buttonAriaLabel || 'Subscribe') | translate"
                   (click)="onNewsletterSubmit()">
                   <mat-icon class="submit-icon">arrow_forward</mat-icon>
                 </button>
@@ -126,7 +127,7 @@ import { FooterConfig, DEFAULT_FOOTER_CONFIG } from './footer.interface';
                   }
                 </div>
                 @if (social.title) {
-                  <h3 class="social-title">{{ social.title }}</h3>
+                  <h3 class="social-title">{{ social.title | translate }}</h3>
                 }
               </div>
             }
@@ -142,11 +143,11 @@ import { FooterConfig, DEFAULT_FOOTER_CONFIG } from './footer.interface';
               @for (link of bottom.links; track link.label; let last = $last) {
                 @if (link.external) {
                   <a [href]="link.url" target="_blank" rel="noopener" class="bottom-link">
-                    {{ link.label }}
+                    {{ link.label | translate }}
                   </a>
                 } @else {
                   <a [routerLink]="link.url" class="bottom-link">
-                    {{ link.label }}
+                    {{ link.label | translate }}
                   </a>
                 }
                 @if (!last) {
@@ -156,7 +157,7 @@ import { FooterConfig, DEFAULT_FOOTER_CONFIG } from './footer.interface';
             </nav>
 
             <div class="copyright-notice">
-              {{ bottom.copyright }}
+              {{ bottom.copyright | translate }}
             </div>
           </div>
         </div>

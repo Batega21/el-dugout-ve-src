@@ -2,50 +2,49 @@ import { Component, OnInit, inject, signal, ChangeDetectionStrategy } from '@ang
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { RouterLink } from '@angular/router';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-premium-feature',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, TranslatePipe],
   template: `
     <div class="premium-feature-page">
       <div class="page-header">
-        <span class="premium-badge">★ Premium Entitlement</span>
-        <h1>Executive Telemetry & Pro Analytics</h1>
-        <p class="subtitle">Exclusive features available to Premium Subscribers and System Administrators.</p>
+        <span class="premium-badge">{{ 'PREMIUM.BADGE' | translate }}</span>
+        <h1>{{ 'PREMIUM.TITLE' | translate }}</h1>
+        <p class="subtitle">{{ 'PREMIUM.SUBTITLE' | translate }}</p>
       </div>
 
       <div class="feature-card">
-        <h2>Enterprise Deep Analytics Engine</h2>
+        <h2>{{ 'PREMIUM.CARD_TITLE' | translate }}</h2>
         <p class="desc">
-          This view is gated behind the <strong>SubscriptionGuard</strong> with
-          <code>requiredTier: 'PREMIUM'</code>. System administrators bypass this verification automatically,
-          while standard users require an active Premium plan.
+          {{ 'PREMIUM.CARD_DESC' | translate }}
         </p>
 
         @if (featureData()) {
           <div class="feature-output">
             <div class="output-item">
-              <span class="label">Feature Level:</span>
+              <span class="label">{{ 'PREMIUM.FEATURE_LEVEL' | translate }}</span>
               <span class="val highlight">{{ featureData().tier }}</span>
             </div>
             <div class="output-item">
-              <span class="label">Feature Capability:</span>
+              <span class="label">{{ 'PREMIUM.FEATURE_CAPABILITY' | translate }}</span>
               <span class="val">{{ featureData().featureName }}</span>
             </div>
             <div class="output-item">
-              <span class="label">Entitlement Status:</span>
-              <span class="val status-ok">Verified Active ✓</span>
+              <span class="label">{{ 'PREMIUM.STATUS' | translate }}</span>
+              <span class="val status-ok">{{ 'PREMIUM.STATUS_OK' | translate }}</span>
             </div>
           </div>
         } @else if (loading()) {
-          <p class="loading-text">Verifying backend cryptographic entitlement...</p>
+          <p class="loading-text">{{ 'PREMIUM.LOADING' | translate }}</p>
         } @else if (errorMessage()) {
           <div class="alert alert-danger">{{ errorMessage() }}</div>
         }
 
         <div class="action-row">
-          <a routerLink="/" class="btn btn-outline">Back to Home</a>
+          <a routerLink="/" class="btn btn-outline">{{ 'PREMIUM.BACK_HOME' | translate }}</a>
         </div>
       </div>
     </div>

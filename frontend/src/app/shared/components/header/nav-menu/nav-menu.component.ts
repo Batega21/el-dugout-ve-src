@@ -12,9 +12,12 @@ import { AvatarComponent } from '../avatar/avatar.component';
 import { AuthService } from '../../../../core/services/auth.service';
 
 import { ThemeToggleComponent } from '../theme-toggle/theme-toggle.component';
+import { LanguageToggleComponent } from '../language-toggle/language-toggle.component';
+import { TranslatePipe } from '@ngx-translate/core';
 
 export interface NavItem {
-  label: string;
+  label?: string;
+  labelKey?: string;
   link: string;
   external?: boolean;
 }
@@ -31,19 +34,21 @@ export interface NavItem {
     MatDividerModule,
     AvatarComponent,
     ThemeToggleComponent,
+    LanguageToggleComponent,
+    TranslatePipe,
   ],
   template: `
-    <nav class="desktop-nav" aria-label="Main Navigation">
+    <nav class="desktop-nav" [attr.aria-label]="'COMMON.NAV.MAIN_NAVIGATION' | translate">
       <ul class="nav-list">
-        @for (item of effectiveNavItems(); track item.label) {
+        @for (item of effectiveNavItems(); track item.link) {
           <li class="nav-item">
             @if (item.external) {
               <a [href]="item.link" target="_blank" rel="noopener" class="nav-link">
-                {{ item.label }}
+                {{ item.labelKey ? (item.labelKey | translate) : item.label }}
               </a>
             } @else {
               <a [routerLink]="item.link" routerLinkActive="active" class="nav-link">
-                {{ item.label }}
+                {{ item.labelKey ? (item.labelKey | translate) : item.label }}
               </a>
             }
           </li>
@@ -54,6 +59,9 @@ export interface NavItem {
         <!-- Baseball Ball Theme Toggle -->
         <app-theme-toggle></app-theme-toggle>
 
+        <!-- Dynamic Language Switcher (Venezuela & USA Flags) -->
+        <app-language-toggle></app-language-toggle>
+
         <!-- 1. Not Logged In: Display "Login" and "Sign up" buttons -->
         @if (!authService.isLoggedIn()) {
           <button
@@ -61,7 +69,7 @@ export interface NavItem {
             type="button"
             class="cta-secondary"
             (click)="onLoginClick()">
-            Login
+            {{ 'COMMON.NAV.LOGIN' | translate }}
           </button>
 
           <button
@@ -69,7 +77,7 @@ export interface NavItem {
             type="button"
             class="cta-primary-pill"
             (click)="onSignUpClick()">
-            Sign up
+            {{ 'COMMON.NAV.SIGN_UP' | translate }}
           </button>
         }
 
@@ -85,6 +93,9 @@ export interface NavItem {
       <!-- Baseball Ball Theme Toggle -->
       <app-theme-toggle></app-theme-toggle>
 
+      <!-- Dynamic Language Switcher (Venezuela & USA Flags) -->
+      <app-language-toggle></app-language-toggle>
+
       @if (authService.isLoggedIn()) {
         <app-avatar></app-avatar>
       }
@@ -92,20 +103,20 @@ export interface NavItem {
       <button
         mat-icon-button
         [matMenuTriggerFor]="mobileMenu"
-        aria-label="Open Navigation Menu"
+        [attr.aria-label]="'COMMON.NAV.OPEN_MENU' | translate"
         class="mobile-menu-btn">
         <mat-icon>menu</mat-icon>
       </button>
 
       <mat-menu #mobileMenu="matMenu" class="app-mobile-menu">
-        @for (item of effectiveNavItems(); track item.label) {
+        @for (item of effectiveNavItems(); track item.link) {
           @if (item.external) {
             <a mat-menu-item [href]="item.link" target="_blank" rel="noopener">
-              {{ item.label }}
+              {{ item.labelKey ? (item.labelKey | translate) : item.label }}
             </a>
           } @else {
             <a mat-menu-item [routerLink]="item.link">
-              {{ item.label }}
+              {{ item.labelKey ? (item.labelKey | translate) : item.label }}
             </a>
           }
         }
@@ -114,35 +125,35 @@ export interface NavItem {
         @if (!authService.isLoggedIn()) {
           <button mat-menu-item (click)="onLoginClick()">
             <mat-icon>login</mat-icon>
-            <span>Login</span>
+            <span>{{ 'COMMON.NAV.LOGIN' | translate }}</span>
           </button>
           <button mat-menu-item (click)="onSignUpClick()">
             <mat-icon>person_add</mat-icon>
-            <span>Sign up</span>
+            <span>{{ 'COMMON.NAV.SIGN_UP' | translate }}</span>
           </button>
         } @else {
           <a mat-menu-item routerLink="/profile">
             <mat-icon>person</mat-icon>
-            <span>Profile</span>
+            <span>{{ 'COMMON.NAV.PROFILE' | translate }}</span>
           </a>
 
           @if (!authService.hasActiveSubscription() && !authService.isAdmin()) {
             <button mat-menu-item (click)="onSubscribeClick()">
               <mat-icon>star</mat-icon>
-              <span>Subscribe</span>
+              <span>{{ 'COMMON.NAV.SUBSCRIBE' | translate }}</span>
             </button>
           }
 
           @if (authService.isAdmin()) {
             <a mat-menu-item routerLink="/admin">
               <mat-icon>admin_panel_settings</mat-icon>
-              <span>System Health Matrix</span>
+              <span>{{ 'COMMON.NAV.SYSTEM_MATRIX' | translate }}</span>
             </a>
           }
 
           <button mat-menu-item (click)="onLogoutClick()">
             <mat-icon>logout</mat-icon>
-            <span>Logout</span>
+            <span>{{ 'COMMON.NAV.LOGOUT' | translate }}</span>
           </button>
         }
       </mat-menu>
@@ -255,10 +266,10 @@ export class NavMenuComponent {
 
   // Base navigation links
   readonly navItems = input<NavItem[]>([
-    { label: 'About Us', link: '/#about' },
-    { label: 'Products', link: '/#products' },
-    { label: 'Service', link: '/#service' },
-    { label: 'Architecture', link: '/architecture' },
+    { label: 'About Us', labelKey: 'COMMON.NAV.ABOUT', link: '/#about' },
+    { label: 'Products', labelKey: 'COMMON.NAV.PRODUCTS', link: '/#products' },
+    { label: 'Service', labelKey: 'COMMON.NAV.SERVICE', link: '/#service' },
+    { label: 'Architecture', labelKey: 'COMMON.NAV.ARCHITECTURE', link: '/architecture' },
   ]);
 
   // Dynamically compute nav items based on user role and state
@@ -266,9 +277,9 @@ export class NavMenuComponent {
     const items = [...this.navItems()];
 
     if (this.authService.isAdmin()) {
-      items.push({ label: 'Manage Users', link: '/users' });
+      items.push({ label: 'Manage Users', labelKey: 'COMMON.NAV.USERS', link: '/users' });
     } else {
-      items.push({ label: 'Premium Pro', link: '/premium' });
+      items.push({ label: 'Premium Pro', labelKey: 'COMMON.NAV.PREMIUM', link: '/premium' });
     }
 
     return items;

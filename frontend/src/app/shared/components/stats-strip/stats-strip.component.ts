@@ -7,26 +7,26 @@ import {
   inject,
   OnInit,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { TranslatePipe } from '@ngx-translate/core';
 import { StatRecordItem, DEFAULT_STAT_RECORDS } from './stats-strip.interface';
 import { LeaderboardsService } from '../../../core/services/leaderboards.service';
 
 @Component({
   selector: 'app-stats-strip',
   standalone: true,
-  imports: [CommonModule],
+  imports: [TranslatePipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
     '[class.full-width]': 'fullWidth()',
   },
   template: `
     <!-- STATS STRIP -->
-    <div class="stats-strip" role="region" aria-label="Récords de la LVBP">
+    <div class="stats-strip" role="region" [attr.aria-label]="'STATS.TICKER_TITLE' | translate">
       <div class="strip-inner" id="strip">
         @for (item of duplicatedItems(); track $index) {
           <div class="strip-item">
-            <span class="si-label">{{ item.label }}</span>
-            <span class="si-val">{{ item.value }}</span>
+            <span class="si-label">{{ item.label | translate }}</span>
+            <span class="si-val">{{ item.value | translate }}</span>
           </div>
         }
       </div>
