@@ -17,7 +17,6 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
         <nav class="nav-links">
           <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Dashboard</a>
           <a routerLink="/users" routerLinkActive="active">Users</a>
-          <a routerLink="/architecture" routerLinkActive="active">Architecture</a>
           <a href="http://localhost:3000/api/docs" target="_blank" rel="noopener" class="external-link">
             API Docs ↗
           </a>

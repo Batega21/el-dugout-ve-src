@@ -18,6 +18,7 @@
       "OPEN_MENU": "Abrir Menú de Navegación",
       "HOME": "Inicio",
       "DASHBOARD": "Panel",
+      "IMPORT_EXCEL": "Importar Excel",
       "API_DOCS": "Documentación API ↗"
     },
     "THEME": {
@@ -183,6 +184,74 @@
     "COL_CREATED": "Creado",
     "UNLINKED": "No vinculado",
     "NO_EMAIL": "Sin correo"
+  },
+  "IMPORT_EXCEL": {
+    "HEADER": {
+      "BREADCRUMB_DASHBOARD": "Panel de Administración",
+      "BREADCRUMB_CURRENT": "Carga de Archivo Excel",
+      "BADGE": "Panel de Administración",
+      "TITLE": "Carga y Validación de Archivos Excel",
+      "SUBTITLE": "Importación segura de estadísticas históricas de la LVBP con verificación de firmas binarias, protección contra inyección de fórmulas y detección de duplicados."
+    },
+    "ACTIONS": {
+      "BACK_DASHBOARD": "Volver al Panel",
+      "DISMISS": "Cerrar",
+      "REMOVE_FILE": "Quitar Archivo",
+      "VALIDATE_BTN": "Validar archivo",
+      "VALIDATING": "Validando...",
+      "CONFIRM_SAVE": "Confirmar y Guardar en Base de Datos",
+      "DISCARD": "Descartar / Cancelar",
+      "SAVING": "Guardando en Base de Datos..."
+    },
+    "ALERTS": {
+      "ACCESS_DENIED": "Acceso Restringido",
+      "ADMIN_REQUIRED": "Solo administradores con rol 'admin' tienen permisos para importar datos al sistema.",
+      "ERROR_TITLE": "Error de Validación",
+      "SUCCESS_TITLE": "Operación Exitosa"
+    },
+    "DROPZONE": {
+      "TITLE": "Arrastra y suelta tu archivo Excel aquí",
+      "SUBTITLE": "Formatos aceptados: .xlsx y .xls (máximo 8 MB). Se verificará la firma binaria antes de la transmisión.",
+      "CHIP_SIGNATURE": "Firma Binaria Verificada",
+      "CHIP_SIZE": "Límite Máx. 8 MB",
+      "CHIP_FORMULA": "Anti-Inyección CSV/Fórmulas",
+      "BROWSE_BTN": "Explorar Archivo",
+      "VALIDATING_MSG": "Analizando estructura y verificando registros existentes en la base de datos...",
+      "BINARY_OK": "Firma Binaria Válida"
+    },
+    "SUMMARY": {
+      "SECTION_TITLE": "Resumen de Validación",
+      "TOTAL_ROWS": "Total Filas",
+      "DETECTED_ROWS": "Registros detectados",
+      "VALID_ROWS": "Filas Válidas",
+      "READY_TO_COMMIT": "Listas para guardar",
+      "DUPLICATE_ROWS": "Filas Duplicadas",
+      "DB_CONFLICT": "Conflicto con base de datos",
+      "ERROR_ROWS": "Filas con Error",
+      "MALFORMED_ROWS": "Datos incompletos o inválidos"
+    },
+    "TABLE": {
+      "TITLE": "Previsualización y Estado de Validación",
+      "FILTER_LABEL": "Filtrar filas por estado",
+      "FILTER_ALL": "Todos",
+      "FILTER_VALID": "Válidos",
+      "FILTER_DUPLICATE": "Duplicados",
+      "FILTER_ERROR": "Errores",
+      "COL_NUM": "Fila",
+      "COL_PLAYER": "Jugador",
+      "COL_TEAM": "Equipo",
+      "COL_SEASON": "Temporada",
+      "COL_METRIC": "Métrica",
+      "COL_STATUS": "Estado",
+      "COL_NOTES": "Notas / Diagnóstico",
+      "EMPTY_FILTER": "No hay registros que coincidan con el filtro seleccionado."
+    },
+    "STATUS": {
+      "VALID": "Válido",
+      "DUPLICATE": "Duplicado",
+      "ERROR": "Error",
+      "READY": "Listo para inserción"
+    }
   },
   "LEADERBOARD_IMPORT": {
     "BREADCRUMB_DASHBOARD": "Panel de Administración",

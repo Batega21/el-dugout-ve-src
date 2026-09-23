@@ -27,8 +27,8 @@ export const routes: Routes = [
       {
         path: 'imports',
         loadComponent: () =>
-          import('./features/admin/leaderboard-import/leaderboard-import.component').then(
-            (m) => m.LeaderboardImportComponent,
+          import('./modules/admin/components/import-file/import-file.component').then(
+            (m) => m.ImportFileComponent,
           ),
       },
     ],
@@ -46,11 +46,6 @@ export const routes: Routes = [
       import('./features/premium/premium-feature.component').then(
         (m) => m.PremiumFeatureComponent,
       ),
-  },
-  {
-    path: 'architecture',
-    loadComponent: () =>
-      import('./features/architecture/architecture.component').then((m) => m.ArchitectureComponent),
   },
   {
     path: '**',

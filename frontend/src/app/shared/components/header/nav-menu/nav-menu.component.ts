@@ -149,6 +149,10 @@ export interface NavItem {
               <mat-icon>admin_panel_settings</mat-icon>
               <span>{{ 'COMMON.NAV.SYSTEM_MATRIX' | translate }}</span>
             </a>
+            <a mat-menu-item routerLink="/admin/imports">
+              <mat-icon>upload_file</mat-icon>
+              <span>{{ 'COMMON.NAV.IMPORT_EXCEL' | translate }}</span>
+            </a>
           }
 
           <button mat-menu-item (click)="onLogoutClick()">
@@ -269,7 +273,6 @@ export class NavMenuComponent {
     { label: 'About Us', labelKey: 'COMMON.NAV.ABOUT', link: '/#about' },
     { label: 'Products', labelKey: 'COMMON.NAV.PRODUCTS', link: '/#products' },
     { label: 'Service', labelKey: 'COMMON.NAV.SERVICE', link: '/#service' },
-    { label: 'Architecture', labelKey: 'COMMON.NAV.ARCHITECTURE', link: '/architecture' },
   ]);
 
   // Dynamically compute nav items based on user role and state
@@ -278,6 +281,7 @@ export class NavMenuComponent {
 
     if (this.authService.isAdmin()) {
       items.push({ label: 'Manage Users', labelKey: 'COMMON.NAV.USERS', link: '/users' });
+      items.push({ label: 'Excel Import', labelKey: 'COMMON.NAV.IMPORT_EXCEL', link: '/admin/imports' });
     } else {
       items.push({ label: 'Premium Pro', labelKey: 'COMMON.NAV.PREMIUM', link: '/premium' });
     }

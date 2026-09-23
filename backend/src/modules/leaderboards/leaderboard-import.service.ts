@@ -5,6 +5,14 @@ import * as ExcelJS from 'exceljs';
 import { FileImportSummaryDto, ImportResultDto } from './dto/import-result.dto';
 import { GetLeadersQueryDto } from './dto/get-leaders.dto';
 import { TopRecordItemDto } from './dto/top-records.dto';
+import {
+  ValidationPreviewDto,
+  ValidationPreviewRowDto,
+} from '../imports/dto/validation-preview.dto';
+import {
+  CommitImportDto,
+  CommitResultDto,
+} from '../imports/dto/commit-import.dto';
 
 export interface ParsedLeaderRow {
   seasonCode: string;
@@ -205,6 +213,8 @@ export class LeaderboardImportService {
     category: StatCategory;
     warnings: string[];
   }> {
+    this.validateMagicNumber(file.buffer, file.originalname);
+
     const workbook = new ExcelJS.Workbook();
     await workbook.xlsx.load(file.buffer as any);
 
@@ -589,22 +599,463 @@ export class LeaderboardImportService {
   }
 
   /**
+   * Formula Injection / CSV Injection Sanitization:
+   * Strips or escapes any string cell value starting with '=', '+', '-', '@', '\t', '\r'
+   * to prevent command execution if re-exported.
+   */
+  sanitizeFormula(val: string): string {
+    if (!val) return '';
+    const dangerousPrefixes = ['=', '+', '-', '@', '\t', '\r'];
+    if (dangerousPrefixes.includes(val.charAt(0))) {
+      return `'${val}`;
+    }
+    return val;
+  }
+
+  /**
+   * Binary Signature (Magic Number) verification:
+   * Enforces that uploaded files are authentic ZIP/XLSX (50 4B 03 04) or OLE2/XLS (D0 CF 11 E0).
+   * Rejects executable masquerades immediately.
+   */
+  validateMagicNumber(buffer: Buffer, fileName: string): void {
+    if (!buffer || buffer.length < 4) {
+      throw new BadRequestException(
+        `File "${fileName}" is empty or too small to be a valid spreadsheet.`,
+      );
+    }
+
+    const first4 = buffer.subarray(0, 4);
+    // XLSX is a ZIP container: 50 4B 03 04 ('PK\x03\x04')
+    const isZip =
+      first4[0] === 0x50 &&
+      first4[1] === 0x4b &&
+      first4[2] === 0x03 &&
+      first4[3] === 0x04;
+    // Legacy XLS (OLE2 Compound Document): D0 CF 11 E0
+    const isOls =
+      first4[0] === 0xd0 &&
+      first4[1] === 0xcf &&
+      first4[2] === 0x11 &&
+      first4[3] === 0xe0;
+
+    if (!isZip && !isOls) {
+      throw new BadRequestException(
+        `Invalid binary signature for file "${fileName}". Only authentic Excel spreadsheets (.xlsx, .xls) are permitted. Executable or disguised files are blocked.`,
+      );
+    }
+  }
+
+  /**
+   * Structure validation: Ensures required columns exist in the worksheet.
+   */
+  validateRequiredHeaders(headers: string[], category: StatCategory, fileName: string): void {
+    const headerList = headers.map((h) => this.stripAccents(h.toLowerCase().trim()));
+
+    const hasSeason = headerList.some((h) =>
+      ['ano', 'year', 'temporada', 'temporadas'].includes(h),
+    );
+    const hasPlayer = headerList.some((h) =>
+      ['jugador', 'bateador', 'player', 'nombre'].includes(h),
+    );
+    const hasTeam = headerList.some((h) => ['equipo', 'team', 'club'].includes(h));
+
+    const missingColumns: string[] = [];
+    if (!hasSeason) missingColumns.push('Temporada/Año');
+    if (!hasPlayer) missingColumns.push('Jugador/Bateador');
+    if (!hasTeam) missingColumns.push('Equipo');
+
+    let hasMetric = false;
+    switch (category) {
+      case StatCategory.BATTING_AVERAGE:
+        hasMetric = headerList.some((h) => ['avg', 'promedio', 'average'].includes(h));
+        if (!hasMetric) missingColumns.push('Promedio (AVG)');
+        break;
+      case StatCategory.HOME_RUNS:
+        hasMetric = headerList.some((h) => ['hr', 'homerun', 'jonrones'].includes(h));
+        if (!hasMetric) missingColumns.push('Jonrones (HR)');
+        break;
+      case StatCategory.DOUBLES:
+        hasMetric = headerList.some((h) => ['d', 'dobles', '2b'].includes(h));
+        if (!hasMetric) missingColumns.push('Dobles (2B/D)');
+        break;
+      case StatCategory.TRIPLES:
+        hasMetric = headerList.some((h) => ['total', 'triples', '3b'].includes(h));
+        if (!hasMetric) missingColumns.push('Triples (3B/TOTAL)');
+        break;
+      case StatCategory.HITS:
+        hasMetric = headerList.some((h) => ['h', 'hits', 'imparables'].includes(h));
+        if (!hasMetric) missingColumns.push('Hits (H)');
+        break;
+      case StatCategory.RUNS:
+        hasMetric = headerList.some((h) => ['ca', 'anotadas', 'carreras'].includes(h));
+        if (!hasMetric) missingColumns.push('Carreras Anotadas (CA)');
+        break;
+      case StatCategory.INNINGS_PITCHED:
+        hasMetric = headerList.some((h) => ['ip', 'el', 'entradas'].includes(h));
+        if (!hasMetric) missingColumns.push('Entradas Lanzadas (IP/EL)');
+        break;
+    }
+
+    if (missingColumns.length > 0) {
+      throw new BadRequestException(
+        `File "${fileName}" does not meet structural requirements. Missing required column(s): ${missingColumns.join(', ')}.`,
+      );
+    }
+  }
+
+  /**
+   * Dry-run preview of an Excel workbook.
+   * Validates file security (MIME, size, magic signature), sanitizes formulas,
+   * validates headers, checks database duplication, and returns structured row previews.
+   */
+  async previewWorkbook(file: Express.Multer.File): Promise<ValidationPreviewDto> {
+    if (!file) {
+      throw new BadRequestException('No Excel file provided for preview.');
+    }
+
+    if (file.size > 8 * 1024 * 1024) {
+      throw new BadRequestException(
+        `File "${file.originalname}" exceeds the 8 MB maximum size limit.`,
+      );
+    }
+
+    this.validateMagicNumber(file.buffer, file.originalname);
+
+    const workbook = new ExcelJS.Workbook();
+    try {
+      await workbook.xlsx.load(file.buffer as any);
+    } catch (err: any) {
+      throw new BadRequestException(
+        `Unable to parse Excel workbook in "${file.originalname}": ${err.message}`,
+      );
+    }
+
+    const worksheet = workbook.worksheets[0];
+    if (!worksheet) {
+      throw new BadRequestException(`Workbook in "${file.originalname}" contains no worksheets.`);
+    }
+
+    const headerRow = worksheet.getRow(1);
+    const headers: Record<number, string> = {};
+    headerRow.eachCell((cell, colNumber) => {
+      const val = this.extractCellValue(cell.value).toLowerCase();
+      headers[colNumber] = this.stripAccents(val);
+    });
+
+    const category = this.detectCategory(file.originalname, Object.values(headers));
+    this.validateRequiredHeaders(Object.values(headers), category, file.originalname);
+
+    // Fetch existing records for duplicate detection
+    const [allSeasons, allPlayers, allTeams, existingLeaders] = await Promise.all([
+      this.prisma.season.findMany(),
+      this.prisma.player.findMany(),
+      this.prisma.team.findMany(),
+      this.prisma.seasonLeader.findMany({
+        where: { category },
+        select: { seasonId: true, playerId: true },
+      }),
+    ]);
+
+    const seasonMap = new Map<string, string>(); // code -> id
+    for (const s of allSeasons) {
+      seasonMap.set(s.code, s.id);
+    }
+
+    const playerMap = new Map<string, string>(); // slug -> id
+    for (const p of allPlayers) {
+      playerMap.set(p.slug, p.id);
+    }
+
+    const teamMap = new Map<string, string>();
+    for (const t of allTeams) {
+      teamMap.set(t.name.toLowerCase().trim(), t.name);
+      if (t.abbreviation) {
+        teamMap.set(t.abbreviation.toLowerCase().trim(), t.name);
+      }
+    }
+
+    const existingLeaderSet = new Set<string>();
+    for (const l of existingLeaders) {
+      existingLeaderSet.add(`${l.seasonId}::${l.playerId}`);
+    }
+
+    const rows: ValidationPreviewRowDto[] = [];
+    const batchKeySet = new Set<string>();
+
+    worksheet.eachRow((row, rowNumber) => {
+      if (rowNumber === 1) return; // Skip header
+
+      const rowData: Record<string, any> = {};
+      row.eachCell({ includeEmpty: false }, (cell, colNumber) => {
+        const headerKey = headers[colNumber];
+        if (headerKey) {
+          rowData[headerKey] = cell.value;
+        }
+      });
+
+      // Extract Year / Season
+      const rawSeason = this.extractCellValue(
+        rowData['ano'] || rowData['year'] || rowData['temporada'] || rowData['temporadas'] || '',
+      );
+
+      // Extract Player Name
+      const rawPlayerName = this.extractCellValue(
+        rowData['jugador'] ||
+          rowData['bateador'] ||
+          rowData['player'] ||
+          rowData['nombre'] ||
+          '',
+      );
+
+      // Extract Team
+      const rawTeam = this.extractCellValue(
+        rowData['equipo'] || rowData['team'] || rowData['club'] || '',
+      );
+
+      // If entire row is blank, skip
+      if (!rawSeason && !rawPlayerName && !rawTeam) {
+        return;
+      }
+
+      let status: 'VALID' | 'DUPLICATE' | 'ERROR' = 'VALID';
+      let validationMessage = 'Clean record ready to commit';
+
+      // Validation 1: Missing season or player
+      if (!rawSeason || !rawPlayerName) {
+        status = 'ERROR';
+        validationMessage = 'Missing required season or player identifier.';
+      }
+
+      const { seasonCode, startYear, endYear } = this.parseSeason(rawSeason);
+      const playerSlug = this.generateSlug(rawPlayerName);
+
+      let statValue = 0;
+      const extraAttributes: Record<string, any> = {};
+
+      switch (category) {
+        case StatCategory.BATTING_AVERAGE: {
+          const rawAvg = this.parseNumericValue(
+            rowData['avg'] || rowData['average'] || rowData['promedio'],
+          );
+          statValue = rawAvg;
+          if (rowData['jj'] !== undefined) extraAttributes['jj'] = this.parseNumericValue(rowData['jj']);
+          if (rowData['vb'] !== undefined) extraAttributes['vb'] = this.parseNumericValue(rowData['vb']);
+          if (rowData['h'] !== undefined) extraAttributes['h'] = this.parseNumericValue(rowData['h']);
+          break;
+        }
+        case StatCategory.HOME_RUNS: {
+          statValue = this.parseNumericValue(rowData['hr'] || rowData['homerun'] || rowData['jonrones']);
+          break;
+        }
+        case StatCategory.DOUBLES: {
+          statValue = this.parseNumericValue(rowData['d'] || rowData['dobles'] || rowData['2b']);
+          break;
+        }
+        case StatCategory.TRIPLES: {
+          statValue = this.parseNumericValue(rowData['total'] || rowData['triples'] || rowData['3b']);
+          break;
+        }
+        case StatCategory.HITS: {
+          statValue = this.parseNumericValue(rowData['h'] || rowData['hits'] || rowData['imparables']);
+          break;
+        }
+        case StatCategory.RUNS: {
+          statValue = this.parseNumericValue(rowData['ca'] || rowData['anotadas'] || rowData['carreras']);
+          break;
+        }
+        case StatCategory.INNINGS_PITCHED: {
+          statValue = this.parseNumericValue(rowData['ip'] || rowData['el'] || rowData['entradas']);
+          break;
+        }
+      }
+
+      // Validation 2: Invalid metric
+      if (status !== 'ERROR' && (isNaN(statValue) || statValue < 0)) {
+        status = 'ERROR';
+        validationMessage = `Invalid numeric stat value (${statValue}) for category ${category}.`;
+      }
+
+      // Check Duplication:
+      // 1. Batch duplicate
+      const batchKey = `${seasonCode}::${playerSlug}`;
+      if (status !== 'ERROR') {
+        if (batchKeySet.has(batchKey)) {
+          status = 'DUPLICATE';
+          validationMessage = `Duplicate record found within this spreadsheet for ${rawPlayerName} (${seasonCode}).`;
+        } else {
+          batchKeySet.add(batchKey);
+        }
+      }
+
+      // 2. Database duplicate
+      if (status === 'VALID') {
+        const existingSeasonId = seasonMap.get(seasonCode);
+        const existingPlayerId = playerMap.get(playerSlug);
+        if (existingSeasonId && existingPlayerId) {
+          const leaderKey = `${existingSeasonId}::${existingPlayerId}`;
+          if (existingLeaderSet.has(leaderKey)) {
+            status = 'DUPLICATE';
+            validationMessage = `Existing database record already present for ${rawPlayerName} in season ${seasonCode}.`;
+          }
+        }
+      }
+
+      const canonicalTeam = teamMap.get(rawTeam.toLowerCase().trim()) || null;
+
+      rows.push({
+        rowNumber,
+        seasonCode,
+        startYear,
+        endYear,
+        playerName: rawPlayerName,
+        playerSlug,
+        teamRaw: rawTeam || 'Sin equipo',
+        canonicalTeam,
+        category,
+        statValue,
+        extraAttributes,
+        status,
+        validationMessage,
+      });
+    });
+
+    const total = rows.length;
+    const valid = rows.filter((r) => r.status === 'VALID').length;
+    const duplicates = rows.filter((r) => r.status === 'DUPLICATE').length;
+    const errors = rows.filter((r) => r.status === 'ERROR').length;
+
+    return {
+      fileName: file.originalname,
+      category,
+      summary: {
+        total,
+        valid,
+        duplicates,
+        errors,
+      },
+      rows,
+    };
+  }
+
+  /**
+   * Commit validated rows to the database inside an ACID transaction.
+   */
+  async commitValidatedRows(dto: CommitImportDto): Promise<CommitResultDto> {
+    if (!dto.rows || dto.rows.length === 0) {
+      throw new BadRequestException('No rows provided to commit.');
+    }
+
+    return await this.prisma.$transaction(
+      async (tx) => {
+        const allTeams = await tx.team.findMany();
+        const teamMap = new Map<string, string>();
+        for (const t of allTeams) {
+          teamMap.set(t.name.toLowerCase().trim(), t.id);
+          if (t.abbreviation) {
+            teamMap.set(t.abbreviation.toLowerCase().trim(), t.id);
+          }
+        }
+
+        let insertedCount = 0;
+        let updatedCount = 0;
+
+        for (const item of dto.rows) {
+          // 1. Upsert Season
+          const season = await tx.season.upsert({
+            where: { code: item.seasonCode },
+            create: {
+              code: item.seasonCode,
+              startYear: item.startYear,
+              endYear: item.endYear,
+            },
+            update: {
+              startYear: item.startYear,
+              endYear: item.endYear,
+            },
+          });
+
+          // 2. Upsert Player
+          const player = await tx.player.upsert({
+            where: { slug: item.playerSlug },
+            create: {
+              fullName: item.playerName,
+              slug: item.playerSlug,
+            },
+            update: {
+              fullName: item.playerName,
+            },
+          });
+
+          const canonicalTeamId = teamMap.get(item.teamRaw.toLowerCase().trim()) || null;
+
+          const existing = await tx.seasonLeader.findUnique({
+            where: {
+              season_player_category: {
+                seasonId: season.id,
+                playerId: player.id,
+                category: item.category,
+              },
+            },
+          });
+
+          if (existing) {
+            await tx.seasonLeader.update({
+              where: { id: existing.id },
+              data: {
+                teamRaw: item.teamRaw,
+                teamId: canonicalTeamId,
+                statValue: item.statValue,
+                extraAttributes: item.extraAttributes || {},
+              },
+            });
+            updatedCount++;
+          } else {
+            await tx.seasonLeader.create({
+              data: {
+                seasonId: season.id,
+                playerId: player.id,
+                teamRaw: item.teamRaw,
+                teamId: canonicalTeamId,
+                category: item.category,
+                statValue: item.statValue,
+                extraAttributes: item.extraAttributes || {},
+              },
+            });
+            insertedCount++;
+          }
+        }
+
+        return {
+          success: true,
+          totalProcessed: dto.rows.length,
+          insertedCount,
+          updatedCount,
+          message: `Successfully committed ${dto.rows.length} records (${insertedCount} inserted, ${updatedCount} updated).`,
+        };
+      },
+      { timeout: 60000 },
+    );
+  }
+
+  /**
    * Safely extract text from ExcelJS CellValue (string, number, richText, formula result).
+   * Automatically runs formula sanitization to prevent spreadsheet execution.
    */
   private extractCellValue(value: any): string {
     if (value === null || value === undefined) return '';
+    let text = '';
     if (typeof value === 'object') {
       if ('richText' in value && Array.isArray(value.richText)) {
-        return value.richText.map((t: any) => t.text || '').join('').trim();
+        text = value.richText.map((t: any) => t.text || '').join('').trim();
+      } else if ('result' in value) {
+        text = String(value.result ?? '').trim();
+      } else if ('text' in value) {
+        text = String(value.text ?? '').trim();
       }
-      if ('result' in value) {
-        return String(value.result ?? '').trim();
-      }
-      if ('text' in value) {
-        return String(value.text ?? '').trim();
-      }
+    } else {
+      text = String(value).trim();
     }
-    return String(value).trim();
+    return this.sanitizeFormula(text);
   }
 
   /**
@@ -616,7 +1067,9 @@ export class LeaderboardImportService {
     }
     const str = this.extractCellValue(value);
     if (!str) return 0;
-    const parsed = parseFloat(str.replace(',', '.'));
+    const cleanStr = str.replace(/^['"]/, '');
+    const parsed = parseFloat(cleanStr.replace(',', '.'));
     return isNaN(parsed) ? 0 : parsed;
   }
 }
+

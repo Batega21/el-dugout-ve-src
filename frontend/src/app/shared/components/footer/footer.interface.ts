@@ -76,7 +76,6 @@ export const DEFAULT_FOOTER_CONFIG: FooterConfig = {
         { label: 'Estadísticas', url: '/#stats' },
         { label: 'Temporadas', url: '/#seasons' },
         { label: 'Salón de la Fama', url: '/#hall-of-fame' },
-        { label: 'Arquitectura', url: '/architecture' },
       ],
     },
     {
