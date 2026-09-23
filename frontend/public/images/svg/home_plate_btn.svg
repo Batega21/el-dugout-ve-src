@@ -1,1 +1,35 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg width="100%" height="100%" viewBox="0 0 60 60" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:affinity="https://www.affinity.studio/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;"><circle cx="30" cy="30" r="30" style="fill:#222;"/><path d="M21.381,39.825l0,-21.649l13.458,0l6.046,10.922l-6.241,10.727l-13.263,0Z" style="fill:#f00;"/></svg>
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="60" height="60" viewBox="0 0 60 60" version="1.1" xmlns="http://www.w3.org/2000/svg" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+  <style>
+    .hp-bg {
+      fill: #121216;
+      stroke: rgba(255, 255, 255, 0.16);
+      stroke-width: 1.5;
+      transition: fill 0.25s ease, stroke 0.25s ease;
+    }
+    .hp-shape {
+      fill: #ef4444;
+      transition: fill 0.25s ease;
+    }
+    :root.light .hp-bg,
+    [data-theme='light'] .hp-bg {
+      fill: #ffffff;
+      stroke: rgba(0, 0, 0, 0.12);
+    }
+    :root.light .hp-shape,
+    [data-theme='light'] .hp-shape {
+      fill: #dc2626;
+    }
+    @media (prefers-color-scheme: light) {
+      .hp-bg {
+        fill: #ffffff;
+        stroke: #e2e8f0;
+      }
+      .hp-shape {
+        fill: #dc2626;
+      }
+    }
+  </style>
+  <circle class="hp-bg" cx="30" cy="30" r="28" fill="#121216" stroke="rgba(255, 255, 255, 0.16)" stroke-width="1.5" />
+  <path class="hp-shape" d="M21.381,39.825l0,-21.649l13.458,0l6.046,10.922l-6.241,10.727l-13.263,0Z" fill="#ef4444" />
+</svg>

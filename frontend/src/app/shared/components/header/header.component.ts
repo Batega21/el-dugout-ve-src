@@ -53,6 +53,10 @@ import { NavMenuComponent } from './nav-menu/nav-menu.component';
       display: flex;
       align-items: center;
       justify-content: space-between;
+
+      @media (max-width: 640px) {
+        padding: 0 1rem;
+      }
     }
   `],
 })

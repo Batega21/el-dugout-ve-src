@@ -61,6 +61,7 @@ import { TranslatePipe } from '@ngx-translate/core';
       display: flex;
       flex-direction: column;
       line-height: var(--line-height-tight, 1.2);
+      white-space: nowrap;
     }
 
     .logo-title {
@@ -77,6 +78,10 @@ import { TranslatePipe } from '@ngx-translate/core';
       color: var(--text-muted-color, var(--text-muted, #9ca3af));
       text-transform: uppercase;
       letter-spacing: 0.06em;
+
+      @media (max-width: 860px) {
+        display: none;
+      }
     }
   `],
 })

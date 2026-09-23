@@ -553,5 +553,33 @@
   "Política de Privacidad": "Política de Privacidad",
   "Términos de Servicio": "Términos de Servicio",
   "© 2026 El Dugout Ve (eldugoutve.com). Todos los derechos reservados.": "© 2026 El Dugout Ve (eldugoutve.com). Todos los derechos reservados.",
-  "Profile updated successfully!": "¡Perfil actualizado exitosamente!"
+  "Profile updated successfully!": "¡Perfil actualizado exitosamente!",
+  "LEADERS_CAROUSEL": {
+    "ESTADISTICAS_BADGE": "Estadísticas",
+    "BATTING_TITLE": "Líderes de Bateo de Todos los Tiempos",
+    "BATTING_SUBTITLE": "Temporadas más recientes y récords históricos de la Liga Venezolana de Béisbol Profesional",
+    "PITCHING_TITLE": "Líderes de Pitcheo de Todos los Tiempos",
+    "PITCHING_SUBTITLE": "Marcas legendarias de lanzadores en la historia de la LVBP",
+    "HOME_RUNS_TITLE": "Líderes en Jonrones",
+    "HITS_TITLE": "Líderes en Hits (Imparables)",
+    "BATTING_AVG_TITLE": "Campeones de Bateo",
+    "STOLEN_BASES_TITLE": "Líderes en Bases Robadas",
+    "WINS_TITLE": "Líderes en Victorias (Juegos Ganados)",
+    "STRIKEOUTS_TITLE": "Líderes en Ponches",
+    "SAVES_TITLE": "Líderes en Salvados (Juegos Salvados)",
+    "TOP_5_BADGE": "TOP 5",
+    "RECENT_SEASONS_BADGE": "ÚLTIMAS 8",
+    "COL_YEAR": "AÑO/TEMP",
+    "COL_PLAYER": "JUGADOR",
+    "COL_TEAM": "EQUIPO",
+    "VIEW_FULL_HISTORY": "VER HISTORIA COMPLETA →",
+    "PREV_TABLE": "Tabla anterior",
+    "NEXT_TABLE": "Tabla siguiente"
+  },
+  "RECORDS": {
+    "TAG": "Hitos y Marcas",
+    "TITLE": "Récords Históricos de la LVBP",
+    "SUBTITLE": "Las mayores marcas individuales registradas en más de 80 años de pelota profesional.",
+    "EMPTY": "No hay récords disponibles en este momento."
+  }
 }

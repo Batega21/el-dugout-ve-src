@@ -1,0 +1,904 @@
+import {
+  Component,
+  ChangeDetectionStrategy,
+  input,
+  signal,
+  computed,
+  ElementRef,
+  viewChild,
+} from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { RouterLink } from '@angular/router';
+import { TranslatePipe } from '@ngx-translate/core';
+import {
+  LeaderCarouselConfig,
+  LeaderTableCard,
+  DEFAULT_BATTING_RECORDS_CONFIG,
+} from './leader-table-carousel.interface';
+
+interface RenderedSlide {
+  originalIndex: number;
+  table: LeaderTableCard;
+  isClone?: boolean;
+}
+
+@Component({
+  selector: 'app-leader-table-carousel',
+  standalone: true,
+  imports: [CommonModule, RouterLink, TranslatePipe],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  template: `
+    <section
+      class="carousel-section"
+      role="region"
+      [attr.aria-label]="effectiveConfig().title | translate"
+      tabindex="0"
+      (keydown)="onKeyDown($event)"
+      (touchstart)="onTouchStart($event)"
+      (touchmove)="onTouchMove($event)"
+      (touchend)="onTouchEnd()">
+
+      <!-- Section Header -->
+      <div class="carousel-header">
+        @if (effectiveConfig().badge; as badgeText) {
+          <div class="badge-label">
+            <span class="badge-dash">—</span>
+            <span class="badge-text">{{ badgeText | translate }}</span>
+          </div>
+        }
+
+        <h2 class="carousel-title">{{ effectiveConfig().title | translate }}</h2>
+
+        @if (effectiveConfig().subtitle; as subtitleText) {
+          <p class="carousel-subtitle">{{ subtitleText | translate }}</p>
+        }
+      </div>
+
+      <!-- Carousel Stage Viewport -->
+      <div class="carousel-stage">
+        <!-- Left Edge Gradient Mask -->
+        <div class="edge-gradient edge-gradient-left" aria-hidden="true"></div>
+
+        <!-- Right Edge Gradient Mask -->
+        <div class="edge-gradient edge-gradient-right" aria-hidden="true"></div>
+
+        <!-- Previous Button (Home Plate SVG pointing Left) -->
+        <button
+          type="button"
+          class="carousel-nav-btn prev"
+          (click)="prev()"
+          [disabled]="!canGoPrev()"
+          [attr.aria-label]="'LEADERS_CAROUSEL.PREV_TABLE' | translate">
+          <img
+            src="images/svg/home_plate_btn.svg"
+            alt=""
+            aria-hidden="true"
+            class="hp-svg-icon" />
+        </button>
+
+        <!-- Next Button (Home Plate SVG pointing Right) -->
+        <button
+          type="button"
+          class="carousel-nav-btn next"
+          (click)="next()"
+          [disabled]="!canGoNext()"
+          [attr.aria-label]="'LEADERS_CAROUSEL.NEXT_TABLE' | translate">
+          <img
+            src="images/svg/home_plate_btn.svg"
+            alt=""
+            aria-hidden="true"
+            class="hp-svg-icon" />
+        </button>
+
+        <!-- Sliding Track Container -->
+        <div class="track-wrapper" #trackWrapper>
+          <div
+            class="carousel-track"
+            [class.no-transition]="!enableTransition()"
+            [style.transform]="trackTransform()"
+            (transitionend)="onTransitionEnd()">
+            @for (slide of slides(); track $index) {
+              <div
+                class="card-slide"
+                [class.active]="isSlideActive($index)"
+                [attr.aria-hidden]="!isSlideActive($index)">
+                <div class="leader-card">
+                  <!-- Card Header: Title with Icon & Optional Badge -->
+                  <div class="card-header">
+                    <div class="header-title">
+                      @if (slide.table.icon) {
+                        <span class="header-icon" aria-hidden="true">{{ slide.table.icon }}</span>
+                      }
+                      <h3>{{ slide.table.categoryKey ? (slide.table.categoryKey | translate) : slide.table.categoryTitle }}</h3>
+                    </div>
+
+                    @if (slide.table.badgeText) {
+                      <span class="card-badge">{{ slide.table.badgeText | translate }}</span>
+                    }
+                  </div>
+
+                  <!-- Table Content (Progressively rendered for active & adjacent slides) -->
+                  @if (isSlideVisible($index)) {
+                    <div class="table-container">
+                      <table class="leader-table">
+                        <thead>
+                          <tr>
+                            <th class="col-year">{{ 'LEADERS_CAROUSEL.COL_YEAR' | translate }}</th>
+                            <th class="col-player">{{ 'LEADERS_CAROUSEL.COL_PLAYER' | translate }}</th>
+                            <th class="col-team">{{ 'LEADERS_CAROUSEL.COL_TEAM' | translate }}</th>
+                            <th class="col-stat">{{ slide.table.statColumn }}</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          @for (item of slide.table.items.slice(0, 5); track item.player + item.yearOrSpan) {
+                            <tr>
+                              <td class="col-year">{{ item.yearOrSpan }}</td>
+                              <td class="col-player">
+                                <span class="player-name">{{ item.player }}</span>
+                                <span class="player-team-mobile">{{ item.team }}</span>
+                              </td>
+                              <td class="col-team">{{ item.team }}</td>
+                              <td class="col-stat">
+                                <span class="stat-value">{{ item.statValue }}</span>
+                              </td>
+                            </tr>
+                          }
+                        </tbody>
+                      </table>
+                    </div>
+                  } @else {
+                    <div class="table-placeholder">
+                      <div class="skeleton-row header-skel"></div>
+                      <div class="skeleton-row"></div>
+                      <div class="skeleton-row"></div>
+                      <div class="skeleton-row"></div>
+                      <div class="skeleton-row"></div>
+                      <div class="skeleton-row"></div>
+                    </div>
+                  }
+
+                  <!-- Card Footer Link -->
+                  <div class="card-footer">
+                    <a
+                      [routerLink]="slide.table.fullHistoryUrl || effectiveConfig().fullHistoryUrl || '/stats'"
+                      class="history-link">
+                      {{ 'LEADERS_CAROUSEL.VIEW_FULL_HISTORY' | translate }}
+                    </a>
+                  </div>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+
+      <!-- Carousel Pagination Indicator Dots -->
+      <div class="carousel-indicators" role="tablist">
+        @for (tbl of effectiveConfig().tables; track tbl.id; let idx = $index) {
+          <button
+            type="button"
+            role="tab"
+            class="indicator-dot"
+            [class.active]="currentIndex() === idx"
+            [attr.aria-selected]="currentIndex() === idx"
+            [attr.aria-label]="(tbl.categoryKey ? (tbl.categoryKey | translate) : tbl.categoryTitle)"
+            (click)="goTo(idx)">
+          </button>
+        }
+      </div>
+    </section>
+  `,
+  styles: [`
+    :host {
+      display: block;
+      width: 100%;
+      margin: 3.5rem 0;
+      --slide-width: clamp(320px, 58vw, 660px);
+      --slide-gap: 1.5rem;
+    }
+
+    .carousel-section {
+      width: 100%;
+      outline: none;
+      position: relative;
+      --slide-width: clamp(320px, 58vw, 660px);
+      --slide-gap: 1.5rem;
+    }
+
+    /* Section Header */
+    .carousel-header {
+      max-width: var(--wrap-max-width, 1200px);
+      margin: 0 auto 1.75rem auto;
+      padding: 0 var(--wrap-padding-x, 1.5rem);
+      text-align: left;
+
+      .badge-label {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 0.5rem;
+
+        .badge-dash {
+          color: var(--primary, #ef4444);
+          font-weight: 800;
+          font-size: 1.1rem;
+        }
+
+        .badge-text {
+          font-family: var(--font-sans);
+          font-size: var(--font-size-xs, 0.8rem);
+          font-weight: 700;
+          letter-spacing: 0.12em;
+          text-transform: uppercase;
+          color: var(--primary, #ef4444);
+        }
+      }
+
+      .carousel-title {
+        font-family: var(--font-display, 'Bebas Neue', sans-serif);
+        font-size: clamp(2rem, 3.5vw, 3rem);
+        font-weight: 800;
+        letter-spacing: 0.03em;
+        text-transform: uppercase;
+        color: var(--text-color, var(--text-primary));
+        margin: 0 0 0.4rem 0;
+        line-height: 1.1;
+      }
+
+      .carousel-subtitle {
+        font-family: var(--font-sans);
+        font-size: var(--font-size-sm, 0.95rem);
+        color: var(--text-secondary-color, var(--text-secondary));
+        margin: 0;
+        max-width: 700px;
+      }
+    }
+
+    /* Stage & Track Viewport */
+    .carousel-stage {
+      position: relative;
+      width: 100%;
+      overflow: hidden;
+      padding: 1rem 0;
+    }
+
+    /* Edge Gradient Overlays */
+    .edge-gradient {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: clamp(70px, 20vw, 240px);
+      pointer-events: none;
+      z-index: 10;
+      transition: background 0.25s ease;
+
+      &.edge-gradient-left {
+        left: 0;
+        background: linear-gradient(to right, var(--bg-main, #0b0f19) 0%, transparent 100%);
+      }
+
+      &.edge-gradient-right {
+        right: 0;
+        background: linear-gradient(to left, var(--bg-main, #0b0f19) 0%, transparent 100%);
+      }
+    }
+
+    /* Home Plate Navigation Buttons */
+    .carousel-nav-btn {
+      position: absolute;
+      top: 50%;
+      z-index: 20;
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      background: var(--bg-card, #121216);
+      border: 1px solid var(--border-theme-color, rgba(255, 255, 255, 0.15));
+      padding: 0;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5);
+      transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+                  filter 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+                  border-color 0.25s ease,
+                  opacity 0.25s ease;
+      will-change: transform, filter;
+
+      &.prev {
+        left: clamp(0.75rem, 3.5vw, 2.5rem);
+        transform: translateY(-50%) rotate(180deg);
+
+        &:hover:not(:disabled) {
+          transform: translateY(-50%) rotate(180deg) scale(1.1);
+        }
+
+        &:active:not(:disabled) {
+          transform: translateY(-50%) rotate(180deg) scale(0.95);
+        }
+      }
+
+      &.next {
+        right: clamp(0.75rem, 3.5vw, 2.5rem);
+        transform: translateY(-50%) rotate(0deg);
+
+        &:hover:not(:disabled) {
+          transform: translateY(-50%) rotate(0deg) scale(1.1);
+        }
+
+        &:active:not(:disabled) {
+          transform: translateY(-50%) rotate(0deg) scale(0.95);
+        }
+      }
+
+      .hp-svg-icon {
+        width: 100%;
+        height: 100%;
+        display: block;
+        pointer-events: none;
+      }
+
+      &:hover:not(:disabled) {
+        filter: drop-shadow(0 0 10px rgba(229, 35, 35, 0.65));
+        border-color: var(--primary, #ef4444);
+      }
+
+      &:disabled {
+        opacity: 0.3;
+        cursor: not-allowed;
+        pointer-events: none;
+      }
+    }
+
+    /* Track Layout */
+    .track-wrapper {
+      width: 100%;
+      overflow: visible;
+    }
+
+    .carousel-track {
+      display: flex;
+      align-items: stretch;
+      gap: var(--slide-gap);
+      /* Pad sides so that the centered slide aligns with center */
+      padding: 0 calc(50% - (var(--slide-width) / 2));
+      transition: transform 0.45s cubic-bezier(0.25, 1, 0.5, 1);
+      will-change: transform;
+
+      &.no-transition {
+        transition: none !important;
+      }
+    }
+
+    /* Individual Card Slide */
+    .card-slide {
+      flex: 0 0 var(--slide-width);
+      width: var(--slide-width);
+      max-width: var(--slide-width);
+      box-sizing: border-box;
+      opacity: 0.45;
+      transform: scale(0.96);
+      transition: opacity 0.35s ease, transform 0.35s cubic-bezier(0.25, 1, 0.5, 1);
+      will-change: opacity, transform;
+
+      &.active {
+        opacity: 1;
+        transform: scale(1);
+        z-index: 5;
+      }
+    }
+
+    /* Leader Card Surface */
+    .leader-card {
+      background-color: var(--background-card-color, var(--bg-card, #121216));
+      border: 1px solid var(--border-theme-color, rgba(255, 255, 255, 0.08));
+      border-radius: var(--radius-lg, 16px);
+      box-shadow: var(--shadow-card, 0 20px 40px -15px rgba(0, 0, 0, 0.8));
+      padding: 1.75rem 2rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 380px;
+      backdrop-filter: blur(8px);
+      transition: border-color 0.25s ease, background-color 0.25s ease;
+    }
+
+    /* Card Header */
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.08));
+
+      .header-title {
+        display: flex;
+        align-items: center;
+        gap: 0.65rem;
+
+        .header-icon {
+          font-size: 1.35rem;
+          line-height: 1;
+        }
+
+        h3 {
+          font-family: var(--font-display, 'Bebas Neue', sans-serif);
+          font-size: 1.45rem;
+          font-weight: 700;
+          letter-spacing: 0.05em;
+          text-transform: uppercase;
+          color: var(--text-color, var(--text-primary));
+          margin: 0;
+          line-height: 1.1;
+        }
+      }
+
+      .card-badge {
+        font-family: var(--font-display, 'Bebas Neue', sans-serif);
+        font-size: 0.85rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--text-muted-color, #9ca3af);
+        border: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.15));
+        border-radius: 4px;
+        padding: 0.2rem 0.55rem;
+        background: rgba(255, 255, 255, 0.02);
+      }
+    }
+
+    /* Table Container & Rows */
+    .table-container {
+      width: 100%;
+      margin-top: 0.75rem;
+      overflow-x: auto;
+    }
+
+    .leader-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: var(--font-size-sm, 0.875rem);
+
+      th {
+        padding: 0.75rem 0.5rem;
+        border-bottom: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.06));
+        color: var(--text-muted-color, #6b7280);
+        font-size: 0.75rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        font-weight: 600;
+      }
+
+      td {
+        padding: 0.85rem 0.5rem;
+        border-bottom: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.04));
+        color: var(--text-secondary-color, #d1d5db);
+        vertical-align: middle;
+      }
+
+      tr:last-child td {
+        border-bottom: none;
+      }
+
+      tbody tr:hover {
+        background: var(--background-hover-color, rgba(255, 255, 255, 0.03));
+      }
+
+      .col-year {
+        width: 100px;
+        color: var(--text-muted-color, #9ca3af);
+        font-variant-numeric: tabular-nums;
+        font-size: 0.825rem;
+      }
+
+      .col-player {
+        .player-name {
+          font-family: var(--font-sans);
+          font-weight: 600;
+          color: var(--text-color, var(--text-primary));
+          display: block;
+        }
+
+        .player-team-mobile {
+          display: none;
+          font-size: 0.75rem;
+          color: var(--text-muted-color, #9ca3af);
+        }
+      }
+
+      .col-team {
+        color: var(--text-secondary-color, var(--text-secondary));
+        font-size: 0.85rem;
+      }
+
+      .col-stat {
+        text-align: right;
+        padding-right: 0.75rem;
+
+        .stat-value {
+          font-family: var(--font-mono, 'Press Start 2P', monospace);
+          font-size: 1.05rem;
+          font-weight: 700;
+          color: var(--primary, #ef4444);
+          letter-spacing: 0.02em;
+        }
+      }
+    }
+
+    /* Skeleton Placeholder for Offscreen Cards */
+    .table-placeholder {
+      padding: 1rem 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+
+      .skeleton-row {
+        height: 28px;
+        background: rgba(255, 255, 255, 0.04);
+        border-radius: 4px;
+        animation: pulse 1.5s ease-in-out infinite;
+
+        &.header-skel {
+          height: 18px;
+          width: 80%;
+          opacity: 0.6;
+        }
+      }
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 0.3; }
+      50% { opacity: 0.7; }
+    }
+
+    /* Card Footer Link */
+    .card-footer {
+      display: flex;
+      justify-content: flex-end;
+      padding-top: 1rem;
+      margin-top: 0.5rem;
+      border-top: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.06));
+
+      .history-link {
+        font-family: var(--font-display, 'Bebas Neue', sans-serif);
+        font-size: 0.95rem;
+        letter-spacing: 0.06em;
+        color: var(--primary, #ef4444);
+        text-transform: uppercase;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        transition: color 0.15s ease, transform 0.15s ease;
+
+        &:hover {
+          color: var(--primary-hover, #dc2626);
+          transform: translateX(3px);
+          text-decoration: underline;
+        }
+      }
+    }
+
+    /* Pagination Dots */
+    .carousel-indicators {
+      display: flex;
+      justify-content: center;
+      gap: 0.6rem;
+      margin-top: 1.5rem;
+
+      .indicator-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        border: 1px solid var(--border-strong, rgba(255, 255, 255, 0.3));
+        background: transparent;
+        padding: 0;
+        cursor: pointer;
+        transition: all 0.2s ease;
+
+        &.active {
+          width: 24px;
+          border-radius: 9999px;
+          background: var(--primary, #ef4444);
+          border-color: var(--primary, #ef4444);
+          box-shadow: 0 0 8px var(--primary-glow, rgba(239, 68, 68, 0.4));
+        }
+
+        &:hover:not(.active) {
+          border-color: var(--text-primary);
+          background: rgba(255, 255, 255, 0.15);
+        }
+      }
+    }
+
+    /* Responsive Adjustments */
+    @media (max-width: 640px) {
+      :host,
+      .carousel-section {
+        --slide-width: min(calc(100vw - 3rem), 380px);
+        --slide-gap: 1rem;
+      }
+
+      .carousel-header {
+        padding: 0 1rem;
+        margin-bottom: 1.25rem;
+
+        .carousel-title {
+          font-size: clamp(1.75rem, 8vw, 2.25rem);
+        }
+      }
+
+      .card-header .header-title h3 {
+        font-size: 1.25rem;
+      }
+
+      .leader-card {
+        padding: 1.25rem 1rem;
+        min-height: 360px;
+      }
+
+      .leader-table {
+        .col-year {
+          width: 75px;
+          font-size: 0.775rem;
+        }
+
+        .col-player {
+          .player-name {
+            font-size: 0.825rem;
+          }
+          .player-team-mobile {
+            display: block;
+            margin-top: 0.15rem;
+            font-size: 0.7rem;
+          }
+        }
+
+        .col-team {
+          display: none;
+        }
+
+        .col-stat {
+          padding-right: 0.25rem;
+
+          .stat-value {
+            font-size: 0.95rem;
+          }
+        }
+      }
+
+      .carousel-nav-btn {
+        width: 38px;
+        height: 38px;
+
+        &.prev { left: 0.25rem; }
+        &.next { right: 0.25rem; }
+      }
+
+      .edge-gradient {
+        width: 20px;
+      }
+    }
+  `],
+})
+export class LeaderTableCarouselComponent {
+  // Configuration input
+  readonly config = input<LeaderCarouselConfig>(DEFAULT_BATTING_RECORDS_CONFIG);
+
+  // Fallback / direct inputs
+  readonly badge = input<string | undefined>(undefined);
+  readonly title = input<string | undefined>(undefined);
+  readonly subtitle = input<string | undefined>(undefined);
+
+  // DOM element references
+  readonly trackWrapper = viewChild<ElementRef<HTMLElement>>('trackWrapper');
+
+  // Active track index (1-based when loop is enabled due to prepended clone)
+  readonly trackIndex = signal<number>(1);
+
+  // Transition enabled state (temporarily disabled during instant clone resets)
+  readonly enableTransition = signal<boolean>(true);
+
+  // Loading state
+  readonly isLoading = signal<boolean>(false);
+
+  // Touch tracking for swipe gestures
+  private touchStartX = 0;
+  private touchStartY = 0;
+  private touchDeltaX = 0;
+
+  // Effective configuration merged with direct inputs
+  readonly effectiveConfig = computed<LeaderCarouselConfig>(() => {
+    const base = this.config() || DEFAULT_BATTING_RECORDS_CONFIG;
+    return {
+      ...base,
+      badge: this.badge() ?? base.badge,
+      title: this.title() ?? base.title,
+      subtitle: this.subtitle() ?? base.subtitle,
+      loop: base.loop !== false,
+    };
+  });
+
+  // Original tables list
+  readonly originalTables = computed<LeaderTableCard[]>(() => {
+    return this.effectiveConfig().tables || [];
+  });
+
+  // Loop enabled flag
+  readonly isLoopEnabled = computed<boolean>(() => {
+    const tables = this.originalTables();
+    return this.effectiveConfig().loop !== false && tables.length > 1;
+  });
+
+  // Generated slides array (includes clones at both ends when loop is true)
+  readonly slides = computed<RenderedSlide[]>(() => {
+    const tables = this.originalTables();
+    if (tables.length === 0) return [];
+
+    if (!this.isLoopEnabled()) {
+      return tables.map((table, idx) => ({
+        originalIndex: idx,
+        table,
+      }));
+    }
+
+    const lastTable = tables[tables.length - 1];
+    const firstTable = tables[0];
+
+    const rendered: RenderedSlide[] = [
+      { originalIndex: tables.length - 1, table: lastTable, isClone: true },
+      ...tables.map((table, idx) => ({ originalIndex: idx, table })),
+      { originalIndex: 0, table: firstTable, isClone: true },
+    ];
+
+    return rendered;
+  });
+
+  // Current logical active index (0 to tables.length - 1)
+  readonly currentIndex = computed<number>(() => {
+    const tables = this.originalTables();
+    const count = tables.length;
+    if (count === 0) return 0;
+
+    if (!this.isLoopEnabled()) {
+      return Math.max(0, Math.min(this.trackIndex(), count - 1));
+    }
+
+    const tIdx = this.trackIndex();
+    if (tIdx === 0) return count - 1;
+    if (tIdx === count + 1) return 0;
+    return tIdx - 1;
+  });
+
+  // Active category computed string
+  readonly activeCategory = computed<string>(() => {
+    const tables = this.originalTables();
+    const current = tables[this.currentIndex()];
+    return current ? current.categoryTitle : '';
+  });
+
+  // Computed CSS transform for hardware acceleration
+  readonly trackTransform = computed<string>(() => {
+    const idx = this.trackIndex();
+    // Move track by: -idx * (cardWidth + gap)
+    return `translate3d(calc(-${idx} * (var(--slide-width) + var(--slide-gap))), 0, 0)`;
+  });
+
+  // Check if navigation can proceed backwards
+  readonly canGoPrev = computed<boolean>(() => {
+    if (this.isLoopEnabled()) return true;
+    return this.trackIndex() > 0;
+  });
+
+  // Check if navigation can proceed forwards
+  readonly canGoNext = computed<boolean>(() => {
+    if (this.isLoopEnabled()) return true;
+    return this.trackIndex() < this.originalTables().length - 1;
+  });
+
+  /**
+   * Navigate to the previous table.
+   */
+  prev(): void {
+    if (!this.canGoPrev()) return;
+    this.enableTransition.set(true);
+    this.trackIndex.update((i) => i - 1);
+  }
+
+  /**
+   * Navigate to the next table.
+   */
+  next(): void {
+    if (!this.canGoNext()) return;
+    this.enableTransition.set(true);
+    this.trackIndex.update((i) => i + 1);
+  }
+
+  /**
+   * Jump directly to a specific original table index.
+   */
+  goTo(targetIndex: number): void {
+    const tables = this.originalTables();
+    if (targetIndex < 0 || targetIndex >= tables.length) return;
+
+    this.enableTransition.set(true);
+    if (this.isLoopEnabled()) {
+      this.trackIndex.set(targetIndex + 1);
+    } else {
+      this.trackIndex.set(targetIndex);
+    }
+  }
+
+  /**
+   * Handle seamless infinite looping when sliding reaches prepended or appended clones.
+   */
+  onTransitionEnd(): void {
+    if (!this.isLoopEnabled()) return;
+
+    const count = this.originalTables().length;
+    const current = this.trackIndex();
+
+    // If we transitioned to the clone before the first item (index 0)
+    if (current === 0) {
+      this.enableTransition.set(false);
+      this.trackIndex.set(count);
+    }
+    // If we transitioned to the clone after the last item (index count + 1)
+    else if (current === count + 1) {
+      this.enableTransition.set(false);
+      this.trackIndex.set(1);
+    }
+  }
+
+  /**
+   * Checks if a slide in the slides array is the centered active slide.
+   */
+  isSlideActive(slideIndex: number): boolean {
+    return slideIndex === this.trackIndex();
+  }
+
+  /**
+   * Lazy loading visibility check: only active and adjacent slides render full tables.
+   */
+  isSlideVisible(slideIndex: number): boolean {
+    const diff = Math.abs(slideIndex - this.trackIndex());
+    return diff <= 1;
+  }
+
+  /**
+   * Keyboard navigation (ArrowLeft & ArrowRight).
+   */
+  onKeyDown(event: KeyboardEvent): void {
+    if (event.key === 'ArrowLeft') {
+      event.preventDefault();
+      this.prev();
+    } else if (event.key === 'ArrowRight') {
+      event.preventDefault();
+      this.next();
+    }
+  }
+
+  /**
+   * Touch swipe gesture detection on mobile devices.
+   */
+  onTouchStart(event: TouchEvent): void {
+    const touch = event.touches[0];
+    this.touchStartX = touch.clientX;
+    this.touchStartY = touch.clientY;
+    this.touchDeltaX = 0;
+  }
+
+  onTouchMove(event: TouchEvent): void {
+    const touch = event.touches[0];
+    this.touchDeltaX = touch.clientX - this.touchStartX;
+  }
+
+  onTouchEnd(): void {
+    const threshold = 40;
+    if (this.touchDeltaX > threshold) {
+      this.prev();
+    } else if (this.touchDeltaX < -threshold) {
+      this.next();
+    }
+    this.touchDeltaX = 0;
+  }
+}

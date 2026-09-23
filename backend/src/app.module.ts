@@ -12,6 +12,7 @@ import { SubscriptionsModule } from './modules/subscriptions/subscriptions.modul
 import { FeaturesModule } from './modules/features/features.module';
 import { LeaderboardsModule } from './modules/leaderboards/leaderboards.module';
 import { ImportsModule } from './modules/imports/imports.module';
+import { RecordsModule } from './modules/records/records.module';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { ImportsModule } from './modules/imports/imports.module';
     FeaturesModule,
     LeaderboardsModule,
     ImportsModule,
+    RecordsModule,
   ],
   providers: [
     {

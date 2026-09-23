@@ -4,6 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { StatusBadgeComponent } from '../../shared/components/status-badge/status-badge.component';
+import { SectionCardsComponent } from '../../shared/components/section-cards/section-cards.component';
 
 interface AdminMetrics {
   status: string;
@@ -43,7 +44,7 @@ interface SubscriptionRecord {
 @Component({
   selector: 'app-admin-dashboard',
   standalone: true,
-  imports: [CommonModule, RouterLink, StatusBadgeComponent, TranslatePipe],
+  imports: [CommonModule, RouterLink, StatusBadgeComponent, SectionCardsComponent, TranslatePipe],
   template: `
     <div class="admin-dashboard">
       <div class="dashboard-header">
@@ -65,6 +66,9 @@ interface SubscriptionRecord {
       @if (errorMessage()) {
         <div class="alert alert-danger">{{ errorMessage() }}</div>
       }
+
+      <!-- System Health Matrix (Relocated to Admin Workspace) -->
+      <app-section-cards [force-visible]="true"></app-section-cards>
 
       <!-- System Health Matrix Section -->
       <section class="metrics-grid">

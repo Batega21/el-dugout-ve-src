@@ -2,12 +2,16 @@ import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { HeroComponent } from '../../shared/components/hero/hero.component';
+import { HistoricalRecordsComponent } from '../../shared/components/historical-records/historical-records.component';
 import { StatsStripComponent } from '../../shared/components/stats-strip/stats-strip.component';
 import { SectionComponent } from '../../shared/components/section/section.component';
-import { SectionCardsComponent } from '../../shared/components/section-cards/section-cards.component';
-import { GuideSectionComponent } from '../../shared/components/guide-section/guide-section.component';
+import { LeaderTableCarouselComponent } from '../../shared/components/leader-table-carousel/leader-table-carousel.component';
 import { SectionConfig } from '../../shared/components/section/section.interface';
-import { SectionCardsConfig, DEFAULT_SECTION_CARDS_CONFIG } from '../../shared/components/section-cards/section-cards.interface';
+import {
+  LeaderCarouselConfig,
+  DEFAULT_BATTING_RECORDS_CONFIG,
+  DEFAULT_PITCHING_RECORDS_CONFIG,
+} from '../../shared/components/leader-table-carousel/leader-table-carousel.interface';
 import { SubscriptionDialogComponent } from '../../shared/components/subscription-dialog/subscription-dialog.component';
 import { SignUpDialogComponent } from '../../shared/components/sign-up-dialog/sign-up-dialog.component';
 import { AuthService } from '../../core/services/auth.service';
@@ -17,10 +21,10 @@ import { AuthService } from '../../core/services/auth.service';
   standalone: true,
   imports: [
     HeroComponent,
+    HistoricalRecordsComponent,
     StatsStripComponent,
+    LeaderTableCarouselComponent,
     SectionComponent,
-    SectionCardsComponent,
-    GuideSectionComponent,
   ],
   template: `
     <div class="home-page">
@@ -30,19 +34,27 @@ import { AuthService } from '../../core/services/auth.service';
         (secondaryAction)="onCall()">
       </app-hero>
 
-      <!-- Stats Strip Component: Top Records of Each Category -->
+      <!-- 1. Stats Strip Component: Top Records of Each Category -->
       <app-stats-strip></app-stats-strip>
 
-      <!-- Section Components (Config-Driven 60/40 Split, Alignment & Layered Media) -->
+      <!-- 2. First Section of Home Page: Historical Records with Lazy On-Viewport Fetching -->
+      @defer (on viewport) {
+        <app-historical-records></app-historical-records>
+      } @placeholder {
+        <div class="records-viewport-placeholder min-h-[360px]" aria-hidden="true"></div>
+      }
+
+      <!-- 3. Instance 1: All-Time Career Batting Records Carousel with Edge Gradients & SVG Controls -->
+      <app-leader-table-carousel [config]="battingRecordsConfig"></app-leader-table-carousel>
+
+      <!-- 4. Section Components (Config-Driven 60/40 Split, Alignment & Layered Media) -->
       <app-section [config]="section1Config"></app-section>
 
+      <!-- 5. Instance 2: All-Time Career Pitching Records Carousel with Edge Gradients & SVG Controls -->
+      <app-leader-table-carousel [config]="pitchingRecordsConfig"></app-leader-table-carousel>
+
+      <!-- 6. Section Components (Config-Driven 60/40 Split, Alignment & Layered Media) -->
       <app-section [config]="section2Config"></app-section>
-
-      <!-- System Health Matrix (Config-Driven, Visible for Logged Admin Users) -->
-      <app-section-cards [config]="systemHealthCardsConfig"></app-section-cards>
-
-      <!-- Quick Setup Guide (Config-Driven / Embedded, Visible for Logged Admin Users) -->
-      <app-guide-section></app-guide-section>
     </div>
   `,
   changeDetection: ChangeDetectionStrategy.Eager,
@@ -129,7 +141,8 @@ export class HomeComponent {
     },
   };
 
-  readonly systemHealthCardsConfig: SectionCardsConfig = DEFAULT_SECTION_CARDS_CONFIG;
+  readonly battingRecordsConfig: LeaderCarouselConfig = DEFAULT_BATTING_RECORDS_CONFIG;
+  readonly pitchingRecordsConfig: LeaderCarouselConfig = DEFAULT_PITCHING_RECORDS_CONFIG;
 
   onSubscribe(): void {
     if (!this.authService.isLoggedIn()) {

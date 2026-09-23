@@ -65,6 +65,18 @@ describe('HomeComponent', () => {
     expect(component.section2Config.align).toBe('right');
   });
 
+  it('should define batting and pitching carousel configurations', () => {
+    expect(component.battingRecordsConfig).toBeDefined();
+    expect(component.battingRecordsConfig.tables.length).toBe(4);
+    const battingIds = component.battingRecordsConfig.tables.map((t) => t.id);
+    expect(battingIds).toEqual(['home-runs', 'hits', 'batting-average', 'stolen-bases']);
+
+    expect(component.pitchingRecordsConfig).toBeDefined();
+    expect(component.pitchingRecordsConfig.tables.length).toBe(3);
+    const pitchingIds = component.pitchingRecordsConfig.tables.map((t) => t.id);
+    expect(pitchingIds).toEqual(['wins', 'strikeouts', 'saves']);
+  });
+
   it('should open sign up dialog when unauthenticated user calls onSubscribe()', () => {
     mockDialog.open.mockReturnValue({
       afterClosed: () => ({
