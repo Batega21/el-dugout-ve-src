@@ -280,8 +280,7 @@ export class NavMenuComponent {
     const items = [...this.navItems()];
 
     if (this.authService.isAdmin()) {
-      items.push({ label: 'Manage Users', labelKey: 'COMMON.NAV.USERS', link: '/users' });
-      items.push({ label: 'Excel Import', labelKey: 'COMMON.NAV.IMPORT_EXCEL', link: '/admin/imports' });
+      items.push({ label: 'Admin', labelKey: 'COMMON.NAV.ADMIN', link: '/admin' });
     } else {
       items.push({ label: 'Premium Pro', labelKey: 'COMMON.NAV.PREMIUM', link: '/premium' });
     }

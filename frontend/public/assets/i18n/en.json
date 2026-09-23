@@ -18,6 +18,7 @@
       "OPEN_MENU": "Open Navigation Menu",
       "HOME": "Home",
       "DASHBOARD": "Dashboard",
+      "ADMIN": "Admin",
       "IMPORT_EXCEL": "Import Excel",
       "API_DOCS": "API Docs ↗"
     },
@@ -251,6 +252,19 @@
       "DUPLICATE": "Duplicate",
       "ERROR": "Error",
       "READY": "Ready to insert"
+    },
+    "MODAL": {
+      "SUCCESS_TITLE": "Import Completed",
+      "SUCCESS_BADGE": "Operation Successful",
+      "SUCCESS_MESSAGE": "Successfully committed {{ total }} records ({{ inserted }} inserted, {{ updated }} updated).",
+      "ERROR_TITLE": "Import Failed",
+      "ERROR_BADGE": "Database Error",
+      "ERROR_MESSAGE": "An error occurred while committing the import to the database.",
+      "TOTAL_LABEL": "Total Processed",
+      "INSERTED_LABEL": "New Inserted",
+      "UPDATED_LABEL": "Updated",
+      "CONFIRM_BTN": "Understood",
+      "CLOSE_BTN": "Close"
     }
   },
   "LEADERBOARD_IMPORT": {
@@ -320,6 +334,7 @@
     "SUCCESS": "Profile updated successfully!"
   },
   "USERS": {
+    "BREADCRUMB_CURRENT": "User Management",
     "TITLE": "User Management",
     "SUBTITLE": "Real-time interaction with NestJS REST API and PostgreSQL database.",
     "REFRESH_USERS": "Refresh Users ↻",

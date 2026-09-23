@@ -14,9 +14,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 import {
   ValidationPreviewDto,
   ValidationPreviewRowDto,
-  ValidationStatus,
 } from '../../../../core/models/import.model';
-import { StatusBadgeComponent } from '../../../../shared/components/status-badge/status-badge.component';
 
 export const DEFAULT_VALIDATION_PREVIEW: ValidationPreviewDto = {
   fileName: '',
@@ -38,7 +36,6 @@ export const DEFAULT_VALIDATION_PREVIEW: ValidationPreviewDto = {
     MatButtonModule,
     MatIconModule,
     MatProgressSpinnerModule,
-    StatusBadgeComponent,
     TranslatePipe,
   ],
   template: `

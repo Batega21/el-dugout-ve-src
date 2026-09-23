@@ -10,15 +10,17 @@ import { RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { TranslatePipe } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { AuthService } from '../../../../core/services/auth.service';
 import { ImportsService } from '../../../../core/services/imports.service';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import {
   ValidationPreviewDto,
   ValidationPreviewRowDto,
   CommitImportDto,
 } from '../../../../core/models/import.model';
 import { ValidationTableComponent } from '../validation-table/validation-table.component';
+import { ConfirmationModalComponent } from '../confirmation-modal/confirmation-modal.component';
 
 @Component({
   selector: 'app-import-file',
@@ -622,6 +624,8 @@ import { ValidationTableComponent } from '../validation-table/validation-table.c
 export class ImportFileComponent {
   readonly authService = inject(AuthService);
   private readonly importsService = inject(ImportsService);
+  private readonly dialog = inject(MatDialog);
+  private readonly translate = inject(TranslateService);
 
   readonly file = signal<File | null>(null);
   readonly isValidating = signal<boolean>(false);
@@ -790,10 +794,20 @@ export class ImportFileComponent {
         this.isUploading.set(false);
         this.previewData.set(null);
         this.file.set(null);
-        this.successMessage.set(
-          result.message ||
-            `¡Importación exitosa! Se han guardado ${result.totalProcessed} registros en la base de datos (${result.insertedCount} nuevos, ${result.updatedCount} actualizados).`,
-        );
+        const localizedMsg = this.translate.instant('IMPORT_EXCEL.MODAL.SUCCESS_MESSAGE', {
+          total: result.totalProcessed,
+          inserted: result.insertedCount,
+          updated: result.updatedCount,
+        });
+        this.successMessage.set(localizedMsg || result.message);
+
+        this.dialog.open(ConfirmationModalComponent, {
+          width: '520px',
+          maxWidth: '95vw',
+          panelClass: 'confirmation-dialog-panel',
+          autoFocus: false,
+          data: result,
+        });
       },
       error: (err) => {
         this.isUploading.set(false);
@@ -802,6 +816,20 @@ export class ImportFileComponent {
           err?.message ||
           'Error durante la confirmación en la base de datos. Se revirtió la transacción.';
         this.errorMessage.set(msg);
+
+        this.dialog.open(ConfirmationModalComponent, {
+          width: '520px',
+          maxWidth: '95vw',
+          panelClass: 'confirmation-dialog-panel',
+          autoFocus: false,
+          data: {
+            success: false,
+            totalProcessed: 0,
+            insertedCount: 0,
+            updatedCount: 0,
+            message: msg,
+          },
+        });
       },
     });
   }

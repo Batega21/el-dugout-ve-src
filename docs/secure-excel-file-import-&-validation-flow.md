@@ -71,15 +71,46 @@ Time:        7.684 s
 
 ### 2. Frontend Unit Tests (`npm test` / Vitest)
 ```text
+ ✓ src/app/modules/admin/components/confirmation-modal/confirmation-modal.component.spec.ts (4 tests)
  ✓ src/app/modules/admin/components/validation-table/validation-table.component.spec.ts (6 tests)
- ✓ src/app/modules/admin/components/import-file/import-file.component.spec.ts (9 tests)
+ ✓ src/app/modules/admin/components/import-file/import-file.component.spec.ts (10 tests)
  ✓ src/app/core/services/imports.service.spec.ts (7 tests)
  ...
- Test Files  22 passed (22)
-      Tests  160 passed (160)
-   Duration  3.68s
+ Test Files  23 passed (23)
+      Tests  165 passed (165)
+   Duration  2.91s
 ```
 
 ### 3. Build & Compilation Verification
 - **Backend Build:** `npm run build` completed successfully (`nest build`).
 - **Frontend Type Checking:** `npx tsc -p tsconfig.app.json --noEmit` completed with 0 errors.
+
+---
+
+## Bugfix: Internationalization (i18n) Asset Synchronization
+- **Issue:** Translation constants (`COMMON.NAV.IMPORT_EXCEL`, `IMPORT_EXCEL.*`) appeared un-translated as raw key strings in the UI.
+- **Root Cause:** In the codebase, Angular 19 configured assets from both `public/` and `src/assets`. Translation keys were added to `frontend/public/assets/i18n/*.json`, but `frontend/src/assets/i18n/*.json` was not synchronized. In development mode (`ng serve`), the Angular CLI served translation files from `src/assets/i18n/`, which lacked the newly added keys.
+- **Fix:** Synchronized `frontend/src/assets/i18n/es.json` and `frontend/src/assets/i18n/en.json` with `frontend/public/assets/i18n/`, ensuring identical dictionaries across both locations.
+- **Verification:** Verified all 16 screenshot keys resolve to their Spanish and English values; all unit tests passing.
+
+---
+
+## Feature: Confirmation Modal Component for Import Results
+- **Component Created:** [`ConfirmationModalComponent`](file:///Users/gabo/repos/el-dugout/frontend/src/app/modules/admin/components/confirmation-modal/confirmation-modal.component.ts)
+  - Accepts the API commit result response payload (`success`, `totalProcessed`, `insertedCount`, `updatedCount`, `message`).
+  - **Success Presentation:**
+    - Emerald green glowing icon (`check_circle`), "Operación Exitosa" badge, and "Importación Completada" title.
+    - Server confirmation message box.
+    - 3-column metric card breakdown: **Total Procesados**, **Nuevos Insertados** (`+81`), **Actualizados** (`0`).
+    - Styled CTA button "Entendido" with checkmark icon.
+  - **Failure Presentation:**
+    - Danger red alert icon (`error`), "Error de Base de Datos" badge, and "Fallo en la Importación" title.
+    - Error diagnostics and transaction rollback notification.
+    - Action button "Cerrar".
+- **Integration in [`ImportFileComponent`](file:///Users/gabo/repos/el-dugout/frontend/src/app/modules/admin/components/import-file/import-file.component.ts):**
+  - Wired into `onCommitRecords(rowsToCommit)`: opens the confirmation modal with dialog panel styling `.confirmation-dialog-panel` on both successful commits and failure/rollback events.
+- **Unit Testing:**
+  - Added [`confirmation-modal.component.spec.ts`](file:///Users/gabo/repos/el-dugout/frontend/src/app/modules/admin/components/confirmation-modal/confirmation-modal.component.spec.ts) covering success rendering, failure rendering, and `dialogRef.close` action.
+  - Updated [`import-file.component.spec.ts`](file:///Users/gabo/repos/el-dugout/frontend/src/app/modules/admin/components/import-file/import-file.component.spec.ts) verifying dialog invocation with response payloads.
+
+

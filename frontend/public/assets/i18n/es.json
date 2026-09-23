@@ -18,6 +18,7 @@
       "OPEN_MENU": "Abrir Menú de Navegación",
       "HOME": "Inicio",
       "DASHBOARD": "Panel",
+      "ADMIN": "Admin",
       "IMPORT_EXCEL": "Importar Excel",
       "API_DOCS": "Documentación API ↗"
     },
@@ -251,6 +252,19 @@
       "DUPLICATE": "Duplicado",
       "ERROR": "Error",
       "READY": "Listo para inserción"
+    },
+    "MODAL": {
+      "SUCCESS_TITLE": "Importación Completada",
+      "SUCCESS_BADGE": "Operación Exitosa",
+      "SUCCESS_MESSAGE": "Se han procesado exitosamente {{ total }} registros ({{ inserted }} insertados, {{ updated }} actualizados).",
+      "ERROR_TITLE": "Fallo en la Importación",
+      "ERROR_BADGE": "Error de Base de Datos",
+      "ERROR_MESSAGE": "Ocurrió un error al procesar la importación en la base de datos.",
+      "TOTAL_LABEL": "Total Procesados",
+      "INSERTED_LABEL": "Nuevos Insertados",
+      "UPDATED_LABEL": "Actualizados",
+      "CONFIRM_BTN": "Entendido",
+      "CLOSE_BTN": "Cerrar"
     }
   },
   "LEADERBOARD_IMPORT": {
@@ -320,6 +334,7 @@
     "SUCCESS": "¡Perfil actualizado exitosamente!"
   },
   "USERS": {
+    "BREADCRUMB_CURRENT": "Gestión de Usuarios",
     "TITLE": "Gestión de Usuarios",
     "SUBTITLE": "Interacción en tiempo real con la API REST de NestJS y base de datos PostgreSQL.",
     "REFRESH_USERS": "Actualizar Usuarios ↻",

@@ -3,10 +3,12 @@ import '@angular/compiler';
 import { Injector, runInInjectionContext } from '@angular/core';
 import { of, throwError } from 'rxjs';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { MatDialog } from '@angular/material/dialog';
 import { ImportFileComponent } from './import-file.component';
 import { AuthService } from '../../../../core/services/auth.service';
 import { ImportsService } from '../../../../core/services/imports.service';
 import { ValidationPreviewDto, CommitResultDto } from '../../../../core/models/import.model';
+import { ConfirmationModalComponent } from '../confirmation-modal/confirmation-modal.component';
 
 describe('ImportFileComponent', () => {
   let component: ImportFileComponent;
@@ -20,6 +22,10 @@ describe('ImportFileComponent', () => {
     verifyFileMagicNumber: ReturnType<typeof vi.fn>;
     previewFile: ReturnType<typeof vi.fn>;
     commitImport: ReturnType<typeof vi.fn>;
+  };
+
+  let matDialogMock: {
+    open: ReturnType<typeof vi.fn>;
   };
 
   const samplePreview: ValidationPreviewDto = {
@@ -62,10 +68,15 @@ describe('ImportFileComponent', () => {
       ),
     };
 
+    matDialogMock = {
+      open: vi.fn(),
+    };
+
     injector = Injector.create({
       providers: [
         { provide: AuthService, useValue: authServiceMock },
         { provide: ImportsService, useValue: importsServiceMock },
+        { provide: MatDialog, useValue: matDialogMock },
       ],
     });
 
@@ -155,7 +166,7 @@ describe('ImportFileComponent', () => {
   });
 
   describe('onCommitRecords', () => {
-    it('calls importsService.commitImport, resets preview, and sets successMessage', () => {
+    it('calls importsService.commitImport, resets preview, sets successMessage, and opens ConfirmationModalComponent', () => {
       component.previewData.set(samplePreview);
 
       component.onCommitRecords(samplePreview.rows);
@@ -164,6 +175,36 @@ describe('ImportFileComponent', () => {
       expect(component.previewData()).toBeNull();
       expect(component.file()).toBeNull();
       expect(component.successMessage()).toContain('Saved successfully');
+      expect(matDialogMock.open).toHaveBeenCalledWith(
+        ConfirmationModalComponent,
+        expect.objectContaining({
+          data: expect.objectContaining({
+            success: true,
+            totalProcessed: 1,
+            insertedCount: 1,
+          }),
+        }),
+      );
+    });
+
+    it('handles commit failure and opens ConfirmationModalComponent with error payload', () => {
+      importsServiceMock.commitImport.mockReturnValueOnce(
+        throwError(() => ({ error: { message: 'Database constraint violation' } })),
+      );
+
+      component.previewData.set(samplePreview);
+      component.onCommitRecords(samplePreview.rows);
+
+      expect(component.errorMessage()).toContain('Database constraint violation');
+      expect(matDialogMock.open).toHaveBeenCalledWith(
+        ConfirmationModalComponent,
+        expect.objectContaining({
+          data: expect.objectContaining({
+            success: false,
+            message: 'Database constraint violation',
+          }),
+        }),
+      );
     });
   });
 
