@@ -24,6 +24,13 @@ export const routes: Routes = [
             (m) => m.AdminDashboardComponent,
           ),
       },
+      {
+        path: 'imports',
+        loadComponent: () =>
+          import('./features/admin/leaderboard-import/leaderboard-import.component').then(
+            (m) => m.LeaderboardImportComponent,
+          ),
+      },
     ],
   },
   {

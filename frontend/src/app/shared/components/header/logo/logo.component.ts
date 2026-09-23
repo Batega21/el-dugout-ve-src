@@ -42,11 +42,11 @@ import { MatIconModule } from '@angular/material/icon';
       width: 2.25rem;
       height: 2.25rem;
       border-radius: var(--radius-sm, 8px);
-      background: linear-gradient(135deg, var(--primary-color, #3b82f6) 0%, var(--primary-hover, #1d4ed8) 100%);
+      background: linear-gradient(135deg, var(--primary-color, #ef4444) 0%, var(--primary-hover, #b91c1c) 100%);
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 2px 8px rgba(59, 130, 246, 0.35);
+      box-shadow: 0 2px 8px var(--primary-glow, rgba(239, 68, 68, 0.35));
 
       .logo-icon {
         font-size: 1.35rem;
@@ -81,5 +81,5 @@ import { MatIconModule } from '@angular/material/icon';
 })
 export class LogoComponent {
   readonly title = input<string>('El Dugout Ve');
-  readonly subtitle = input<string>('LVBP Wiki');
+  readonly subtitle = input<string>('La Biblia del Béisbol Venezolano');
 }

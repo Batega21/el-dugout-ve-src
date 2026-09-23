@@ -42,6 +42,7 @@ import { NavMenuComponent } from './nav-menu/nav-menu.component';
       padding: 0 !important;
       color: var(--text-color, var(--text-primary));
       box-shadow: var(--shadow-md);
+      transition: background-color var(--transition-normal, 250ms ease), border-color var(--transition-normal, 250ms ease), color var(--transition-normal, 250ms ease);
     }
 
     .header-container {

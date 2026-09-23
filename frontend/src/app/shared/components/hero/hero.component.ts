@@ -1,47 +1,69 @@
-import { Component, input, output, ChangeDetectionStrategy } from '@angular/core';
+import {
+  Component,
+  input,
+  output,
+  computed,
+  inject,
+  ChangeDetectionStrategy,
+} from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { ThemeService } from '../../../core/services/theme.service';
 
 @Component({
   selector: 'app-hero',
   standalone: true,
-  imports: [MatButtonModule, MatIconModule],
+  imports: [CommonModule, MatButtonModule, MatIconModule],
+  host: {
+    '[class.full-width]': 'fullWidth()',
+  },
   template: `
-    <section class="hero-section">
+    <section
+      class="hero-section"
+      [style.background-image]="'url(' + currentImage() + ')'"
+      role="banner"
+      [attr.aria-label]="title()">
+      <!-- Subtle backdrop scrim overlay for text legibility and contrast -->
+      <div class="hero-backdrop-overlay" aria-hidden="true"></div>
+
       <div class="hero-container">
-        <!-- 2.1 Tagline Text (Pill / Badge) -->
-        <div class="tagline-badge">
-          <span class="tagline-dot"></span>
-          <span class="tagline-text">{{ tagline() }}</span>
-        </div>
+        <!-- Content Column overlaying background (Left aligned) -->
+        <div class="hero-content">
+          <!-- 2.1 Main Heading or Title -->
+          <h1 class="hero-title">{{ title() }}</h1>
 
-        <!-- 2.2 Main Heading or Title -->
-        <h1 class="hero-title">{{ title() }}</h1>
+          <!-- 2.2 Tagline Text (Pill / Badge) -->
+          <div class="tagline-badge">
+            <span class="tagline-dot"></span>
+            <span class="tagline-text">{{ tagline() }}</span>
+          </div>
 
-        <!-- 2.3 Copy for Company Context -->
-        <p class="hero-description">{{ description() }}</p>
+          <!-- 2.3 Copy for Company Context -->
+          <p class="hero-description">{{ description() }}</p>
 
-        <!-- CTA Buttons Group (Dual Pill Buttons matching wireframe) -->
-        <div class="hero-actions">
-          <!-- 2.4 Secondary CTA Button -->
-          <button
-            mat-stroked-button
-            type="button"
-            class="pill-btn secondary-btn"
-            (click)="onSecondaryClick()">
-            <mat-icon class="btn-icon">phone_in_talk</mat-icon>
-            <span>{{ secondaryCta() }}</span>
-          </button>
+          <!-- CTA Buttons Group (Dual Pill Buttons matching wireframe) -->
+          <div class="hero-actions">
+            <!-- 2.4 Secondary CTA Button -->
+            <button
+              mat-stroked-button
+              type="button"
+              class="pill-btn secondary-btn"
+              (click)="onSecondaryClick()">
+              <mat-icon class="btn-icon">phone_in_talk</mat-icon>
+              <span>{{ secondaryCta() }}</span>
+            </button>
 
-          <!-- 2.5 Primary CTA Button -->
-          <button
-            mat-flat-button
-            type="button"
-            class="pill-btn primary-btn"
-            (click)="onPrimaryClick()">
-            <mat-icon class="btn-icon">mark_email_read</mat-icon>
-            <span>{{ primaryCta() }}</span>
-          </button>
+            <!-- 2.5 Primary CTA Button -->
+            <button
+              mat-flat-button
+              type="button"
+              class="pill-btn primary-btn"
+              (click)="onPrimaryClick()">
+              <mat-icon class="btn-icon">mark_email_read</mat-icon>
+              <span>{{ primaryCta() }}</span>
+            </button>
+          </div>
         </div>
       </div>
     </section>
@@ -54,54 +76,103 @@ import { MatIconModule } from '@angular/material/icon';
     }
 
     .hero-section {
-      padding: 4.5rem 0 3.5rem 0;
+      position: relative;
+      width: 100%;
+      min-height: 640px;
+      padding: 5rem 0;
+      display: flex;
+      align-items: center;
+      background-size: cover;
+      background-position: right center;
+      background-repeat: no-repeat;
+      background-color: var(--background-primary-color, #0b0f19);
+      overflow: hidden;
+      transition: background-image 0.3s ease, background-color var(--transition-normal, 250ms ease);
+    }
+
+    .hero-backdrop-overlay {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1;
+      background: linear-gradient(
+        90deg,
+        rgba(11, 15, 25, 0.92) 0%,
+        rgba(11, 15, 25, 0.6) 42%,
+        rgba(11, 15, 25, 0.1) 68%,
+        transparent 100%
+      );
+
+      @media (max-width: 991px) {
+        background: linear-gradient(
+          90deg,
+          rgba(11, 15, 25, 0.95) 0%,
+          rgba(11, 15, 25, 0.82) 50%,
+          rgba(11, 15, 25, 0.65) 100%
+        );
+      }
+    }
+
+    :host-context(.light) .hero-backdrop-overlay,
+    :host-context([data-theme='light']) .hero-backdrop-overlay {
+      background: linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 0.95) 0%,
+        rgba(255, 255, 255, 0.65) 42%,
+        rgba(255, 255, 255, 0.15) 68%,
+        transparent 100%
+      );
+
+      @media (max-width: 991px) {
+        background: linear-gradient(
+          90deg,
+          rgba(255, 255, 255, 0.96) 0%,
+          rgba(255, 255, 255, 0.88) 50%,
+          rgba(255, 255, 255, 0.7) 100%
+        );
+      }
     }
 
     .hero-container {
-      max-width: 820px;
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      max-width: var(--wrap-max-width, 1200px);
+      margin: 0 auto;
+      padding: 0 var(--wrap-padding-x, 1.5rem);
+    }
+
+    .hero-content {
+      max-width: 580px;
       display: flex;
       flex-direction: column;
       align-items: flex-start;
       text-align: left;
     }
 
-    /* 2.1 Tagline Badge */
-    .tagline-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.6rem;
-      padding: 0.45rem 1rem;
-      border-radius: var(--radius-pill, 9999px);
-      background-color: var(--background-card-color, rgba(31, 41, 55, 0.7));
-      border: 1px solid var(--border-theme-color, rgba(255, 255, 255, 0.1));
-      color: var(--text-secondary-color, #cbd5e1);
-      font-size: var(--font-size-sm, 0.85rem);
-      font-weight: var(--font-weight-medium, 500);
-      letter-spacing: 0.02em;
-      margin-bottom: 1.5rem;
-      backdrop-filter: blur(var(--backdrop-blur, 8px));
-
-      .tagline-dot {
-        width: 0.5rem;
-        height: 0.5rem;
-        border-radius: 50%;
-        background-color: var(--ice-blue, #38bdf8);
-        box-shadow: 0 0 8px var(--ice-blue, #38bdf8);
-      }
-    }
-
-    /* 2.2 Main Heading / Title */
+    /* 2.1 Main Heading / Title */
     .hero-title {
       font-family: var(--font-display);
-      font-size: clamp(2.25rem, 5vw, var(--font-size-4xl, 3.5rem));
+      font-size: clamp(4rem, 7vw, var(--font-size-4xl, 5rem));
       font-weight: var(--font-weight-extrabold, 800);
       line-height: var(--line-height-tight, 1.15);
       letter-spacing: -0.03em;
       color: var(--text-color, #ffffff);
       margin: 0 0 1.25rem 0;
-      background: linear-gradient(180deg, #ffffff 30%, #94a3b8 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+    }
+
+    /* 2.2 Tagline Badge */
+    .tagline-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.45rem 1rem;
+      color: var(--text-secondary-color, #cbd5e1);
+      font-family: var(--font-special);
+      font-size: var(--font-size-sm, 0.85rem);
+      font-weight: var(--font-weight-medium, 500);
+      letter-spacing: 0.02em;
+      margin-bottom: 1.5rem;
     }
 
     /* 2.3 Copy for Company Context */
@@ -110,7 +181,7 @@ import { MatIconModule } from '@angular/material/icon';
       font-size: clamp(1rem, 2vw, var(--font-size-lg, 1.15rem));
       line-height: var(--line-height-relaxed, 1.65);
       color: var(--text-secondary-color, #94a3b8);
-      max-width: 680px;
+      max-width: 580px;
       margin: 0 0 2.5rem 0;
     }
 
@@ -157,18 +228,23 @@ import { MatIconModule } from '@angular/material/icon';
 
     /* 2.5 Primary CTA Button */
     .primary-btn {
-      background-color: var(--primary-color, #3b82f6) !important;
+      background-color: var(--primary-color, var(--primary, #ef4444)) !important;
       color: #ffffff !important;
-      box-shadow: 0 4px 14px rgba(59, 130, 246, 0.4);
+      box-shadow: 0 4px 14px var(--primary-glow, rgba(239, 68, 68, 0.4));
 
       &:hover {
-        background-color: var(--primary-hover, #2563eb) !important;
-        box-shadow: var(--shadow-glow, 0 6px 20px rgba(59, 130, 246, 0.6));
+        background-color: var(--primary-hover, #dc2626) !important;
+        box-shadow: var(--shadow-glow, 0 6px 20px var(--primary-glow, rgba(239, 68, 68, 0.6)));
         transform: translateY(-1px);
       }
     }
 
     @media (max-width: 640px) {
+      .hero-section {
+        min-height: 460px;
+        padding: 3.5rem 0;
+      }
+
       .hero-actions {
         flex-direction: column;
         width: 100%;
@@ -182,6 +258,8 @@ import { MatIconModule } from '@angular/material/icon';
   `],
 })
 export class HeroComponent {
+  readonly themeService = inject(ThemeService);
+
   // 2.1 Tagline text
   readonly tagline = input<string>('Enciclopedia del Béisbol Profesional Venezolano');
 
@@ -198,6 +276,30 @@ export class HeroComponent {
 
   // 2.5 Primary CTA button placeholder
   readonly primaryCta = input<string>('Suscríbete');
+
+  // 2.6 Hero banner images for dark and light themes (covering background)
+  readonly darkImage = input<string>('/images/hero_banner-09-2026-dark.jpeg');
+  readonly lightImage = input<string>('/images/hero_banner-09-2026-light.jpeg');
+  readonly imageAlt = input<string>('El Dugout Ve - Béisbol Profesional Venezolano');
+
+  /**
+   * Whether to stretch the hero background to full viewport width. Defaults to true.
+   */
+  readonly fullWidth = input<boolean>(true);
+
+  /**
+   * Dynamically resolved hero background image path according to active theme.
+   */
+  readonly currentImage = computed(() => {
+    return this.themeService.isDark() ? this.darkImage() : this.lightImage();
+  });
+
+  /**
+   * Computed style object for hero section background.
+   */
+  readonly heroBgStyle = computed(() => ({
+    'background-image': `url('${this.currentImage()}')`,
+  }));
 
   readonly primaryAction = output<void>();
   readonly secondaryAction = output<void>();

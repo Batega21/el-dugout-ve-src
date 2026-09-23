@@ -1,153 +1,184 @@
 // =============================================================================
-// GLOBAL APPLICATION THEME CONFIGURATION
+// GLOBAL APPLICATION THEME CONFIGURATION - EL DUGOUT VE
 // =============================================================================
-// Main theme configuration file for global design tokens, brand palette,
-// typography, surfaces, elevations, and semantic variables.
+// Official Design System & Theme Tokens for the Venezuelan Professional
+// Baseball Wiki (LVBP - eldugoutve.com).
 //
-// Design system:
-// - Typography: DM Sans (Body / Editorial) & Space Grotesk (Metrics / Numbers / Mono)
-// - Palette: Andean Peak & Night aesthetics (Deep obsidian, glacier ice-blue, vibrant tech blue)
-// - Elements: Arch Portal, Bento Grid, Floating Metrics, Parallax Scrims
+// Palette Definition:
+// - Primary: Baseball Crimson Red (Light: #dc2626 / Dark: #ef4444 / Focus: #b91c1c)
+// - Secondary: Navy Blue (Light: #1e3a8a / Dark: #3b82f6 / Deep Navy: #0f172a)
+// - Accent / Tertiary: Vintage Ochre & Gold (#d97706 / #b45309) for awards, trophies & badges
+// - Surfaces & Canvas: Dark graphite/black (#0b0f19 / #08090c) & Light crisp white (#f8fafc)
 // =============================================================================
 
 // -----------------------------------------------------------------------------
-// 1. CONFIGURABLE SCSS PALETTE DEFAULTS
-// Users can easily customize or override these values at build/compile time.
+// 1. SCSS PALETTE DEFAULTS
 // -----------------------------------------------------------------------------
 
-// Brand & Accent Colors
-$theme-primary: #3b82f6 !default;                  // Andean sky / tech blue
-$theme-primary-hover: #2563eb !default;            // Primary interactive hover state
-$theme-primary-active: #1d4ed8 !default;           // Primary pressed state
-$theme-primary-light: rgba(59, 130, 246, 0.15) !default; // Subtle blue container/pill tint
+// Crimson Red (Primary)
+$theme-crimson-light: #dc2626 !default;        // Light mode primary
+$theme-crimson-dark: #ef4444 !default;         // Dark mode primary
+$theme-crimson-focus: #b91c1c !default;        // Accent / Focus / Active
 
-$theme-secondary: #38bdf8 !default;                // Glacier cyan / sky
-$theme-secondary-hover: #0ea5e9 !default;          // Secondary interactive hover
-$theme-secondary-light: rgba(56, 189, 248, 0.15) !default;
+// Navy Blue (Secondary)
+$theme-navy-light: #1e3a8a !default;           // Light mode secondary (Deep Navy)
+$theme-navy-dark: #3b82f6 !default;            // Dark mode secondary
+$theme-navy-dark-bg: #2563eb !default;         // Dark mode bg-blue-600
+$theme-navy-surface: #0f172a !default;         // Deep Navy Canvas / Card backgrounds
 
-// Andean Mountain Signature Accents (from index.html)
-$theme-ice-blue: #7dd3fc !default;                 // Ice Blue accent for numbers, badges & icons
-$theme-ice-blue-glow: rgba(125, 211, 252, 0.25) !default; // Subtle neon glow for key metrics
+// Vintage Ochre & Gold Accent (Tertiary)
+$theme-ochre: #d97706 !default;                // Vintage trophy & batting title ochre
+$theme-ochre-dark: #b45309 !default;           // Deep ochre / Hall of Fame badge
 
-// Background & Surface Canvas (Andina Studio Dark Theme)
-$theme-bg-main: #0b0f19 !default;                  // Primary canvas background
-$theme-bg-card: #111827 !default;                  // Bento card / container surface
-$theme-bg-card-hover: #1f2937 !default;            // Bento card hover state
-$theme-bg-overlay: rgba(11, 15, 25, 0.75) !default;// Arch card overlay / scrims
-$theme-bg-subtle: #161f30 !default;                // Table headers / subtle panels
-
-// Typography Colors (from index.html)
-$theme-text-primary: #f9fafb !default;             // High-contrast primary text
-$theme-text-secondary: #9ca3af !default;           // Secondary body text
-$theme-text-muted: #6b7280 !default;               // Muted metadata, coordinates, footnotes
-$theme-text-inverse: #0b0f19 !default;             // Inverted text on light badges
-
-// Borders & Dividers
-$theme-border-color: #1f293d !default;             // Standard card & divider border
-$theme-border-subtle: rgba(255, 255, 255, 0.08) !default; // Ultra-fine card borders
-$theme-border-strong: rgba(255, 255, 255, 0.2) !default;  // Interactive hover borders
-
-// Semantic & Status Colors
-$theme-color-success: #10b981 !default;            // Operational green
-$theme-color-warning: #f59e0b !default;            // Amber alert
-$theme-color-danger: #ef4444 !default;             // Error red
-$theme-color-info: #0284c7 !default;                // Info blue
-
-// Font Families (loaded in index.html)
-$theme-font-sans: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif !default;
-$theme-font-display: 'Space Grotesk', monospace !default;
-$theme-font-mono: 'Space Grotesk', 'JetBrains Mono', monospace !default;
+// Font Families (Imported from Google Fonts)
+// - Header 1, 2 y 3: Bebas Neue
+// - Header 4, normal text, buttons, links: Montserrat
+// - Design font (For special text): Permanent Marker
+// - mono: Pixelify Sans
+$theme-font-heading: 'Bebas Neue', sans-serif !default;
+$theme-font-display: 'Bebas Neue', sans-serif !default;
+$theme-font-sans: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !default;
+$theme-font-design: 'Permanent Marker', cursive !default;
+$theme-font-special: 'Permanent Marker', cursive !default;
+$theme-font-mono: 'Pixelify Sans', monospace !default;
 
 // -----------------------------------------------------------------------------
-// 2. GLOBAL CSS CUSTOM PROPERTIES (:root)
-// Exposed to the entire DOM for runtime styles, dynamic theming, and overrides.
+// 2. ROOT THEME CUSTOM PROPERTIES
+// Default: Dark Theme
 // -----------------------------------------------------------------------------
 
-:root {
-  /* --- Typography Families --- */
-  --font-sans: #{$theme-font-sans};
-  --font-primary: #{$theme-font-sans};
-  --font-display: #{$theme-font-display};
-  --font-mono: #{$theme-font-mono};
+:root,
+:root.dark,
+[data-theme='dark'] {
+  color-scheme: dark;
 
-  /* --- Font Sizes & Scale --- */
-  --font-size-xs: 0.75rem;          /* 12px */
-  --font-size-sm: 0.85rem;          /* 13.6px - Coordinates, metadata, small tags */
-  --font-size-base: 1rem;           /* 16px - Base body text */
-  --font-size-md: 1.125rem;         /* 18px */
-  --font-size-lg: 1.2rem;           /* 19.2px - Hero lead description */
-  --font-size-xl: 1.5rem;           /* 24px - Section & card headings */
-  --font-size-2xl: 2rem;            /* 32px */
-  --font-size-3xl: 2.5rem;          /* 40px */
-  --font-size-4xl: 3.5rem;          /* 56px - Hero display titles */
-  --font-size-metric: 2.75rem;      /* Bento grid metric highlights */
+  /* --- Primary: Baseball Crimson Red --- */
+  --primary: #ef4444;
+  --primary-hover: #dc2626;
+  --primary-active: #b91c1c;
+  --primary-light: rgba(239, 68, 68, 0.16);
+  --primary-focus: #b91c1c;
+  --primary-glow: rgba(239, 68, 68, 0.4);
+  --rojo: #b91c1c;
 
-  /* --- Font Weights --- */
-  --font-weight-regular: 400;
-  --font-weight-medium: 500;
-  --font-weight-semibold: 600;
-  --font-weight-bold: 700;
-  --font-weight-extrabold: 800;
+  /* --- Secondary: Navy Blue --- */
+  --secondary: #3b82f6;
+  --secondary-hover: #2563eb;
+  --secondary-active: #1d4ed8;
+  --secondary-light: rgba(59, 130, 246, 0.16);
+  --navy-deep: #0f172a;
+  --bg-navy-surface: #0f172a;
 
-  /* --- Line Heights --- */
-  --line-height-tight: 1.15;
-  --line-height-snug: 1.35;
-  --line-height-normal: 1.5;
-  --line-height-relaxed: 1.65;
+  /* --- Accent / Tertiary: Vintage Ochre & Gold --- */
+  --accent-ochre: #d97706;
+  --accent-ochre-dark: #b45309;
+  --accent-ochre-light: rgba(217, 119, 6, 0.15);
+  --trophy-gold: #d97706;
+  --trophy-gold-dark: #b45309;
+  --trophy-gold-glow: rgba(217, 119, 6, 0.35);
 
-  /* --- Core Theme Palette --- */
-  --primary: #{$theme-primary};
-  --primary-hover: #{$theme-primary-hover};
-  --primary-active: #{$theme-primary-active};
-  --primary-light: #{$theme-primary-light};
+  /* Baseball Luminous Yellow (For Dark Mode Ball) */
+  --baseball-yellow-core: #fef08a;
+  --baseball-yellow-glow: #facc15;
+  --baseball-yellow-ambient: rgba(250, 204, 21, 0.65);
 
-  --secondary: #{$theme-secondary};
-  --secondary-hover: #{$theme-secondary-hover};
-  --secondary-light: #{$theme-secondary-light};
+  /* Legacy & Ecosystem Aliases */
+  --ice-blue: #38bdf8;
+  --ice-blue-glow: rgba(56, 189, 248, 0.25);
+  --accent-color: var(--accent-ochre);
 
-  /* Ecosystem Brand Accents */
-  --gcp-blue: #4285f4;
-  --nest-red: #ea2845;
-  --angular-red: #dd0031;
-
-  /* Andean Ice Blue Accent (from index.html) */
-  --ice-blue: #{$theme-ice-blue};
-  --ice-blue-glow: #{$theme-ice-blue-glow};
-
-  /* Surfaces & Backgrounds */
-  --background-primary-color: #{$theme-bg-main};
-  --background-secondary-color: #{$theme-bg-card};
-  --background-tertiary-color: #{$theme-bg-card-hover};
-  --background-overlay: #{$theme-bg-overlay};
-  --background-subtle: #{$theme-bg-subtle};
+  /* --- Surfaces & Backgrounds: Dark --- */
+  --background-primary-color: #0b0f19;         // Deep graphite / obsidian
+  --background-secondary-color: #111827;       // Card / Containers
+  --background-tertiary-color: #161f30;        // Subtle panels & card hover
+  --background-overlay: rgba(11, 15, 25, 0.85); // Header & sticky overlays
+  --background-subtle: #161f30;
 
   /* Shorthand Surface Aliases */
   --bg-main: var(--background-primary-color);
   --bg-card: var(--background-secondary-color);
   --bg-card-hover: var(--background-tertiary-color);
   --bg-surface: var(--background-secondary-color);
+  --bg-deep-navy: var(--navy-deep);
 
-  /* Text & Typography Colors */
-  --text-primary: #{$theme-text-primary};
-  --text-secondary: #{$theme-text-secondary};
-  --text-muted: #{$theme-text-muted};
-  --text-inverse: #{$theme-text-inverse};
+  /* --- Typography Colors: Dark --- */
+  --text-primary: #f9fafb;                     // High-contrast off-white
+  --text-secondary: #9ca3af;                   // Muted / secondary body
+  --text-muted: #6b7280;                       // Captions & timestamps
+  --text-inverse: #0b0f19;
+  --hero-title-color: var(--text-primary);
+  --hero-title-gradient: none;
 
-  /* Borders & Dividers */
-  --border-color: #{$theme-border-color};
-  --border-subtle: #{$theme-border-subtle};
-  --border-strong: #{$theme-border-strong};
-  --border-focus: var(--primary);
+  /* --- Borders & Dividers: Dark --- */
+  --border-color: #1f2937;
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --border-strong: rgba(255, 255, 255, 0.2);
+  --border-focus: var(--primary-focus);
 
-  /* Status & Semantic Feedback */
-  --success: #{$theme-color-success};
-  --warning: #{$theme-color-warning};
-  --danger: #{$theme-color-danger};
-  --info: #{$theme-color-info};
+  /* --- Semantic Status Colors --- */
+  --success: #10b981;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+  --info: #3b82f6;
 
-  // ---------------------------------------------------------------------------
-  // GLOBAL SEMANTIC THEME ALIASES (Matching user configuration pattern)
-  // ---------------------------------------------------------------------------
+  /* --- Elevation & Shadows: Dark --- */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -4px rgba(0, 0, 0, 0.4);
+  --shadow-card: 0 20px 40px -15px rgba(0, 0, 0, 0.8);
+  --shadow-glow: 0 0 20px rgba(239, 68, 68, 0.35);
+
+  /* --- Shared Font Tokens --- */
+  --font-heading: #{$theme-font-heading};
+  --font-display: #{$theme-font-heading};
+  --font-sans: #{$theme-font-sans};
+  --font-primary: #{$theme-font-sans};
+  --font-design: #{$theme-font-design};
+  --font-special: #{$theme-font-special};
+  --font-mono: #{$theme-font-mono};
+
+  /* --- Typography Scale --- */
+  --font-size-xs: 0.75rem;
+  --font-size-sm: 0.85rem;
+  --font-size-base: 1rem;
+  --font-size-md: 1.125rem;
+  --font-size-lg: 1.2rem;
+  --font-size-xl: 1.5rem;
+  --font-size-2xl: 2rem;
+  --font-size-3xl: 2.5rem;
+  --font-size-4xl: 5rem;
+  --font-size-metric: 2.75rem;
+
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  --font-weight-extrabold: 800;
+
+  --line-height-tight: 1.15;
+  --line-height-snug: 1.35;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.65;
+
+  /* --- Layout & Radii --- */
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-pill: 9999px;
+  --radius-arch: 160px 160px 0 0;
+
+  --wrap-max-width: 1200px;
+  --wrap-padding-x: 1.5rem;
+  --header-height: 72px;
+  --backdrop-blur: 12px;
+
+  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-normal: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 400ms cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Global Semantic Aliases */
   --primary-color: var(--primary);
   --secondary-color: var(--secondary);
   --background-color: var(--background-primary-color);
@@ -159,39 +190,151 @@ $theme-font-mono: 'Space Grotesk', 'JetBrains Mono', monospace !default;
   --text-muted-color: var(--text-muted);
   --border-theme-color: var(--border-color);
   --ice-blue-color: var(--ice-blue);
-  --accent-color: var(--ice-blue);
-
-  /* --- Geometry, Shapes & Border Radii --- */
-  --radius-xs: 4px;
-  --radius-sm: 6px;
-  --radius-md: 10px;
-  --radius-lg: 16px;
-  --radius-xl: 24px;
-  --radius-pill: 9999px;
-  --radius-arch: 160px 160px 0 0;  /* Andean arch portal cutout */
-
-  /* --- Elevations, Shadows & Blurs --- */
-  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -4px rgba(0, 0, 0, 0.3);
-  --shadow-card: 0 20px 40px -15px rgba(0, 0, 0, 0.7);
-  --shadow-glow: 0 0 20px rgba(56, 189, 248, 0.25);
-  --backdrop-blur: 12px;
-
-  /* --- Spacing & Layout Tokens --- */
-  --wrap-max-width: 1200px;
-  --wrap-padding-x: 1.5rem;
-  --header-height: 72px;
-
-  /* --- Animation & Transitions --- */
-  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
-  --transition-normal: 250ms cubic-bezier(0.4, 0, 0.2, 1);
-  --transition-slow: 400ms cubic-bezier(0.4, 0, 0.2, 1);
-  --parallax-ratio: 0.25;
 }
 
 // -----------------------------------------------------------------------------
-// 3. SCSS VARIABLE ALIASES (For direct SCSS usage in stylesheets)
+// 3. LIGHT THEME OVERRIDES
+// -----------------------------------------------------------------------------
+
+:root.light,
+[data-theme='light'] {
+  color-scheme: light;
+
+  /* --- Primary: Baseball Crimson Red (Light Mode) --- */
+  --primary: #dc2626;
+  --primary-hover: #b91c1c;
+  --primary-active: #991b1b;
+  --primary-light: rgba(220, 38, 38, 0.1);
+  --primary-focus: #b91c1c;
+  --primary-glow: rgba(220, 38, 38, 0.25);
+  --rojo: #dc2626;
+
+  /* --- Secondary: Navy Blue (Light Mode) --- */
+  --secondary: #1e3a8a;
+  --secondary-hover: #172554;
+  --secondary-active: #0f172a;
+  --secondary-light: rgba(30, 58, 138, 0.1);
+  --navy-deep: #1e3a8a;
+  --bg-navy-surface: #f1f5f9;
+
+  /* --- Accent / Tertiary: Vintage Ochre & Gold --- */
+  --accent-ochre: #d97706;
+  --accent-ochre-dark: #b45309;
+  --accent-ochre-light: rgba(217, 119, 6, 0.12);
+  --trophy-gold: #d97706;
+  --trophy-gold-dark: #b45309;
+  --trophy-gold-glow: rgba(217, 119, 6, 0.25);
+
+  /* Classic Baseball Colors (For Light Mode Ball) */
+  --baseball-leather-white: #ffffff;
+  --baseball-leather-shade: #f1f5f9;
+  --baseball-stitch-red: #dc2626;
+
+  /* Legacy & Ecosystem Aliases */
+  --ice-blue: #0284c7;
+  --ice-blue-glow: rgba(2, 132, 199, 0.2);
+  --accent-color: var(--accent-ochre);
+
+  /* --- Surfaces & Backgrounds: Light --- */
+  --background-primary-color: #f8fafc;         // Clean, crisp gray-white
+  --background-secondary-color: #ffffff;       // Clean white cards
+  --background-tertiary-color: #f1f5f9;        // Card hover & subtle tabs
+  --background-overlay: rgba(248, 250, 252, 0.88); // Semi-transparent header
+  --background-subtle: #f1f5f9;
+
+  /* Shorthand Surface Aliases */
+  --bg-main: var(--background-primary-color);
+  --bg-card: var(--background-secondary-color);
+  --bg-card-hover: var(--background-tertiary-color);
+  --bg-surface: var(--background-secondary-color);
+  --bg-deep-navy: var(--navy-deep);
+
+  /* --- Typography Colors: Light --- */
+  --text-primary: #0f172a;                     // Deep slate
+  --text-secondary: #64748b;                   // Muted slate
+  --text-muted: #94a3b8;                       // Light slate
+  --text-inverse: #f8fafc;
+  --hero-title-color: var(--text-primary);
+  --hero-title-gradient: none;
+
+  /* --- Borders & Dividers: Light --- */
+  --border-color: #e2e8f0;
+  --border-subtle: rgba(0, 0, 0, 0.06);
+  --border-strong: rgba(0, 0, 0, 0.16);
+  --border-focus: var(--primary-focus);
+
+  /* --- Semantic Status Colors: Light --- */
+  --success: #059669;
+  --warning: #d97706;
+  --danger: #dc2626;
+  --info: #0284c7;
+
+  /* --- Elevation & Shadows: Light --- */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -1px rgba(0, 0, 0, 0.04);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.05);
+  --shadow-card: 0 10px 30px -10px rgba(0, 0, 0, 0.08);
+  --shadow-glow: 0 0 20px rgba(220, 38, 38, 0.2);
+
+  /* Global Semantic Aliases */
+  --primary-color: var(--primary);
+  --secondary-color: var(--secondary);
+  --background-color: var(--background-primary-color);
+  --background-card-color: var(--background-secondary-color);
+  --background-hover-color: var(--background-tertiary-color);
+  --text-color: var(--text-primary);
+  --text-primary-color: var(--text-primary);
+  --text-secondary-color: var(--text-secondary);
+  --text-muted-color: var(--text-muted);
+  --border-theme-color: var(--border-color);
+  --ice-blue-color: var(--ice-blue);
+}
+
+// -----------------------------------------------------------------------------
+// 4. UTILITY TOKEN CLASSES (Per Palette Specification)
+// -----------------------------------------------------------------------------
+
+// Primary (Baseball Crimson Red)
+.text-red-600 { color: #dc2626 !important; }
+.bg-red-600 { background-color: #dc2626 !important; }
+.text-red-500 { color: #ef4444 !important; }
+.bg-red-500 { background-color: #ef4444 !important; }
+.hover\:bg-red-700:hover { background-color: #b91c1c !important; }
+
+// Secondary (Navy Blue)
+.text-blue-900 { color: #1e3a8a !important; }
+.bg-blue-900 { background-color: #1e3a8a !important; }
+.text-blue-400 { color: #3b82f6 !important; }
+.bg-blue-600 { background-color: #2563eb !important; }
+.bg-deep-navy { background-color: #0f172a !important; }
+
+// Accent / Tertiary (Vintage Ochre & Gold)
+.text-ochre { color: #d97706 !important; }
+.bg-ochre { background-color: #d97706 !important; }
+.text-ochre-dark { color: #b45309 !important; }
+.bg-ochre-dark { background-color: #b45309 !important; }
+
+.badge-ochre {
+  background-color: var(--accent-ochre-light, rgba(217, 119, 6, 0.15)) !important;
+  color: #d97706 !important;
+  border: 1px solid rgba(217, 119, 6, 0.35) !important;
+}
+
+.trophy-accent {
+  color: var(--trophy-gold, #d97706);
+  text-shadow: 0 0 10px var(--trophy-gold-glow, rgba(217, 119, 6, 0.3));
+}
+
+// Typography Font Utilities
+.font-heading { font-family: var(--font-heading) !important; }
+.font-display { font-family: var(--font-display) !important; }
+.font-sans { font-family: var(--font-sans) !important; }
+.font-design { font-family: var(--font-design) !important; }
+.font-special { font-family: var(--font-special) !important; }
+.font-mono { font-family: var(--font-mono) !important; }
+
+// -----------------------------------------------------------------------------
+// 5. SCSS VARIABLE ALIASES (For Stylesheet Imports)
 // -----------------------------------------------------------------------------
 
 $primary-color: var(--primary);
@@ -205,7 +348,12 @@ $text-secondary-color: var(--text-secondary);
 $text-muted-color: var(--text-muted);
 $border-theme-color: var(--border-color);
 $ice-blue-color: var(--ice-blue);
-$accent-color: var(--ice-blue);
+$accent-color: var(--accent-ochre);
 $font-family-primary: var(--font-primary);
 $font-family-display: var(--font-display);
+$font-family-heading: var(--font-heading);
+$font-family-sans: var(--font-sans);
+$font-family-design: var(--font-design);
+$font-family-special: var(--font-special);
+$font-family-mono: var(--font-mono);
 $radius-arch: var(--radius-arch);

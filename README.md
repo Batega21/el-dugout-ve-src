@@ -1,4 +1,4 @@
-# El Dugout Ve (Wiki del Béisbol Profesional Venezolano)
+# El Dugout Ve (La Biblia del Béisbol Venezolano)
 
 **El Dugout Ve** (`eldugoutve.com`) es una enciclopedia web y plataforma comunitaria para los fanáticos del béisbol profesional venezolano (Liga Venezolana de Béisbol Profesional - LVBP). Diseñada con arquitectura desacoplada de alto rendimiento y desplegable en **Google Cloud Platform (GCP)**.
 
@@ -42,7 +42,7 @@
 
 | Layer | Technology | Key Features |
 | :--- | :--- | :--- |
-| **Frontend** | Angular 19+ | Standalone components, Angular Signals, typed HTTP interceptors, responsive styling |
+| **Frontend** | Angular 22+ | Standalone components, Angular Signals, typed HTTP interceptors, responsive styling |
 | **Backend** | NestJS 10+ | Clean architecture, DTO validation (`class-validator`), Swagger/OpenAPI docs, Terminus health probes |
 | **Database** | PostgreSQL 16 + Prisma ORM | Automated schema migrations, connection pooling, seed scripts, Prisma Studio GUI |
 | **Containers** | Docker & Docker Compose | Multi-stage slim production images, local PostgreSQL 16 + Adminer GUI |
@@ -92,7 +92,7 @@ el-dugout-ve/
 
 ### 1. Prerequisites
 
-- **Node.js**: v20+ or v22+
+- **Node.js**: v22+ or v24+
 - **Docker & Docker Compose**: Installed and running
 
 ### 2. Configure Environment Variables
@@ -211,3 +211,26 @@ npm run test:backend
 # Run production builds for both apps
 npm run build:all
 ```
+
+### 1. Color Palette Tokens
+* **Primary (Baseball Crimson Red):**
+  - Light mode: `#dc2626` / `text-red-600` / `bg-red-600`
+  - Dark mode: `#ef4444` / `text-red-500` / `bg-red-500`
+  - Accent / Focus: `#b91c1c` / `hover:bg-red-700`
+* **Secondary (Navy Blue):**
+  - Light mode: `#1e3a8a` / `text-blue-900` / `bg-blue-900`
+  - Dark mode: `#3b82f6` / `text-blue-400` / `bg-blue-600`
+  - Deep Navy Canvas/Surfaces: `#0f172a` (Dark mode card backgrounds)
+* **Accent / Tertiary (Vintage Ochre / Gold Accent):**
+  - Ochre Accent: `#d97706` / `#b45309` (Represents vintage trophies, awards, batting titles, hall of fame badges).
+* **Surfaces & Typography Backgrounds:**
+  - **Dark Theme (Default):**
+    * Background: `#08090c` or `#0b0f19` (Deep graphite/black)
+    * Card/Containers: `#111827` or `#161f30` with border `#1f2937`
+    * Text High-contrast: `#f9fafb` (White/Off-white)
+    * Text Muted/Secondary: `#9ca3af`
+  - **Light Theme:**
+    * Background: `#f8fafc` (Clean, crisp gray-white)
+    * Card/Containers: `#ffffff` with subtle border `#e2e8f0`
+    * Text High-contrast: `#0f172a` (Deep slate)
+    * Text Muted/Secondary: `#64748b`

@@ -52,6 +52,7 @@ interface SubscriptionRecord {
           <p class="subtitle">Real-time system telemetry and subscriber entitlement control.</p>
         </div>
         <div class="header-actions">
+          <a routerLink="/admin/imports" class="btn btn-outline">⚾ Ingest Leaderboards</a>
           <a routerLink="/users" class="btn btn-outline">Manage Users</a>
           <button (click)="loadAll()" class="btn btn-primary" [disabled]="loading()">
             {{ loading() ? 'Refreshing...' : 'Refresh Metrics ↻' }}

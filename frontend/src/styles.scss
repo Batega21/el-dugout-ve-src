@@ -6,12 +6,12 @@
 $app-theme: mat.define-theme((
   color: (
     theme-type: color-scheme,
-    primary: mat.$azure-palette,
+    primary: mat.$red-palette,
     tertiary: mat.$blue-palette,
   ),
   typography: (
-    plain-family: 'DM Sans, Inter, sans-serif',
-    brand-family: 'Space Grotesk, DM Sans, sans-serif',
+    plain-family: 'Montserrat, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+    brand-family: 'Bebas Neue, sans-serif',
   ),
   density: (
     scale: 0,
@@ -36,9 +36,30 @@ body {
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   min-height: 100vh;
+  overflow-x: hidden;
+  transition: background-color var(--transition-normal, 250ms ease), color var(--transition-normal, 250ms ease);
+}
+
+/* Header 1, 2 y 3: Bebas Neue */
+h1, h2, h3 {
+  font-family: var(--font-heading);
+  letter-spacing: 0.03em;
+  color: var(--text-primary);
+}
+
+/* Header 4, normal text, buttons, links: Montserrat */
+h4, h5, h6 {
+  font-family: var(--font-sans);
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+p, span, label, input, textarea, select {
+  font-family: var(--font-sans);
 }
 
 a {
+  font-family: var(--font-sans);
   color: var(--primary);
   text-decoration: none;
   transition: color 0.15s ease;
@@ -47,14 +68,27 @@ a {
   }
 }
 
-code, pre {
+button, .btn {
+  font-family: var(--font-sans);
+}
+
+/* mono: Pixelify Sans */
+code, pre, kbd, samp {
   font-family: var(--font-mono);
 }
 
+/* Design font: (For special text): Permanent Marker */
+.font-design,
+.font-special,
+.special-text,
+.design-text {
+  font-family: var(--font-design);
+}
+
 .container {
-  max-width: 1200px;
+  max-width: var(--wrap-max-width, 1200px);
   margin: 0 auto;
-  padding: 0 1.5rem;
+  padding: 0 var(--wrap-padding-x, 1.5rem);
 }
 
 .btn {
@@ -68,11 +102,12 @@ code, pre {
   border-radius: var(--radius-sm);
   border: 1px solid transparent;
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: all 0.2s ease;
 
   &.btn-primary {
     background-color: var(--primary);
-    color: white;
+    color: #ffffff;
+    box-shadow: 0 2px 8px var(--primary-glow, rgba(239, 68, 68, 0.35));
     &:hover {
       background-color: var(--primary-hover);
     }
@@ -94,32 +129,33 @@ code, pre {
   }
 }
 
-/* Subscription & Login Dialog Panels & Overlay */
+/* Subscription, Sign-Up & Login Dialog Panels & Form Fields */
 .subscription-dialog-panel,
+.signup-dialog-panel,
 .login-dialog-panel {
   .mat-mdc-dialog-surface {
     border-radius: 1.25rem !important;
-    background-color: #0b0f19 !important;
-    border: 1px solid rgba(255, 255, 255, 0.12) !important;
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7) !important;
+    background-color: var(--background-secondary-color) !important;
+    border: 1px solid var(--border-theme-color) !important;
+    box-shadow: var(--shadow-card) !important;
     padding: 0 !important;
-    color: #f8fafc !important;
+    color: var(--text-primary) !important;
   }
 
   .mat-mdc-form-field {
-    --mdc-outlined-text-field-input-text-color: #f1f5f9;
-    --mdc-outlined-text-field-input-text-placeholder-color: #94a3b8;
-    --mdc-outlined-text-field-label-text-color: #94a3b8;
-    --mdc-outlined-text-field-focus-label-text-color: #38bdf8;
-    --mdc-outlined-text-field-outline-color: rgba(255, 255, 255, 0.2);
-    --mdc-outlined-text-field-focus-outline-color: #38bdf8;
+    --mdc-outlined-text-field-input-text-color: var(--text-primary);
+    --mdc-outlined-text-field-input-text-placeholder-color: var(--text-muted);
+    --mdc-outlined-text-field-label-text-color: var(--text-secondary);
+    --mdc-outlined-text-field-focus-label-text-color: var(--primary);
+    --mdc-outlined-text-field-outline-color: var(--border-strong);
+    --mdc-outlined-text-field-focus-outline-color: var(--primary);
 
     input.mat-mdc-input-element {
-      color: #f1f5f9 !important;
-      caret-color: #38bdf8 !important;
+      color: var(--text-primary) !important;
+      caret-color: var(--primary) !important;
 
       &::placeholder {
-        color: #94a3b8 !important;
+        color: var(--text-muted) !important;
         opacity: 0 !important;
         transition: opacity 0.2s ease;
       }
@@ -138,7 +174,7 @@ code, pre {
     }
 
     .mat-icon {
-      color: #94a3b8 !important;
+      color: var(--text-secondary) !important;
     }
   }
 }
@@ -151,10 +187,10 @@ code, pre {
     background: transparent;
   }
   &::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.15);
+    background: var(--border-strong, rgba(255, 255, 255, 0.15));
     border-radius: 9999px;
   }
   &::-webkit-scrollbar-thumb:hover {
-    background: rgba(255, 255, 255, 0.3);
+    background: var(--text-secondary, rgba(255, 255, 255, 0.3));
   }
 }

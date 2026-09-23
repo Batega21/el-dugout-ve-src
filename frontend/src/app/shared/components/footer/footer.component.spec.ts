@@ -19,12 +19,12 @@ describe('FooterComponent', () => {
   it('should have default configuration matching DEFAULT_FOOTER_CONFIG', () => {
     const config = component.config();
     expect(config).toEqual(DEFAULT_FOOTER_CONFIG);
-    expect(config.brand?.name).toBe('BRAND NAME');
-    expect(config.brand?.slogan).toBe('Enter Your Slogan Here');
+    expect(config.brand?.name).toBe('EL DUGOUT VE');
+    expect(config.brand?.slogan).toBe('La Wiki del Béisbol Profesional Venezolano');
     expect(config.sections?.length).toBe(2);
-    expect(config.contact?.title).toBe('Contact us');
-    expect(config.social?.items.length).toBe(5);
-    expect(config.bottom?.copyright).toContain('© 2025 Example Text');
+    expect(config.contact?.title).toBe('Contacto');
+    expect(config.social?.items.length).toBe(4);
+    expect(config.bottom?.copyright).toContain('© 2026 El Dugout Ve');
   });
 
   it('should update newsletterEmail signal on email input event', () => {

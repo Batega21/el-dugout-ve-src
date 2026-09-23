@@ -1,8 +1,9 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { HeaderComponent } from './shared/components/header/header.component';
 import { FooterComponent } from './shared/components/footer/footer.component';
 import { FooterConfig, DEFAULT_FOOTER_CONFIG } from './shared/components/footer/footer.interface';
+import { ThemeService } from './core/services/theme.service';
 
 @Component({
   selector: 'app-root',
@@ -33,6 +34,11 @@ import { FooterConfig, DEFAULT_FOOTER_CONFIG } from './shared/components/footer/
   `],
 })
 export class AppComponent {
+  /**
+   * Initializes theme engine upon application boot.
+   */
+  readonly themeService = inject(ThemeService);
+
   /**
    * Reusable footer configuration passed into the FooterComponent via Signal input.
    */
