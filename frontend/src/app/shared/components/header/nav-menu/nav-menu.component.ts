@@ -90,12 +90,6 @@ export interface NavItem {
 
     <!-- Mobile Navigation Toggle -->
     <div class="mobile-nav">
-      <!-- Baseball Ball Theme Toggle -->
-      <app-theme-toggle></app-theme-toggle>
-
-      <!-- Dynamic Language Switcher (Venezuela & USA Flags) -->
-      <app-language-toggle></app-language-toggle>
-
       @if (authService.isLoggedIn()) {
         <app-avatar></app-avatar>
       }
@@ -160,6 +154,14 @@ export interface NavItem {
             <span>{{ 'COMMON.NAV.LOGOUT' | translate }}</span>
           </button>
         }
+
+        <mat-divider></mat-divider>
+
+        <!-- Theme & Language Toggles inside Mobile Menu -->
+        <div class="mobile-menu-toggles" (click)="$event.stopPropagation()">
+          <app-theme-toggle></app-theme-toggle>
+          <app-language-toggle></app-language-toggle>
+        </div>
       </mat-menu>
     </div>
   `,
@@ -251,6 +253,15 @@ export interface NavItem {
       .mobile-menu-btn {
         color: var(--text-color, var(--text-primary, #ffffff));
       }
+    }
+
+    .mobile-menu-toggles {
+      display: flex;
+      align-items: center;
+      justify-content: space-evenly;
+      padding: 0.85rem 1rem;
+      gap: 1.25rem;
+      background: var(--background-hover-color, rgba(255, 255, 255, 0.03));
     }
 
     @media (max-width: 860px) {

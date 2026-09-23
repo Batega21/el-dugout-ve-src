@@ -553,5 +553,33 @@
   "Política de Privacidad": "Privacy Policy",
   "Términos de Servicio": "Terms of Service",
   "© 2026 El Dugout Ve (eldugoutve.com). Todos los derechos reservados.": "© 2026 El Dugout Ve (eldugoutve.com). All rights reserved.",
-  "Profile updated successfully!": "Profile updated successfully!"
+  "Profile updated successfully!": "Profile updated successfully!",
+  "LEADERS_CAROUSEL": {
+    "ESTADISTICAS_BADGE": "Statistics",
+    "BATTING_TITLE": "All-Time Career Batting Records",
+    "BATTING_SUBTITLE": "Most recent seasons and all-time records of the Venezuelan Professional Baseball League",
+    "PITCHING_TITLE": "All-Time Career Pitching Records",
+    "PITCHING_SUBTITLE": "Legendary pitching marks in the history of the LVBP",
+    "HOME_RUNS_TITLE": "Home Runs Leaders",
+    "HITS_TITLE": "Hits Leaders",
+    "BATTING_AVG_TITLE": "Batting Champions",
+    "STOLEN_BASES_TITLE": "Stolen Bases Leaders",
+    "WINS_TITLE": "Wins Leaders",
+    "STRIKEOUTS_TITLE": "Strikeouts Leaders",
+    "SAVES_TITLE": "Saves Leaders",
+    "TOP_5_BADGE": "TOP 5",
+    "RECENT_SEASONS_BADGE": "LAST 8",
+    "COL_YEAR": "YEAR/SEAS",
+    "COL_PLAYER": "PLAYER",
+    "COL_TEAM": "TEAM",
+    "VIEW_FULL_HISTORY": "VIEW FULL HISTORY →",
+    "PREV_TABLE": "Previous table",
+    "NEXT_TABLE": "Next table"
+  },
+  "RECORDS": {
+    "TAG": "Milestones & Marks",
+    "TITLE": "LVBP All-Time Records",
+    "SUBTITLE": "The greatest individual achievements recorded across 80+ years of professional baseball.",
+    "EMPTY": "No historical records available at this time."
+  }
 }

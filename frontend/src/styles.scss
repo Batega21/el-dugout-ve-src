@@ -21,6 +21,7 @@ $app-theme: mat.define-theme((
 html {
   color-scheme: dark light;
   @include mat.all-component-themes($app-theme);
+  overflow-x: hidden;
 }
 
 * {
@@ -195,3 +196,16 @@ code, pre, kbd, samp {
     background: var(--text-secondary, rgba(255, 255, 255, 0.3));
   }
 }
+
+/* Mobile menu toggle container in mat-menu overlay */
+.app-mobile-menu {
+  .mobile-menu-toggles {
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    padding: 0.85rem 1rem;
+    gap: 1.25rem;
+    background: var(--background-hover-color, rgba(255, 255, 255, 0.03));
+  }
+}
+

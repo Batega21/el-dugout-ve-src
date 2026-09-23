@@ -252,6 +252,14 @@ import { ThemeService } from '../../../core/services/theme.service';
         padding: 3.5rem 0;
       }
 
+      .hero-container {
+        padding: 0 1rem;
+      }
+
+      .hero-title {
+        font-size: clamp(2.5rem, 12vw, 3.75rem);
+      }
+
       .hero-actions {
         flex-direction: column;
         width: 100%;
