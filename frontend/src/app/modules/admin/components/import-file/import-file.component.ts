@@ -234,6 +234,12 @@ import { ConfirmationModalComponent } from '../confirmation-modal/confirmation-m
     </div>
   `,
   styles: [`
+    :host {
+      display: block;
+      color: var(--text-color, var(--text-primary, #ffffff));
+      font-family: var(--font-sans);
+    }
+
     .import-page-container {
       padding: 2.5rem 0;
       max-width: 1100px;
@@ -248,27 +254,27 @@ import { ConfirmationModalComponent } from '../confirmation-modal/confirmation-m
       display: flex;
       align-items: center;
       gap: 0.5rem;
-      font-size: 0.85rem;
-      color: #9ca3af;
+      font-size: var(--font-size-sm, 0.85rem);
+      font-family: var(--font-sans);
     }
 
     .breadcrumb-link {
-      color: #9ca3af;
+      color: var(--text-secondary-color, var(--text-secondary, #9ca3af));
       text-decoration: none;
       transition: color 0.15s ease;
 
       &:hover {
-        color: #e52323;
+        color: var(--primary-color, var(--primary, #e52323));
       }
     }
 
     .breadcrumb-sep {
-      color: #4b5563;
+      color: var(--text-muted-color, var(--text-muted, #4b5563));
     }
 
     .breadcrumb-current {
-      color: #f3f4f6;
-      font-weight: 500;
+      color: var(--text-color, var(--text-primary, #f3f4f6));
+      font-weight: var(--font-weight-medium, 500);
     }
 
     /* Page Header */
@@ -279,33 +285,38 @@ import { ConfirmationModalComponent } from '../confirmation-modal/confirmation-m
       flex-wrap: wrap;
       gap: 1rem;
       padding-bottom: 0.5rem;
-      border-bottom: 1px solid #1f2937;
+      border-bottom: 1px solid var(--border-theme-color, var(--border-color, #1f2937));
     }
 
     .admin-badge {
       display: inline-block;
-      font-size: 0.75rem;
-      font-weight: 700;
+      font-size: var(--font-size-xs, 0.75rem);
+      font-weight: var(--font-weight-bold, 700);
       text-transform: uppercase;
       letter-spacing: 0.08em;
-      color: #e52323;
-      margin-bottom: 0.4rem;
+      color: var(--primary, #e52323);
+      background: var(--primary-light, rgba(239, 68, 68, 0.16));
+      border-radius: var(--radius-pill, 9999px);
+      padding: 0.25rem 0.65rem;
+      margin-bottom: 0.5rem;
     }
 
     .page-title {
-      font-size: 2rem;
-      font-weight: 800;
-      color: #ffffff;
+      font-family: var(--font-display, inherit);
+      font-size: var(--font-size-2xl, 2rem);
+      font-weight: var(--font-weight-extrabold, 800);
+      color: var(--text-color, var(--text-primary, #ffffff));
       margin: 0 0 0.4rem 0;
       letter-spacing: -0.02em;
     }
 
     .page-subtitle {
-      color: #9ca3af;
+      font-family: var(--font-sans);
+      color: var(--text-secondary-color, var(--text-secondary, #9ca3af));
       margin: 0;
-      font-size: 0.95rem;
+      font-size: var(--font-size-sm, 0.95rem);
       max-width: 650px;
-      line-height: 1.5;
+      line-height: var(--line-height-normal, 1.5);
     }
 
     /* Alerts */
@@ -314,7 +325,7 @@ import { ConfirmationModalComponent } from '../confirmation-modal/confirmation-m
       align-items: center;
       gap: 1rem;
       padding: 1rem 1.25rem;
-      border-radius: 0.75rem;
+      border-radius: var(--radius-md, 0.75rem);
       font-size: 0.9rem;
       position: relative;
 
@@ -362,9 +373,9 @@ import { ConfirmationModalComponent } from '../confirmation-modal/confirmation-m
 
     /* Upload Dropzone */
     .dropzone-card {
-      border: 2px dashed #374151;
-      border-radius: 1rem;
-      background: #111827;
+      border: 2px dashed var(--border-theme-color, #374151);
+      border-radius: var(--radius-lg, 1rem);
+      background: var(--background-secondary-color, #111827);
       padding: 3.5rem 2rem;
       text-align: center;
       cursor: pointer;
@@ -372,18 +383,18 @@ import { ConfirmationModalComponent } from '../confirmation-modal/confirmation-m
       outline: none;
 
       &:hover, &:focus-visible {
-        border-color: #e52323;
-        background: rgba(229, 35, 35, 0.03);
+        border-color: var(--primary, #e52323);
+        background: var(--primary-light, rgba(229, 35, 35, 0.03));
       }
 
       &.dragging {
-        border-color: #e52323;
-        background: rgba(229, 35, 35, 0.08);
+        border-color: var(--primary, #e52323);
+        background: var(--primary-light, rgba(229, 35, 35, 0.08));
         transform: scale(1.005);
       }
 
       &.has-file {
-        border-color: #10b981;
+        border-color: var(--success, #10b981);
       }
 
       &.loading {
@@ -405,11 +416,11 @@ import { ConfirmationModalComponent } from '../confirmation-modal/confirmation-m
       width: 64px;
       height: 64px;
       border-radius: 50%;
-      background: rgba(229, 35, 35, 0.12);
+      background: var(--primary-light, rgba(229, 35, 35, 0.12));
       display: flex;
       align-items: center;
       justify-content: center;
-      color: #e52323;
+      color: var(--primary, #e52323);
       transition: transform 0.2s ease;
 
       .upload-icon {
@@ -425,17 +436,19 @@ import { ConfirmationModalComponent } from '../confirmation-modal/confirmation-m
     }
 
     .drop-title {
+      font-family: var(--font-display, inherit);
       font-size: 1.35rem;
       font-weight: 700;
-      color: #ffffff;
+      color: var(--text-color, var(--text-primary, #ffffff));
       margin: 0;
     }
 
     .drop-desc {
-      font-size: 0.9rem;
-      color: #9ca3af;
+      font-family: var(--font-sans);
+      font-size: var(--font-size-sm, 0.9rem);
+      color: var(--text-secondary-color, var(--text-secondary, #9ca3af));
       margin: 0;
-      line-height: 1.5;
+      line-height: var(--line-height-normal, 1.5);
     }
 
     .security-badges {
@@ -450,19 +463,19 @@ import { ConfirmationModalComponent } from '../confirmation-modal/confirmation-m
       display: inline-flex;
       align-items: center;
       gap: 0.35rem;
-      font-size: 0.75rem;
-      font-weight: 600;
-      color: #9ca3af;
-      background: #1f2937;
-      border: 1px solid #374151;
-      border-radius: 9999px;
+      font-size: var(--font-size-xs, 0.75rem);
+      font-weight: var(--font-weight-semibold, 600);
+      color: var(--text-secondary-color, var(--text-secondary, #9ca3af));
+      background: var(--background-tertiary-color, #1f2937);
+      border: 1px solid var(--border-theme-color, #374151);
+      border-radius: var(--radius-pill, 9999px);
       padding: 0.25rem 0.65rem;
 
       .chip-icon {
         font-size: 14px;
         width: 14px;
         height: 14px;
-        color: #e52323;
+        color: var(--primary, #e52323);
       }
     }
 
@@ -474,9 +487,9 @@ import { ConfirmationModalComponent } from '../confirmation-modal/confirmation-m
       padding: 2rem 0;
 
       .loading-label {
-        color: #d1d5db;
-        font-size: 0.95rem;
-        font-weight: 500;
+        color: var(--text-secondary-color, var(--text-secondary, #d1d5db));
+        font-size: var(--font-size-sm, 0.95rem);
+        font-weight: var(--font-weight-medium, 500);
         margin: 0;
       }
     }
@@ -485,9 +498,9 @@ import { ConfirmationModalComponent } from '../confirmation-modal/confirmation-m
     .staged-file-card {
       margin-top: 1.25rem;
       padding: 1.25rem 1.5rem;
-      background: #111827;
-      border: 1px solid #1f2937;
-      border-radius: 0.75rem;
+      background: var(--background-secondary-color, #111827);
+      border: 1px solid var(--border-theme-color, #1f2937);
+      border-radius: var(--radius-md, 0.75rem);
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -505,8 +518,8 @@ import { ConfirmationModalComponent } from '../confirmation-modal/confirmation-m
         width: 44px;
         height: 44px;
         background: rgba(16, 185, 129, 0.12);
-        color: #10b981;
-        border-radius: 0.5rem;
+        color: var(--success, #10b981);
+        border-radius: var(--radius-sm, 0.5rem);
         display: flex;
         align-items: center;
         justify-content: center;
@@ -519,9 +532,9 @@ import { ConfirmationModalComponent } from '../confirmation-modal/confirmation-m
       }
 
       .file-title-text {
-        font-weight: 600;
-        color: #ffffff;
-        font-size: 1rem;
+        font-weight: var(--font-weight-semibold, 600);
+        color: var(--text-color, var(--text-primary, #ffffff));
+        font-size: var(--font-size-base, 1rem);
       }
 
       .file-meta-row {
@@ -532,14 +545,14 @@ import { ConfirmationModalComponent } from '../confirmation-modal/confirmation-m
       }
 
       .file-size-tag {
-        color: #9ca3af;
+        color: var(--text-muted-color, var(--text-muted, #9ca3af));
       }
 
       .verified-tag {
         display: inline-flex;
         align-items: center;
         gap: 0.25rem;
-        color: #34d399;
+        color: var(--success, #34d399);
         font-weight: 600;
 
         .verified-icon {
@@ -562,9 +575,9 @@ import { ConfirmationModalComponent } from '../confirmation-modal/confirmation-m
       align-items: center;
       gap: 0.5rem;
       padding: 0.65rem 1.25rem;
-      border-radius: 0.5rem;
-      font-size: 0.875rem;
-      font-weight: 600;
+      border-radius: var(--radius-sm, 0.5rem);
+      font-size: var(--font-size-sm, 0.875rem);
+      font-weight: var(--font-weight-semibold, 600);
       cursor: pointer;
       border: 1px solid transparent;
       transition: all 0.15s ease;
@@ -578,33 +591,33 @@ import { ConfirmationModalComponent } from '../confirmation-modal/confirmation-m
 
     .btn-outline {
       background: transparent;
-      border-color: #374151;
-      color: #d1d5db;
+      border-color: var(--border-theme-color, var(--border-strong, #374151));
+      color: var(--text-color, var(--text-primary, #d1d5db));
 
       &:hover {
-        background: #1f2937;
-        color: #ffffff;
+        background: var(--background-tertiary-color, #1f2937);
+        color: var(--text-color, #ffffff);
       }
     }
 
     .btn-browse {
-      background: #1f2937;
-      border-color: #374151;
-      color: #ffffff;
+      background: var(--background-tertiary-color, #1f2937);
+      border-color: var(--border-theme-color, #374151);
+      color: var(--text-color, var(--text-primary, #ffffff));
 
       &:hover:not(:disabled) {
-        background: #374151;
-        border-color: #4b5563;
+        background: var(--border-strong, #374151);
+        border-color: var(--border-focus, #4b5563);
       }
     }
 
     .btn-primary {
-      background: #e52323;
+      background: var(--primary, #e52323);
       color: #ffffff;
       box-shadow: 0 2px 10px rgba(229, 35, 35, 0.35);
 
       &:hover:not(:disabled) {
-        background: #dc2626;
+        background: var(--primary-hover, #dc2626);
         box-shadow: 0 4px 14px rgba(229, 35, 35, 0.5);
       }
     }

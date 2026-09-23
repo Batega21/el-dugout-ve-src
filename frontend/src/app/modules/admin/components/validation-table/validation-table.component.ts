@@ -252,6 +252,12 @@ export const DEFAULT_VALIDATION_PREVIEW: ValidationPreviewDto = {
     </div>
   `,
   styles: [`
+    :host {
+      display: block;
+      color: var(--text-color, #ffffff);
+      font-family: var(--font-sans);
+    }
+
     .validation-container {
       display: flex;
       flex-direction: column;
@@ -272,9 +278,9 @@ export const DEFAULT_VALIDATION_PREVIEW: ValidationPreviewDto = {
       flex-wrap: wrap;
       gap: 1rem;
       padding: 1.25rem 1.5rem;
-      background: #111827;
-      border: 1px solid #1f2937;
-      border-radius: 0.75rem;
+      background: var(--background-secondary-color, #111827);
+      border: 1px solid var(--border-theme-color, #1f2937);
+      border-radius: var(--radius-md, 0.75rem);
     }
 
     .file-meta {
@@ -285,19 +291,20 @@ export const DEFAULT_VALIDATION_PREVIEW: ValidationPreviewDto = {
       .meta-icon {
         width: 44px;
         height: 44px;
-        border-radius: 0.5rem;
-        background: rgba(229, 35, 35, 0.12);
+        border-radius: var(--radius-sm, 0.5rem);
+        background: var(--primary-light, rgba(229, 35, 35, 0.12));
         display: flex;
         align-items: center;
         justify-content: center;
-        color: #e52323;
+        color: var(--primary, #e52323);
       }
 
       .file-title {
         margin: 0;
+        font-family: var(--font-display, inherit);
         font-size: 1.15rem;
         font-weight: 700;
-        color: #ffffff;
+        color: var(--text-color, #ffffff);
       }
 
       .meta-sub {
@@ -305,12 +312,12 @@ export const DEFAULT_VALIDATION_PREVIEW: ValidationPreviewDto = {
         align-items: center;
         gap: 0.5rem;
         font-size: 0.825rem;
-        color: #9ca3af;
+        color: var(--text-secondary-color, #9ca3af);
         margin-top: 0.2rem;
       }
 
       .dot-sep {
-        color: #4b5563;
+        color: var(--text-muted-color, #4b5563);
       }
 
       .category-badge {
@@ -386,9 +393,9 @@ export const DEFAULT_VALIDATION_PREVIEW: ValidationPreviewDto = {
 
     .summary-card {
       padding: 1.25rem;
-      border-radius: 0.75rem;
-      background: #111827;
-      border: 1px solid #1f2937;
+      border-radius: var(--radius-md, 0.75rem);
+      background: var(--background-secondary-color, #111827);
+      border: 1px solid var(--border-theme-color, #1f2937);
       display: flex;
       align-items: flex-start;
       gap: 1rem;
@@ -397,7 +404,7 @@ export const DEFAULT_VALIDATION_PREVIEW: ValidationPreviewDto = {
       .card-icon {
         width: 38px;
         height: 38px;
-        border-radius: 0.5rem;
+        border-radius: var(--radius-sm, 0.5rem);
         display: flex;
         align-items: center;
         justify-content: center;
@@ -409,11 +416,11 @@ export const DEFAULT_VALIDATION_PREVIEW: ValidationPreviewDto = {
       }
 
       .card-label {
-        font-size: 0.75rem;
+        font-size: var(--font-size-xs, 0.75rem);
         font-weight: 600;
         text-transform: uppercase;
         letter-spacing: 0.05em;
-        color: #9ca3af;
+        color: var(--text-secondary-color, #9ca3af);
       }
 
       .card-value {
@@ -421,12 +428,12 @@ export const DEFAULT_VALIDATION_PREVIEW: ValidationPreviewDto = {
         font-weight: 800;
         line-height: 1.2;
         margin: 0.25rem 0;
-        color: #ffffff;
+        color: var(--text-color, #ffffff);
       }
 
       .card-sub {
-        font-size: 0.75rem;
-        color: #6b7280;
+        font-size: var(--font-size-xs, 0.75rem);
+        color: var(--text-muted-color, #6b7280);
       }
     }
 
@@ -465,9 +472,9 @@ export const DEFAULT_VALIDATION_PREVIEW: ValidationPreviewDto = {
 
     /* Table Container */
     .table-card {
-      background: #111827;
-      border: 1px solid #1f2937;
-      border-radius: 0.75rem;
+      background: var(--background-secondary-color, #111827);
+      border: 1px solid var(--border-theme-color, #1f2937);
+      border-radius: var(--radius-md, 0.75rem);
       overflow: hidden;
     }
 
@@ -484,33 +491,33 @@ export const DEFAULT_VALIDATION_PREVIEW: ValidationPreviewDto = {
       thead {
         position: sticky;
         top: 0;
-        background: #0f172a;
+        background: var(--background-tertiary-color, #0f172a);
         z-index: 10;
       }
 
       th {
         padding: 0.85rem 1rem;
         text-align: left;
-        font-size: 0.75rem;
+        font-size: var(--font-size-xs, 0.75rem);
         font-weight: 700;
         text-transform: uppercase;
         letter-spacing: 0.05em;
-        color: #9ca3af;
-        border-bottom: 1px solid #1f2937;
+        color: var(--text-secondary-color, #9ca3af);
+        border-bottom: 1px solid var(--border-theme-color, #1f2937);
       }
 
       td {
         padding: 0.85rem 1rem;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-        color: #d1d5db;
+        border-bottom: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.05));
+        color: var(--text-color, #d1d5db);
         vertical-align: middle;
       }
     }
 
     .col-num {
       width: 65px;
-      color: #6b7280 !important;
-      font-family: monospace;
+      color: var(--text-muted-color, #6b7280) !important;
+      font-family: var(--font-mono, monospace);
     }
 
     .text-right {
@@ -638,9 +645,9 @@ export const DEFAULT_VALIDATION_PREVIEW: ValidationPreviewDto = {
       justify-content: space-between;
       align-items: center;
       padding: 1.25rem 1.5rem;
-      background: #111827;
-      border: 1px solid #1f2937;
-      border-radius: 0.75rem;
+      background: var(--background-secondary-color, #111827);
+      border: 1px solid var(--border-theme-color, #1f2937);
+      border-radius: var(--radius-md, 0.75rem);
       flex-wrap: wrap;
       gap: 1rem;
     }

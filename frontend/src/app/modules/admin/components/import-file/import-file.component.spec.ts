@@ -4,6 +4,7 @@ import { Injector, runInInjectionContext } from '@angular/core';
 import { of, throwError } from 'rxjs';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { MatDialog } from '@angular/material/dialog';
+import { TranslateService } from '@ngx-translate/core';
 import { ImportFileComponent } from './import-file.component';
 import { AuthService } from '../../../../core/services/auth.service';
 import { ImportsService } from '../../../../core/services/imports.service';
@@ -26,6 +27,10 @@ describe('ImportFileComponent', () => {
 
   let matDialogMock: {
     open: ReturnType<typeof vi.fn>;
+  };
+
+  let translateServiceMock: {
+    instant: ReturnType<typeof vi.fn>;
   };
 
   const samplePreview: ValidationPreviewDto = {
@@ -72,11 +77,16 @@ describe('ImportFileComponent', () => {
       open: vi.fn(),
     };
 
+    translateServiceMock = {
+      instant: vi.fn().mockReturnValue('Se han procesado exitosamente 1 registros.'),
+    };
+
     injector = Injector.create({
       providers: [
         { provide: AuthService, useValue: authServiceMock },
         { provide: ImportsService, useValue: importsServiceMock },
         { provide: MatDialog, useValue: matDialogMock },
+        { provide: TranslateService, useValue: translateServiceMock },
       ],
     });
 
@@ -174,7 +184,7 @@ describe('ImportFileComponent', () => {
       expect(importsServiceMock.commitImport).toHaveBeenCalled();
       expect(component.previewData()).toBeNull();
       expect(component.file()).toBeNull();
-      expect(component.successMessage()).toContain('Saved successfully');
+      expect(component.successMessage()).toContain('Se han procesado exitosamente');
       expect(matDialogMock.open).toHaveBeenCalledWith(
         ConfirmationModalComponent,
         expect.objectContaining({

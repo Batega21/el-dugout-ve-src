@@ -3,6 +3,8 @@
 ## Objective
 
 Implement a reusable, highly optimized carousel component in Angular (`LeaderTableCarouselComponent`) that displays historical top-5 baseball leader tables. The component must support progressive lazy loading, side-peeking tables with gradient masks, smooth transitions, and custom baseball-themed SVG navigation buttons based on the provided wireframes and UI references.
+Relocate the "System Health Matrix" section-cards to the "admin workspace".
+Remove the "Quick Setup Guide" from the home component.
 
 ---
 
@@ -12,14 +14,21 @@ Implement a reusable, highly optimized carousel component in Angular (`LeaderTab
    - The active leader table is centered in the viewport container.
    - The previous ("Last") and next ("Second") leader tables must peek in slightly from the left and right edges.
    - **Gradient Masks / Overlays:**
-     - Left edge overlay: A linear gradient (`from-black/100 to-transparent` in dark mode, or matching theme background) fading from left (100% opacity) to right (0% opacity) covering the peeking previous table.
-     - Right edge overlay: A linear gradient fading from right (100% opacity) to left (0% opacity) covering the peeking next table.
+     - Left edge overlay:
+        - Dark Theme: A linear gradient (`from-black/100 to-transparent` in dark mode, or matching theme background) fading from left (100% opacity) to right (0% opacity) covering the peeking previous table.
+        - Light Theme: A linear gradient (`from-white/100 to-transparent` in light mode, or matching theme background) fading from left (100% opacity) to right (0% opacity) covering the peeking previous table.
+     - Right edge overlay:
+        - Dark Theme: A linear gradient fading from right (100% opacity) to left (0% opacity) covering the peeking next table.
+        - Light Theme: A linear gradient fading from right (100% opacity) to left (0% opacity) covering the peeking next table.
    - The active centered card has full opacity and crisp visibility.
 
 2. **Navigation Buttons (`home_plate_btn.svg`):**
    - Source path: `public/images/svg/home_plate_btn.svg` (or `/assets/images/svg/home_plate_btn.svg`).
    - Positioned vertically centered on the left and right sides of the carousel container (anchored over the gradient areas).
    - The left button points left; the right button points right (rotate 180° if needed).
+   - **Theme Handling**: 
+     - Dark theme: Update the SVG fill colors to match the dark theme defined in the _theme.scss file.
+     - Light theme: Update the SVG fill colors to match the light theme defined in the _theme.scss file.
    - **Interactions & Animations:**
      - `hover`: Slight scale-up (`scale-110`), glowing red drop-shadow filter (`drop-shadow-[0_0_10px_rgba(229,35,35,0.6)]`), smooth cubic-bezier transition.
      - `active / click`: Quick press feedback (`scale-95`), trigger sliding animation to previous or next table.
@@ -82,3 +91,6 @@ Tables included in the carousel (each showing Top 5 pitchers):
 - [ ] Batting carousel switches smoothly between Home Runs, Hits, Batting Average, and Stolen Bases.
 - [ ] Pitching carousel switches smoothly between Wins, Strikeouts, and Saves.
 - [ ] Each table renders strictly the top 5 records with monospaced red stats and a bottom "View Full History" link.
+- [ ] "System Health Matrix" is moved to admin workspace.
+- [ ] "Quick Setup Guide" is removed from home.
+- [ ] Ensure that the Theming and i18n is working as expected.
