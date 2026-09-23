@@ -6,7 +6,7 @@ We have implemented a comprehensive theme system for **El Dugout Ve**, featuring
 
 ## 🎨 Design Tokens & Color Palette
 
-All color tokens in [`_theme.scss`](file:///Users/gabo/repos/el-dugout/frontend/src/styles/_theme.scss) and [`styles.scss`](file:///Users/gabo/repos/el-dugout/frontend/src/styles.scss) have been updated to reflect the baseball identity:
+All color tokens in [`_theme.scss`](../el-dugout/frontend/src/styles/_theme.scss) and [`styles.scss`](../el-dugout/frontend/src/styles.scss) have been updated to reflect the baseball identity:
 
 | Token Category | Dark Mode (Default) | Light Mode | Utility Classes |
 | :--- | :--- | :--- | :--- |
@@ -22,7 +22,7 @@ All color tokens in [`_theme.scss`](file:///Users/gabo/repos/el-dugout/frontend/
 
 ## ⚾ Baseball Ball Toggle Button
 
-The new [`ThemeToggleComponent`](file:///Users/gabo/repos/el-dugout/frontend/src/app/shared/components/header/theme-toggle/theme-toggle.component.ts) renders an authentic baseball SVG ball with dual behavior:
+The new [`ThemeToggleComponent`](../el-dugout/frontend/src/app/shared/components/header/theme-toggle/theme-toggle.component.ts) renders an authentic baseball SVG ball with dual behavior:
 
 ```mermaid
 flowchart LR
@@ -32,6 +32,7 @@ flowchart LR
 ```
 
 ### 1. Dark Mode Behavior (Active)
+
 - **Illumination**: The baseball is a **bright baseball ball emitting bright yellow light**.
 - **Visuals**:
   - Radial gradient core transitioning from `#ffffff` and `#fef08a` to radiant `#facc15` and warm amber `#eab308`.
@@ -40,6 +41,7 @@ flowchart LR
   - Luminous light glint on the sphere.
 
 ### 2. Light Mode Behavior
+
 - **Classic Ball**: Renders as a **normal baseball ball**.
 - **Visuals**:
   - Crisp white/cream leather shading (`#ffffff` to `#f8fafc` to `#cbd5e1`).
@@ -47,6 +49,7 @@ flowchart LR
   - Subtle natural 3D spherical shadow without yellow glow.
 
 ### 3. Tactile Feedback & Accessibility
+
 - Click animation: 360-degree rotation and scale pulse.
 - ARIA support: `role="switch"`, `aria-checked="true|false"`, `aria-label`, and keyboard focus ring.
 
@@ -54,7 +57,7 @@ flowchart LR
 
 ## ⚙️ Core Theme Service
 
-Created [`ThemeService`](file:///Users/gabo/repos/el-dugout/frontend/src/app/core/services/theme.service.ts):
+Created [`ThemeService`](../el-dugout/frontend/src/app/core/services/theme.service.ts):
 - Uses Angular 19+ **Signals**: `theme()`, `isDark()`, `isLight()`.
 - Persists user selection to `localStorage` under `el_dugout_theme`.
 - Modifies `document.documentElement` (`class="dark|light"`, `data-theme="dark|light"`, `colorScheme="dark|light"`).
@@ -65,6 +68,7 @@ Created [`ThemeService`](file:///Users/gabo/repos/el-dugout/frontend/src/app/cor
 ## 🔍 Verification & Test Results
 
 ### 1. Automated Vitest Suite
+
 Executed:
 ```bash
 npm run test
@@ -75,8 +79,5 @@ Result: **12 test files passed, 89 total tests passed (100% success)**.
 - All 81 existing tests continue passing without regression.
 
 ### 2. Production Build Verification
-Executed:
-```bash
-HOME=/Users/gabo/repos/el-dugout/frontend npm run build
-```
+
 Result: **Build completed successfully with exit code 0**. All SCSS and TypeScript bundles compiled without errors.
