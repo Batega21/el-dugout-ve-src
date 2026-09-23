@@ -18,6 +18,8 @@
       "OPEN_MENU": "Open Navigation Menu",
       "HOME": "Home",
       "DASHBOARD": "Dashboard",
+      "ADMIN": "Admin",
+      "IMPORT_EXCEL": "Import Excel",
       "API_DOCS": "API Docs ↗"
     },
     "THEME": {
@@ -184,6 +186,87 @@
     "UNLINKED": "Unlinked",
     "NO_EMAIL": "No email"
   },
+  "IMPORT_EXCEL": {
+    "HEADER": {
+      "BREADCRUMB_DASHBOARD": "Admin Dashboard",
+      "BREADCRUMB_CURRENT": "Excel File Import",
+      "BADGE": "Admin Workspace",
+      "TITLE": "Excel File Ingestion & Validation",
+      "SUBTITLE": "Secure historical LVBP baseball statistics import featuring binary magic signature verification, anti-formula injection, and duplicate database collision detection."
+    },
+    "ACTIONS": {
+      "BACK_DASHBOARD": "Back to Dashboard",
+      "DISMISS": "Dismiss",
+      "REMOVE_FILE": "Remove File",
+      "VALIDATE_BTN": "Validate file",
+      "VALIDATING": "Validating...",
+      "CONFIRM_SAVE": "Confirm and Save to Database",
+      "DISCARD": "Discard / Cancel",
+      "SAVING": "Saving to Database..."
+    },
+    "ALERTS": {
+      "ACCESS_DENIED": "Access Restricted",
+      "ADMIN_REQUIRED": "Only users with the 'admin' role are permitted to import data into the system.",
+      "ERROR_TITLE": "Validation Error",
+      "SUCCESS_TITLE": "Operation Successful"
+    },
+    "DROPZONE": {
+      "TITLE": "Drag and drop your Excel file here",
+      "SUBTITLE": "Supported formats: .xlsx and .xls (max 8 MB). Binary signatures are inspected before network transmission.",
+      "CHIP_SIGNATURE": "Binary Signature Verified",
+      "CHIP_SIZE": "Max 8 MB Limit",
+      "CHIP_FORMULA": "Anti-Formula/CSV Injection",
+      "BROWSE_BTN": "Browse File",
+      "VALIDATING_MSG": "Parsing schema and verifying duplicate database records...",
+      "BINARY_OK": "Valid Binary Signature"
+    },
+    "SUMMARY": {
+      "SECTION_TITLE": "Validation Summary",
+      "TOTAL_ROWS": "Total Rows",
+      "DETECTED_ROWS": "Records detected",
+      "VALID_ROWS": "Valid Rows",
+      "READY_TO_COMMIT": "Ready to commit",
+      "DUPLICATE_ROWS": "Duplicate Rows",
+      "DB_CONFLICT": "Database collision / conflict",
+      "ERROR_ROWS": "Error Rows",
+      "MALFORMED_ROWS": "Malformed / invalid records"
+    },
+    "TABLE": {
+      "TITLE": "Data Preview & Integrity Validation",
+      "FILTER_LABEL": "Filter rows by status",
+      "FILTER_ALL": "All",
+      "FILTER_VALID": "Valid",
+      "FILTER_DUPLICATE": "Duplicates",
+      "FILTER_ERROR": "Errors",
+      "COL_NUM": "Row",
+      "COL_PLAYER": "Player",
+      "COL_TEAM": "Team",
+      "COL_SEASON": "Season",
+      "COL_METRIC": "Metric",
+      "COL_STATUS": "Status",
+      "COL_NOTES": "Notes / Diagnostics",
+      "EMPTY_FILTER": "No records match the selected filter."
+    },
+    "STATUS": {
+      "VALID": "Valid",
+      "DUPLICATE": "Duplicate",
+      "ERROR": "Error",
+      "READY": "Ready to insert"
+    },
+    "MODAL": {
+      "SUCCESS_TITLE": "Import Completed",
+      "SUCCESS_BADGE": "Operation Successful",
+      "SUCCESS_MESSAGE": "Successfully committed {{ total }} records ({{ inserted }} inserted, {{ updated }} updated).",
+      "ERROR_TITLE": "Import Failed",
+      "ERROR_BADGE": "Database Error",
+      "ERROR_MESSAGE": "An error occurred while committing the import to the database.",
+      "TOTAL_LABEL": "Total Processed",
+      "INSERTED_LABEL": "New Inserted",
+      "UPDATED_LABEL": "Updated",
+      "CONFIRM_BTN": "Understood",
+      "CLOSE_BTN": "Close"
+    }
+  },
   "LEADERBOARD_IMPORT": {
     "BREADCRUMB_DASHBOARD": "Admin Dashboard",
     "BREADCRUMB_CURRENT": "Historical Leaderboards Ingestion",
@@ -251,6 +334,7 @@
     "SUCCESS": "Profile updated successfully!"
   },
   "USERS": {
+    "BREADCRUMB_CURRENT": "User Management",
     "TITLE": "User Management",
     "SUBTITLE": "Real-time interaction with NestJS REST API and PostgreSQL database.",
     "REFRESH_USERS": "Refresh Users ↻",

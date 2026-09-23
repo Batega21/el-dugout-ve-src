@@ -11,6 +11,7 @@ import { AuthModule } from './modules/auth/auth.module';
 import { SubscriptionsModule } from './modules/subscriptions/subscriptions.module';
 import { FeaturesModule } from './modules/features/features.module';
 import { LeaderboardsModule } from './modules/leaderboards/leaderboards.module';
+import { ImportsModule } from './modules/imports/imports.module';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { LeaderboardsModule } from './modules/leaderboards/leaderboards.module';
     SubscriptionsModule,
     FeaturesModule,
     LeaderboardsModule,
+    ImportsModule,
   ],
   providers: [
     {

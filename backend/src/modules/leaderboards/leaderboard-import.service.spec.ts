@@ -1,8 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { BadRequestException } from '@nestjs/common';
 import { LeaderboardImportService } from './leaderboard-import.service';
 import { PrismaService } from '../../database/prisma.service';
 import { StatCategory } from '@prisma/client';
 import * as ExcelJS from 'exceljs';
+import { CommitImportDto } from '../imports/dto/commit-import.dto';
 
 describe('LeaderboardImportService', () => {
   let service: LeaderboardImportService;
@@ -283,6 +285,186 @@ describe('LeaderboardImportService', () => {
         { label: 'Más títulos bateo', value: '6x — Luis Sojo' },
         { label: 'Temporadas registradas', value: '80 Temporadas LVBP' },
       ]);
+    });
+  });
+
+  describe('Security & Validation: validateMagicNumber', () => {
+    it('accepts authentic ZIP/XLSX magic bytes (50 4B 03 04)', () => {
+      const validZip = Buffer.from([0x50, 0x4b, 0x03, 0x04, 0x00]);
+      expect(() => service.validateMagicNumber(validZip, 'test.xlsx')).not.toThrow();
+    });
+
+    it('accepts authentic OLE2/XLS magic bytes (D0 CF 11 E0)', () => {
+      const validOls = Buffer.from([0xd0, 0xcf, 0x11, 0xe0, 0x00]);
+      expect(() => service.validateMagicNumber(validOls, 'test.xls')).not.toThrow();
+    });
+
+    it('rejects executable / non-Excel binary signatures (e.g. MZ header 4D 5A)', () => {
+      const exeHeader = Buffer.from([0x4d, 0x5a, 0x90, 0x00]);
+      expect(() => service.validateMagicNumber(exeHeader, 'malicious.xlsx')).toThrow(
+        BadRequestException,
+      );
+    });
+
+    it('rejects buffers shorter than 4 bytes', () => {
+      const shortBuffer = Buffer.from([0x50, 0x4b]);
+      expect(() => service.validateMagicNumber(shortBuffer, 'corrupted.xlsx')).toThrow(
+        BadRequestException,
+      );
+    });
+  });
+
+  describe('Security & Validation: sanitizeFormula', () => {
+    it('prepends single quote to neutralize formula injection payloads', () => {
+      expect(service.sanitizeFormula('=cmd|/C calc!A0')).toBe(`'=cmd|/C calc!A0`);
+      expect(service.sanitizeFormula('+12345')).toBe(`'+12345`);
+      expect(service.sanitizeFormula('-9876')).toBe(`'-9876`);
+      expect(service.sanitizeFormula('@SUM(A1:A10)')).toBe(`'@SUM(A1:A10)`);
+      expect(service.sanitizeFormula('\tTabInjected')).toBe(`'\tTabInjected`);
+      expect(service.sanitizeFormula('\rReturnInjected')).toBe(`'\rReturnInjected`);
+    });
+
+    it('leaves standard benign strings unchanged', () => {
+      expect(service.sanitizeFormula('Jesús Ramos')).toBe('Jesús Ramos');
+      expect(service.sanitizeFormula('Magallanes')).toBe('Magallanes');
+      expect(service.sanitizeFormula('1946-46')).toBe('1946-46');
+    });
+  });
+
+  describe('Security & Validation: validateRequiredHeaders', () => {
+    it('passes when all required headers exist for category', () => {
+      expect(() =>
+        service.validateRequiredHeaders(
+          ['ano', 'jugador', 'equipo', 'avg'],
+          StatCategory.BATTING_AVERAGE,
+          'lider-bate.xlsx',
+        ),
+      ).not.toThrow();
+    });
+
+    it('throws BadRequestException when season column is missing', () => {
+      expect(() =>
+        service.validateRequiredHeaders(
+          ['jugador', 'equipo', 'avg'],
+          StatCategory.BATTING_AVERAGE,
+          'lider-bate.xlsx',
+        ),
+      ).toThrow(BadRequestException);
+    });
+
+    it('throws BadRequestException when category metric is missing', () => {
+      expect(() =>
+        service.validateRequiredHeaders(
+          ['ano', 'jugador', 'equipo'],
+          StatCategory.HOME_RUNS,
+          'lider-homerun.xlsx',
+        ),
+      ).toThrow(BadRequestException);
+    });
+  });
+
+  describe('previewWorkbook', () => {
+    it('rejects files exceeding 8 MB size limit', async () => {
+      const fakeFile: any = {
+        originalname: 'huge.xlsx',
+        size: 9 * 1024 * 1024,
+        buffer: Buffer.from([0x50, 0x4b, 0x03, 0x04]),
+      };
+      await expect(service.previewWorkbook(fakeFile)).rejects.toThrow(BadRequestException);
+    });
+
+    it('returns preview telemetry flagging valid rows and existing database duplicates', async () => {
+      // Mock existing season, player, and season leader in database to trigger duplicate flag
+      prismaMock.season = {
+        findMany: jest.fn().mockResolvedValue([{ id: 's-1946', code: '1946-46' }]),
+      };
+      prismaMock.player = {
+        findMany: jest.fn().mockResolvedValue([{ id: 'p-ramos', slug: 'jesus-ramos' }]),
+      };
+      prismaMock.team = {
+        findMany: jest.fn().mockResolvedValue([{ id: 't-mag', name: 'Navegantes del Magallanes', abbreviation: 'MAG' }]),
+      };
+      prismaMock.seasonLeader.findMany = jest.fn().mockResolvedValue([
+        { seasonId: 's-1946', playerId: 'p-ramos' },
+      ]);
+
+      const workbook = new ExcelJS.Workbook();
+      const sheet = workbook.addWorksheet('Lider Bate');
+      sheet.addRow(['Año', 'Bateador', 'Equipo', 'AVG', 'JJ', 'VB', 'H']);
+      // Row 1: Duplicate against DB
+      sheet.addRow(['1946-46', 'Jesús Ramos', 'MAG', 0.403, 30, 119, 48]);
+      // Row 2: Valid new record
+      sheet.addRow(['1946-47', 'Guillermo Vento', 'Ara-Zul', 0.385, 28, 104, 40]);
+      // Row 3: Repeated entry in same sheet (batch duplicate)
+      sheet.addRow(['1946-47', 'Guillermo Vento', 'Ara-Zul', 0.385, 28, 104, 40]);
+
+      const buffer = (await workbook.xlsx.writeBuffer()) as unknown as Buffer;
+      const file: Express.Multer.File = {
+        fieldname: 'file',
+        originalname: 'lider-bate.xlsx',
+        encoding: '7bit',
+        mimetype: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        buffer,
+        size: buffer.length,
+        stream: null as any,
+        destination: '',
+        filename: '',
+        path: '',
+      };
+
+      const preview = await service.previewWorkbook(file);
+
+      expect(preview.fileName).toBe('lider-bate.xlsx');
+      expect(preview.category).toBe(StatCategory.BATTING_AVERAGE);
+      expect(preview.summary.total).toBe(3);
+      expect(preview.summary.valid).toBe(1);
+      expect(preview.summary.duplicates).toBe(2);
+      expect(preview.summary.errors).toBe(0);
+
+      // Verify row 1 is duplicate from DB
+      expect(preview.rows[0].status).toBe('DUPLICATE');
+      expect(preview.rows[0].playerName).toBe('Jesús Ramos');
+
+      // Verify row 2 is valid
+      expect(preview.rows[1].status).toBe('VALID');
+      expect(preview.rows[1].playerName).toBe('Guillermo Vento');
+
+      // Verify row 3 is duplicate from batch
+      expect(preview.rows[2].status).toBe('DUPLICATE');
+    });
+  });
+
+  describe('commitValidatedRows', () => {
+    it('commits validated rows within a single transaction', async () => {
+      const commitDto: CommitImportDto = {
+        category: StatCategory.BATTING_AVERAGE,
+        rows: [
+          {
+            seasonCode: '1946-46',
+            startYear: 1946,
+            endYear: 1946,
+            playerName: 'Jesús Ramos',
+            playerSlug: 'jesus-ramos',
+            teamRaw: 'Magallanes',
+            category: StatCategory.BATTING_AVERAGE,
+            statValue: 0.403,
+            extraAttributes: { jj: 30, vb: 119, h: 48 },
+          },
+        ],
+      };
+
+      const result = await service.commitValidatedRows(commitDto);
+
+      expect(result.success).toBe(true);
+      expect(result.totalProcessed).toBe(1);
+      expect(result.insertedCount).toBe(1);
+      expect(prismaMock.$transaction).toHaveBeenCalled();
+    });
+
+    it('throws BadRequestException if no rows are provided', async () => {
+      await expect(
+        service.commitValidatedRows({ category: StatCategory.BATTING_AVERAGE, rows: [] }),
+      ).rejects.toThrow(BadRequestException);
     });
   });
 });

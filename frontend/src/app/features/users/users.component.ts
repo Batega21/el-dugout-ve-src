@@ -1,6 +1,8 @@
 import { Component, OnInit, signal, inject, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
+import { MatIconModule } from '@angular/material/icon';
 import { TranslatePipe } from '@ngx-translate/core';
 import { UsersService } from '../../core/services/users.service';
 import { User, CreateUserInput } from '../../core/models/user.model';
@@ -9,17 +11,31 @@ import { StatusBadgeComponent } from '../../shared/components/status-badge/statu
 @Component({
   selector: 'app-users',
   standalone: true,
-  imports: [CommonModule, FormsModule, StatusBadgeComponent, TranslatePipe],
+  imports: [CommonModule, FormsModule, RouterLink, MatIconModule, StatusBadgeComponent, TranslatePipe],
   template: `
     <div class="users-page">
+      <!-- Breadcrumbs -->
+      <nav class="breadcrumb-nav" aria-label="Breadcrumbs">
+        <a routerLink="/admin" class="breadcrumb-link">{{ 'IMPORT_EXCEL.HEADER.BREADCRUMB_DASHBOARD' | translate }}</a>
+        <span class="breadcrumb-sep">/</span>
+        <span class="breadcrumb-current">{{ 'USERS.BREADCRUMB_CURRENT' | translate }}</span>
+      </nav>
+
       <div class="page-header">
         <div>
           <h1>{{ 'USERS.TITLE' | translate }}</h1>
           <p class="subtitle">{{ 'USERS.SUBTITLE' | translate }}</p>
         </div>
-        <button (click)="loadUsers()" class="btn btn-outline" [disabled]="loading()">
-          {{ (loading() ? 'ADMIN.REFRESHING' : 'USERS.REFRESH_USERS') | translate }}
-        </button>
+        <div class="header-actions">
+          <a routerLink="/admin" class="btn btn-outline">
+            <mat-icon>arrow_back</mat-icon>
+            {{ 'IMPORT_EXCEL.ACTIONS.BACK_DASHBOARD' | translate }}
+          </a>
+          <button (click)="loadUsers()" class="btn btn-outline" [disabled]="loading()">
+            <mat-icon>refresh</mat-icon>
+            {{ (loading() ? 'ADMIN.REFRESHING' : 'USERS.REFRESH_USERS') | translate }}
+          </button>
+        </div>
       </div>
     
       <!-- Notification Alerts -->
@@ -171,11 +187,41 @@ import { StatusBadgeComponent } from '../../shared/components/status-badge/statu
       padding: 2.5rem 0;
     }
 
+    .breadcrumb-nav {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: var(--font-size-sm, 0.85rem);
+      font-family: var(--font-sans);
+      margin-bottom: 1.25rem;
+    }
+
+    .breadcrumb-link {
+      color: var(--text-secondary-color, var(--text-secondary, #9ca3af));
+      text-decoration: none;
+      transition: color 0.15s ease;
+
+      &:hover {
+        color: var(--primary-color, var(--primary, #e52323));
+      }
+    }
+
+    .breadcrumb-sep {
+      color: var(--text-muted-color, var(--text-muted, #4b5563));
+    }
+
+    .breadcrumb-current {
+      color: var(--text-color, var(--text-primary, #f3f4f6));
+      font-weight: var(--font-weight-medium, 500);
+    }
+
     .page-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
       margin-bottom: 2rem;
+      flex-wrap: wrap;
+      gap: 1rem;
 
       h1 {
         font-family: var(--font-display);
@@ -189,6 +235,25 @@ import { StatusBadgeComponent } from '../../shared/components/status-badge/statu
         font-family: var(--font-sans);
         color: var(--text-secondary-color, var(--text-secondary));
         font-size: var(--font-size-sm, 0.95rem);
+      }
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        text-decoration: none;
+
+        mat-icon {
+          font-size: 18px;
+          width: 18px;
+          height: 18px;
+        }
       }
     }
 

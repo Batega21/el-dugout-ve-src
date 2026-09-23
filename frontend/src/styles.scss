@@ -129,10 +129,11 @@ code, pre, kbd, samp {
   }
 }
 
-/* Subscription, Sign-Up & Login Dialog Panels & Form Fields */
+/* Subscription, Sign-Up, Login & Confirmation Dialog Panels & Form Fields */
 .subscription-dialog-panel,
 .signup-dialog-panel,
-.login-dialog-panel {
+.login-dialog-panel,
+.confirmation-dialog-panel {
   .mat-mdc-dialog-surface {
     border-radius: 1.25rem !important;
     background-color: var(--background-secondary-color) !important;
