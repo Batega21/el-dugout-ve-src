@@ -4,59 +4,80 @@ We have implemented an end-to-end admin data ingestion feature for **El Dugout V
 
 ---
 
-## Changes Summary
+## 🚀 Recent Refinements & Admin Enhancements
 
-### 1. Backend Security & Processing (NestJS 10+)
-- **Binary Signature & Magic Number Inspection (`validateMagicNumber`):**
-  - Verifies the first 4 bytes of uploaded files directly from buffer.
-  - Accepts authentic ZIP/XLSX (`50 4B 03 04`) and legacy OLE2/XLS (`D0 CF 11 E0`).
-  - Blocks disguised or executable payloads (e.g., `4D 5A` MZ header).
-- **Anti-Formula / CSV Injection Sanitization (`sanitizeFormula`):**
-  - Sanitizes cell values starting with dangerous characters (`=`, `+`, `-`, `@`, `\t`, `\r`) by prepending a single quote (`'`), neutralizing spreadsheet formula execution.
-- **Structure & Column Schema Validation (`validateRequiredHeaders`):**
-  - Requires season (`Año/Temporada`), player (`Jugador/Bateador`), and team (`Equipo`), plus category-specific metric columns (`AVG`, `HR`, `2B`, `3B`, `H`, `CA`, `IP`).
-- **Two-Step API Endpoints in [`ImportsController`](file:///Users/gabo/repos/el-dugout/backend/src/modules/imports/imports.controller.ts):**
-  - `POST /api/v1/imports/preview` (or `/api/imports/preview`):
-    - Accepts multipart/form-data (up to 8 MB).
-    - Performs database dry-run check to flag existing records as `DUPLICATE`.
-    - Returns [`ValidationPreviewDto`](file:///Users/gabo/repos/el-dugout/backend/src/modules/imports/dto/validation-preview.dto.ts) with row statuses (`VALID`, `DUPLICATE`, `ERROR`).
-  - `POST /api/v1/imports/commit` (or `/api/imports/commit`):
-    - Commits validated rows inside a single atomic ACID transaction (`this.prisma.$transaction(...)`).
-    - Upserts `Season`, `Player` (slug deduplication), resolves canonical `Team`, and upserts `SeasonLeader`.
-    - Rolls back cleanly if any failure occurs.
-- **Module Registration:**
-  - Encapsulated within [`ImportsModule`](file:///Users/gabo/repos/el-dugout/backend/src/modules/imports/imports.module.ts) and registered in [`AppModule`](file:///Users/gabo/repos/el-dugout/backend/src/app.module.ts).
+### 1. Admin Theme System Configuration
+- **Token Harmonization:** Aligned admin components with the global theme tokens (`--font-display`, `--font-sans`, `--background-secondary-color`, `--border-theme-color`, `--text-color`, `--text-secondary-color`, `--primary`, `--radius-md`).
+- **Targeted Elements:**
+  - [`.page-title`](file:///Users/gabo/repos/el-dugout/frontend/src/app/modules/admin/components/import-file/import-file.component.ts#L304-L311) & [`.page-subtitle`](file:///Users/gabo/repos/el-dugout/frontend/src/app/modules/admin/components/import-file/import-file.component.ts#L313-L320)
+  - [`.dropzone-card`](file:///Users/gabo/repos/el-dugout/frontend/src/app/modules/admin/components/import-file/import-file.component.ts#L380-L400) (drag-and-drop area with theme card backgrounds and borders)
+  - [`.breadcrumb-nav`](file:///Users/gabo/repos/el-dugout/frontend/src/app/modules/admin/components/import-file/import-file.component.ts#L253-L278) (breadcrumb trails and subtle dividers)
+  - [`.data-table`](file:///Users/gabo/repos/el-dugout/frontend/src/app/modules/admin/components/validation-table/validation-table.component.ts#L480-L510) and [`.summary-card`](file:///Users/gabo/repos/el-dugout/frontend/src/app/modules/admin/components/validation-table/validation-table.component.ts#L394-L435)
+  - Buttons (`.btn-outline`, `.btn-browse`, `.btn-primary`)
 
-### 2. Frontend Architecture (Angular 19+)
-- **Security Service [`ImportsService`](file:///Users/gabo/repos/el-dugout/frontend/src/app/core/services/imports.service.ts):**
-  - Implements `verifyFileMagicNumber(file)` using browser `ArrayBuffer` slice before upload.
-  - Integrates HTTP calls for `previewFile` and `commitImport`.
-- **Upload Component [`ImportFileComponent`](file:///Users/gabo/repos/el-dugout/frontend/src/app/modules/admin/components/import-file/import-file.component.ts):**
-  - Modern sports-tech dark aesthetic (`#0a0a0c`, `#111827`, border `#1f2937`, primary red `#e52323`).
-  - Drag-and-drop dropzone with active drag-over states and file input fallback.
-  - Angular Material `<mat-progress-spinner>` displayed during server validation and commit.
-  - Role-protected: inaccessible to non-admins (both via `adminGuard` and template fallback).
-- **Preview Table [`ValidationTableComponent`](file:///Users/gabo/repos/el-dugout/frontend/src/app/modules/admin/components/validation-table/validation-table.component.ts):**
-  - Summary cards: Total rows, Valid rows (Green badge), Duplicated rows / Conflict with DB (Orange badge), Malformed rows (Red badge).
-  - Responsive data table highlighting duplicate and error rows.
-  - Action buttons: "Confirmar y Guardar en Base de Datos" and "Descartar / Cancelar".
-- **Legacy Architecture Cleanup:**
-  - Removed obsolete `ArchitectureComponent` and `/architecture` route.
-  - Removed outdated placeholder `leaderboard-import.component.ts`.
-  - Updated [`NavMenuComponent`](file:///Users/gabo/repos/el-dugout/frontend/src/app/shared/components/header/nav-menu/nav-menu.component.ts) to provide the "Importar Excel" option strictly to admin users.
-- **Internationalization (i18n):**
-  - Complete dictionaries added to [`es.json`](file:///Users/gabo/repos/el-dugout/frontend/public/assets/i18n/es.json) and [`en.json`](file:///Users/gabo/repos/el-dugout/frontend/public/assets/i18n/en.json) under `IMPORT_EXCEL.*` and `COMMON.NAV.IMPORT_EXCEL`.
+### 2. Confirmation Modal with Full i18n Support
+- **Parameterized Localization:** Localized the confirmation dialog messages in [`confirmation-modal.component.ts`](file:///Users/gabo/repos/el-dugout/frontend/src/app/modules/admin/components/confirmation-modal/confirmation-modal.component.ts) using `TranslatePipe` and dynamic params:
+  - `IMPORT_EXCEL.MODAL.SUCCESS_MESSAGE`: `"Se han procesado exitosamente {{ total }} registros ({{ inserted }} insertados, {{ updated }} actualizados)."`
+  - `IMPORT_EXCEL.MODAL.ERROR_MESSAGE`: `"Ocurrió un error al procesar la importación. No se guardaron cambios en la base de datos."`
+- **Dual-Asset Synchronization:** Added definitions across all four translation files:
+  - [`frontend/src/assets/i18n/es.json`](file:///Users/gabo/repos/el-dugout/frontend/src/assets/i18n/es.json) & [`frontend/public/assets/i18n/es.json`](file:///Users/gabo/repos/el-dugout/frontend/public/assets/i18n/es.json)
+  - [`frontend/src/assets/i18n/en.json`](file:///Users/gabo/repos/el-dugout/frontend/src/assets/i18n/en.json) & [`frontend/public/assets/i18n/en.json`](file:///Users/gabo/repos/el-dugout/frontend/public/assets/i18n/en.json)
+
+### 3. User Management View (`/users`) Upgrades
+- **Breadcrumbs:** Added breadcrumbs to [`UsersComponent`](file:///Users/gabo/repos/el-dugout/frontend/src/app/features/users/users.component.ts):
+  - Dashboard (`/admin`) → Current view (`USERS.BREADCRUMB_CURRENT`).
+- **Back to Dashboard Button:** Inserted a styled `btn-outline` link with `arrow_back` icon leading directly back to the Admin Dashboard (`/admin`).
+- **Theming:** Integrated `.breadcrumb-nav` and `.header-actions` with display typography and theme color tokens.
+
+### 4. Consolidated Main Navigation Menu
+- **Simplified Nav:** Updated [`NavMenuComponent`](file:///Users/gabo/repos/el-dugout/frontend/src/app/shared/components/header/nav-menu/nav-menu.component.ts) to display a single top-level **Admin** link (`COMMON.NAV.ADMIN` -> `/admin`) when an admin user is logged in.
+- **Removed Top-Level Clutter:** Removed direct links for "Manage Users" and "Excel Import" from the top navigation bar, routing admins directly through the centralized Admin Dashboard.
 
 ---
 
-## Verification Results
+## 🛠 Architectural Overview
 
-### 1. Backend Unit Tests (`npm test`)
+```mermaid
+flowchart TD
+    User([Admin User]) -->|Navigates| Nav[Header Nav: 'Admin']
+    Nav --> AdminDash[Admin Dashboard /admin]
+    AdminDash -->|'Ingestar Líderes'| ImportView[Excel Import /admin/imports]
+    AdminDash -->|'Gestionar Usuarios'| UsersView[User Management /users]
+
+    ImportView -->|Breadcrumb| AdminDash
+    UsersView -->|Breadcrumb & 'Volver al Panel'| AdminDash
+
+    subgraph Excel Data Ingestion Flow
+        Upload[Upload .xlsx/.xls] --> ClientValidation[Client-Side Magic Number Check PK..]
+        ClientValidation -->|POST /api/v1/imports/preview| NestAPIPreview[Preview & Duplicate Check]
+        NestAPIPreview --> ValidationTable[Validation Preview Table]
+        ValidationTable -->|POST /api/v1/imports/commit| NestAPICommit[ACID Prisma Transaction]
+        NestAPICommit --> Modal[Localized Confirmation Modal]
+    end
+```
+
+---
+
+## 🧪 Verification Results
+
+### 1. Frontend Unit Tests (`npm test` / Vitest)
+```text
+ ✓ src/app/modules/admin/components/confirmation-modal/confirmation-modal.component.spec.ts (4 tests)
+ ✓ src/app/modules/admin/components/validation-table/validation-table.component.spec.ts (6 tests)
+ ✓ src/app/modules/admin/components/import-file/import-file.component.spec.ts (10 tests)
+ ✓ src/app/core/services/imports.service.spec.ts (7 tests)
+ ...
+ Test Files  23 passed (23)
+      Tests  165 passed (165)
+   Duration  2.92s
+```
+
+### 2. Backend Unit Tests (`npm test` / Jest)
 ```text
 PASS src/modules/subscriptions/subscriptions.service.spec.ts
 PASS src/common/filters/all-exceptions.filter.spec.ts
-PASS src/modules/health/health.controller.spec.ts
 PASS src/modules/users/users.service.spec.ts
+PASS src/modules/health/health.controller.spec.ts
 PASS src/modules/subscriptions/subscriptions.controller.spec.ts
 PASS src/modules/leaderboards/leaderboard-import.service.spec.ts
 PASS src/modules/imports/imports.controller.spec.ts
@@ -66,51 +87,10 @@ PASS src/modules/auth/auth.service.spec.ts
 Test Suites: 9 passed, 9 total
 Tests:       89 passed, 89 total
 Snapshots:   0 total
-Time:        7.684 s
-```
-
-### 2. Frontend Unit Tests (`npm test` / Vitest)
-```text
- ✓ src/app/modules/admin/components/confirmation-modal/confirmation-modal.component.spec.ts (4 tests)
- ✓ src/app/modules/admin/components/validation-table/validation-table.component.spec.ts (6 tests)
- ✓ src/app/modules/admin/components/import-file/import-file.component.spec.ts (10 tests)
- ✓ src/app/core/services/imports.service.spec.ts (7 tests)
- ...
- Test Files  23 passed (23)
-      Tests  165 passed (165)
-   Duration  2.91s
+Time:        5.497 s
 ```
 
 ### 3. Build & Compilation Verification
-- **Backend Build:** `npm run build` completed successfully (`nest build`).
-- **Frontend Type Checking:** `npx tsc -p tsconfig.app.json --noEmit` completed with 0 errors.
-
----
-
-## Bugfix: Internationalization (i18n) Asset Synchronization
-- **Issue:** Translation constants (`COMMON.NAV.IMPORT_EXCEL`, `IMPORT_EXCEL.*`) appeared un-translated as raw key strings in the UI.
-- **Root Cause:** In the codebase, Angular 19 configured assets from both `public/` and `src/assets`. Translation keys were added to `frontend/public/assets/i18n/*.json`, but `frontend/src/assets/i18n/*.json` was not synchronized. In development mode (`ng serve`), the Angular CLI served translation files from `src/assets/i18n/`, which lacked the newly added keys.
-- **Fix:** Synchronized `frontend/src/assets/i18n/es.json` and `frontend/src/assets/i18n/en.json` with `frontend/public/assets/i18n/`, ensuring identical dictionaries across both locations.
-- **Verification:** Verified all 16 screenshot keys resolve to their Spanish and English values; all unit tests passing.
-
----
-
-## Feature: Confirmation Modal Component for Import Results
-- **Component Created:** [`ConfirmationModalComponent`](file:///Users/gabo/repos/el-dugout/frontend/src/app/modules/admin/components/confirmation-modal/confirmation-modal.component.ts)
-  - Accepts the API commit result response payload (`success`, `totalProcessed`, `insertedCount`, `updatedCount`, `message`).
-  - **Success Presentation:**
-    - Emerald green glowing icon (`check_circle`), "Operación Exitosa" badge, and "Importación Completada" title.
-    - Server confirmation message box.
-    - 3-column metric card breakdown: **Total Procesados**, **Nuevos Insertados** (`+81`), **Actualizados** (`0`).
-    - Styled CTA button "Entendido" with checkmark icon.
-  - **Failure Presentation:**
-    - Danger red alert icon (`error`), "Error de Base de Datos" badge, and "Fallo en la Importación" title.
-    - Error diagnostics and transaction rollback notification.
-    - Action button "Cerrar".
-- **Integration in [`ImportFileComponent`](file:///Users/gabo/repos/el-dugout/frontend/src/app/modules/admin/components/import-file/import-file.component.ts):**
-  - Wired into `onCommitRecords(rowsToCommit)`: opens the confirmation modal with dialog panel styling `.confirmation-dialog-panel` on both successful commits and failure/rollback events.
-- **Unit Testing:**
-  - Added [`confirmation-modal.component.spec.ts`](file:///Users/gabo/repos/el-dugout/frontend/src/app/modules/admin/components/confirmation-modal/confirmation-modal.component.spec.ts) covering success rendering, failure rendering, and `dialogRef.close` action.
-  - Updated [`import-file.component.spec.ts`](file:///Users/gabo/repos/el-dugout/frontend/src/app/modules/admin/components/import-file/import-file.component.spec.ts) verifying dialog invocation with response payloads.
-
-
+- **Frontend TypeScript (`tsc`):** `npx tsc -p tsconfig.app.json --noEmit` passed with 0 errors.
+- **Frontend Build (`ng build`):** Clean production compilation.
+- **Backend Build (`nest build`):** Clean compilation.
