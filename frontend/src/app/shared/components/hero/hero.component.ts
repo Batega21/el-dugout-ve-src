@@ -24,7 +24,7 @@ import { ThemeService } from '../../../core/services/theme.service';
       class="hero-section"
       [style.background-image]="'url(' + currentImage() + ')'"
       role="banner"
-      [attr.aria-label]="title() | translate">
+      [attr.aria-label]="imageAlt() | translate">
       <!-- Subtle backdrop scrim overlay for text legibility and contrast -->
       <div class="hero-backdrop-overlay" aria-hidden="true"></div>
 
@@ -35,9 +35,8 @@ import { ThemeService } from '../../../core/services/theme.service';
           <h1 class="hero-title">{{ title() | translate }}</h1>
 
           <!-- 2.2 Tagline Text (Pill / Badge) -->
-          <div class="tagline-badge">
-            <span class="tagline-dot"></span>
-            <span class="tagline-text">{{ tagline() | translate }}</span>
+          <div class="tagline-badge font-special">
+            <span class="tagline-text font-special">{{ tagline() | translate }}</span>
           </div>
 
           <!-- 2.3 Copy for Company Context -->
@@ -50,6 +49,7 @@ import { ThemeService } from '../../../core/services/theme.service';
               mat-stroked-button
               type="button"
               class="pill-btn secondary-btn"
+              [attr.aria-label]="secondaryCta() | translate"
               (click)="onSecondaryClick()">
               <mat-icon class="btn-icon">phone_in_talk</mat-icon>
               <span>{{ secondaryCta() | translate }}</span>
@@ -60,6 +60,7 @@ import { ThemeService } from '../../../core/services/theme.service';
               mat-flat-button
               type="button"
               class="pill-btn primary-btn"
+              [attr.aria-label]="primaryCta() | translate"
               (click)="onPrimaryClick()">
               <mat-icon class="btn-icon">mark_email_read</mat-icon>
               <span>{{ primaryCta() | translate }}</span>
@@ -167,13 +168,18 @@ import { ThemeService } from '../../../core/services/theme.service';
       display: inline-flex;
       align-items: center;
       gap: 0.6rem;
-      padding: 0.45rem 1rem;
+      padding: 0;
       color: var(--text-secondary-color, #cbd5e1);
       font-family: var(--font-special);
-      font-size: var(--font-size-sm, 0.85rem);
-      font-weight: var(--font-weight-medium, 500);
+      font-size: var(--font-size-xl, 1.5rem);
+      font-weight: var(--font-weight-regular, 400);
       letter-spacing: 0.02em;
       margin-bottom: 1.5rem;
+
+      .tagline-text,
+      span {
+        font-family: var(--font-special);
+      }
     }
 
     /* 2.3 Copy for Company Context */
@@ -262,26 +268,24 @@ export class HeroComponent {
   readonly themeService = inject(ThemeService);
 
   // 2.1 Tagline text
-  readonly tagline = input<string>('Enciclopedia del Béisbol Profesional Venezolano');
+  readonly tagline = input<string>('HERO.TAGLINE');
 
   // 2.2 Main heading or Title
-  readonly title = input<string>('El Dugout Ve');
+  readonly title = input<string>('HERO.TITLE');
 
   // 2.3 Copy for company context
-  readonly description = input<string>(
-    'La enciclopedia definitiva del béisbol profesional venezolano (LVBP). Estadísticas históricas, franquicias, rosters, temporadas, boxscores y la historia viva de la pelota criolla.',
-  );
+  readonly description = input<string>('HERO.DESCRIPTION');
 
   // 2.4 Secondary CTA button placeholder
-  readonly secondaryCta = input<string>('Explorar Equipos');
+  readonly secondaryCta = input<string>('HERO.SECONDARY_CTA');
 
   // 2.5 Primary CTA button placeholder
-  readonly primaryCta = input<string>('Suscríbete');
+  readonly primaryCta = input<string>('HERO.PRIMARY_CTA');
 
   // 2.6 Hero banner images for dark and light themes (covering background)
   readonly darkImage = input<string>('/images/hero_banner-09-2026-dark.jpeg');
   readonly lightImage = input<string>('/images/hero_banner-09-2026-light.jpeg');
-  readonly imageAlt = input<string>('El Dugout Ve - Béisbol Profesional Venezolano');
+  readonly imageAlt = input<string>('HERO.IMAGE_ALT');
 
   /**
    * Whether to stretch the hero background to full viewport width. Defaults to true.

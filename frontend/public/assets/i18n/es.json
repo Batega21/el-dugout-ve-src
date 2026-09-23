@@ -1,11 +1,11 @@
 {
   "COMMON": {
     "NAV": {
-      "ABOUT": "Sobre Nosotros",
+      "ABOUT": "Nosotros",
       "PRODUCTS": "Productos",
       "SERVICE": "Servicios",
       "ARCHITECTURE": "Arquitectura",
-      "USERS": "Gestionar Usuarios",
+      "USERS": "Usuarios",
       "PREMIUM": "Premium Pro",
       "LOGIN": "Iniciar Sesión",
       "SIGN_UP": "Registrarse",
