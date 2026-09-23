@@ -1,8 +1,10 @@
 import { Injectable, inject, signal, computed } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Router } from '@angular/router';
 import { Observable, tap } from 'rxjs';
 import { User, UpdateProfileInput } from '../models/user.model';
 import { SubscriptionTier } from '../models/subscription.model';
+import { isAdminRoute } from '../utils/admin-route.util';
 
 export interface LoginCredentials {
   email: string;
@@ -30,6 +32,7 @@ const STORAGE_TOKEN_KEY = 'el_dugout_auth_token';
 })
 export class AuthService {
   private readonly http = inject(HttpClient);
+  private readonly router = inject(Router, { optional: true });
 
   readonly currentUser = signal<User | null>(this.loadStoredUser());
   readonly accessToken = signal<string | null>(this.loadStoredToken());
@@ -93,12 +96,50 @@ export class AuthService {
   }
 
   logout(): void {
+    const wasAdmin = this.isAdmin();
+    const currentUrl = this.router?.url;
+
     this.currentUser.set(null);
     this.accessToken.set(null);
     if (this.isBrowser()) {
       localStorage.removeItem(STORAGE_USER_KEY);
       localStorage.removeItem(STORAGE_TOKEN_KEY);
     }
+
+    if (this.router && (this.isAdminRoute(currentUrl) || (wasAdmin && this.isAdminRoute(this.router.url)))) {
+      this.router.navigate(['/']);
+    }
+  }
+
+  /**
+   * Evaluates whether a URL or the current active route corresponds to an admin feature.
+   */
+  isAdminRoute(url?: string): boolean {
+    const targetUrl = url ?? this.router?.url;
+    if (isAdminRoute(targetUrl)) {
+      return true;
+    }
+
+    const rootSnapshot = this.router?.routerState?.snapshot?.root;
+    if (rootSnapshot && this.hasAdminRouteData(rootSnapshot)) {
+      return true;
+    }
+
+    return false;
+  }
+
+  private hasAdminRouteData(route: any): boolean {
+    if (route.data?.['adminOnly'] || route.data?.['requiresAdmin']) {
+      return true;
+    }
+    if (route.children && Array.isArray(route.children)) {
+      for (const child of route.children) {
+        if (this.hasAdminRouteData(child)) {
+          return true;
+        }
+      }
+    }
+    return false;
   }
 
   /**

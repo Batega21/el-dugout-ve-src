@@ -1,6 +1,7 @@
 import '@angular/compiler';
 import { Injector } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Router } from '@angular/router';
 import { of } from 'rxjs';
 import { AuthService } from './auth.service';
 import { User } from '../models/user.model';
@@ -239,5 +240,113 @@ describe('AuthService Signals & State', () => {
     expect(service.isLoggedIn()).toBe(false);
     expect(service.currentUser()).toBeNull();
     expect(service.accessToken()).toBeNull();
+  });
+
+  describe('Admin Logout Redirection', () => {
+    let mockRouter: {
+      url: string;
+      navigate: any;
+    };
+    let routerService: AuthService;
+
+    beforeEach(() => {
+      mockRouter = {
+        url: '/',
+        navigate: vi.fn(),
+      };
+
+      const injector = Injector.create({
+        providers: [
+          AuthService,
+          { provide: HttpClient, useValue: mockHttpClient },
+          { provide: Router, useValue: mockRouter },
+        ],
+      });
+
+      routerService = injector.get(AuthService);
+    });
+
+    it('should redirect to home page when an admin user logs out while on /admin', () => {
+      mockRouter.url = '/admin';
+      routerService.setMockUser({
+        id: 'admin-1',
+        email: 'admin@eldugoutve.com',
+        firstName: 'Admin',
+        lastName: 'User',
+        role: 'ADMIN',
+        isActive: true,
+        createdAt: '',
+        updatedAt: '',
+      });
+
+      expect(routerService.isAdmin()).toBe(true);
+
+      routerService.logout();
+
+      expect(routerService.isLoggedIn()).toBe(false);
+      expect(mockRouter.navigate).toHaveBeenCalledWith(['/']);
+    });
+
+    it('should redirect to home page when an admin user logs out while on /admin/imports', () => {
+      mockRouter.url = '/admin/imports?batch=123';
+      routerService.setMockUser({
+        id: 'admin-1',
+        email: 'admin@eldugoutve.com',
+        firstName: 'Admin',
+        lastName: 'User',
+        role: 'ADMIN',
+        isActive: true,
+        createdAt: '',
+        updatedAt: '',
+      });
+
+      routerService.logout();
+
+      expect(mockRouter.navigate).toHaveBeenCalledWith(['/']);
+    });
+
+    it('should redirect to home page when an admin user logs out while on /users', () => {
+      mockRouter.url = '/users';
+      routerService.setMockUser({
+        id: 'admin-1',
+        email: 'admin@eldugoutve.com',
+        firstName: 'Admin',
+        lastName: 'User',
+        role: 'ADMIN',
+        isActive: true,
+        createdAt: '',
+        updatedAt: '',
+      });
+
+      routerService.logout();
+
+      expect(mockRouter.navigate).toHaveBeenCalledWith(['/']);
+    });
+
+    it('should not redirect if user logs out while on the home page /', () => {
+      mockRouter.url = '/';
+      routerService.setMockUser({
+        id: 'admin-1',
+        email: 'admin@eldugoutve.com',
+        firstName: 'Admin',
+        lastName: 'User',
+        role: 'ADMIN',
+        isActive: true,
+        createdAt: '',
+        updatedAt: '',
+      });
+
+      routerService.logout();
+
+      expect(mockRouter.navigate).not.toHaveBeenCalled();
+    });
+
+    it('should correctly evaluate isAdminRoute for admin and non-admin routes', () => {
+      expect(routerService.isAdminRoute('/admin')).toBe(true);
+      expect(routerService.isAdminRoute('/admin/imports')).toBe(true);
+      expect(routerService.isAdminRoute('/users')).toBe(true);
+      expect(routerService.isAdminRoute('/profile')).toBe(false);
+      expect(routerService.isAdminRoute('/')).toBe(false);
+    });
   });
 });

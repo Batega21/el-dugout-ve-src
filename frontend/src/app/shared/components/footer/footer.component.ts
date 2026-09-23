@@ -69,7 +69,7 @@ import { FooterConfig, DEFAULT_FOOTER_CONFIG } from './footer.interface';
               <div class="contact-items">
                 @for (item of contact.items; track item.label) {
                   <div class="contact-entry">
-                    <span class="contact-label">{{ item.label | translate }}</span>
+                    <span class="contact-label">{{ item.label | translate }} </span>
                     @if (item.href) {
                       <a [href]="item.href" class="contact-value link">{{ item.value }}</a>
                     } @else {
@@ -91,16 +91,16 @@ import { FooterConfig, DEFAULT_FOOTER_CONFIG } from './footer.interface';
                 <input
                   type="email"
                   class="newsletter-input"
-                  [placeholder]="(newsletter.placeholder || 'Write Email') | translate"
+                  [placeholder]="(newsletter.placeholder || 'FOOTER.NEWSLETTER_PLACEHOLDER') | translate"
                   [value]="newsletterEmail()"
                   (input)="onEmailInput($event)"
                   (keydown.enter)="onNewsletterSubmit()"
-                  [attr.aria-label]="(newsletter.placeholder || 'Write Email') | translate"
+                  [attr.aria-label]="(newsletter.placeholder || 'FOOTER.NEWSLETTER_PLACEHOLDER') | translate"
                 />
                 <button
                   type="button"
                   class="newsletter-submit-btn"
-                  [attr.aria-label]="(newsletter.buttonAriaLabel || 'Subscribe') | translate"
+                  [attr.aria-label]="(newsletter.buttonAriaLabel || 'FOOTER.NEWSLETTER_BTN_ARIA') | translate"
                   (click)="onNewsletterSubmit()">
                   <mat-icon class="submit-icon">arrow_forward</mat-icon>
                 </button>
@@ -139,7 +139,7 @@ import { FooterConfig, DEFAULT_FOOTER_CONFIG } from './footer.interface';
       @if (config().bottom; as bottom) {
         <div class="footer-bottom">
           <div class="footer-container bottom-bar">
-            <nav class="bottom-links" aria-label="Footer Secondary Links">
+            <nav class="bottom-links" [attr.aria-label]="'FOOTER.BOTTOM_LINKS_ARIA' | translate">
               @for (link of bottom.links; track link.label; let last = $last) {
                 @if (link.external) {
                   <a [href]="link.url" target="_blank" rel="noopener" class="bottom-link">
@@ -174,7 +174,7 @@ import { FooterConfig, DEFAULT_FOOTER_CONFIG } from './footer.interface';
       --f-dim: var(--text-muted-color, var(--text-muted));
       --f-border: var(--border-theme-color, var(--border-color));
       --f-primary: var(--primary-color, var(--primary));
-      --f-on-primary: var(--text-color, #ffffff);
+      --f-on-primary: #ffffff;
     }
     .footer-container { max-width: var(--wrap-max-width, 1200px); margin: 0 auto; padding: 0 var(--wrap-padding-x, 1.25rem); }
     .footer-main { background: var(--f-surface); color: var(--f-on-surface); border-top: 1px solid var(--f-border); padding: 4rem 0 3.5rem; }
@@ -191,17 +191,18 @@ import { FooterConfig, DEFAULT_FOOTER_CONFIG } from './footer.interface';
     .about-text { line-height: 1.6; max-width: 320px; }
     .bullet-list { list-style: none; gap: 0.75rem; }
     .bullet-item { gap: 0.5rem; }
-    .bullet-item::before { content: '•'; color: var(--f-dim); font-size: 1rem; line-height: 1; }
     .footer-link, .bottom-link, .contact-value { text-decoration: none; }
     .footer-link:hover, .bottom-link:hover, .contact-value.link:hover { color: var(--f-primary); }
     .contact-items { gap: 1rem; margin-bottom: 1.5rem; }
     .contact-label { font-size: var(--font-size-sm, 0.875rem); color: var(--f-on-surface); }
     .contact-accent-bar { width: 3.25rem; height: 6px; background: var(--f-primary); border-radius: var(--radius-sm, 6px); }
     .action-col { gap: 2rem; }
-    .newsletter-box { display: flex; background: var(--background-hover-color, var(--bg-card-hover)); border-radius: var(--radius-sm, 6px); overflow: hidden; border: 1px solid var(--f-border); max-width: 280px; width: 100%; }
-    .newsletter-input { flex: 1; background: transparent; border: none; padding: 0.75rem 0.85rem; font-size: 1rem; color: var(--f-on-surface); outline: none; }
+    .newsletter-box { display: flex; background: var(--background-hover-color, var(--bg-card-hover)); border-radius: var(--radius-sm, 6px); overflow: hidden; border: 1px solid var(--f-border); max-width: 280px; width: 100%; transition: border-color 0.2s ease, box-shadow 0.2s ease; }
+    .newsletter-box:focus-within { border-color: var(--f-primary); box-shadow: 0 0 0 2px var(--primary-light, rgba(239, 68, 68, 0.25)); }
+    .newsletter-input { flex: 1; background: transparent; border: none; padding: 0.75rem 0.85rem; font-size: 1rem; color: var(--f-on-surface); caret-color: var(--f-primary); outline: none; }
     .newsletter-input::placeholder { color: var(--f-dim); }
-    .newsletter-submit-btn { background: var(--f-primary); border: none; color: var(--f-on-primary); padding: 0 1rem; min-width: 44px; min-height: 44px; justify-content: center; cursor: pointer; }
+    .newsletter-submit-btn { background: var(--f-primary); border: none; color: var(--f-on-primary); padding: 0 1rem; min-width: 44px; min-height: 44px; justify-content: center; cursor: pointer; transition: background-color 0.2s ease; }
+    .newsletter-submit-btn:hover { background: var(--primary-hover, #dc2626); }
     .submit-icon, .social-icon { font-size: 1.2rem; width: 1.2rem; height: 1.2rem; }
     .social-block { gap: 1.25rem; }
     .social-circles { gap: 0.65rem; flex-wrap: wrap; }

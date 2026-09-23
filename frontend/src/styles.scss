@@ -21,7 +21,7 @@ $app-theme: mat.define-theme((
 html {
   color-scheme: dark light;
   @include mat.all-component-themes($app-theme);
-  overflow-x: hidden;
+  overflow-x: clip;
 }
 
 * {
@@ -37,7 +37,7 @@ body {
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   min-height: 100vh;
-  overflow-x: hidden;
+  overflow-x: clip;
   transition: background-color var(--transition-normal, 250ms ease), color var(--transition-normal, 250ms ease);
 }
 
@@ -151,6 +151,10 @@ code, pre, kbd, samp {
     --mdc-outlined-text-field-focus-label-text-color: var(--primary);
     --mdc-outlined-text-field-outline-color: var(--border-strong);
     --mdc-outlined-text-field-focus-outline-color: var(--primary);
+    --mdc-outlined-text-field-error-outline-color: var(--danger);
+    --mdc-outlined-text-field-error-focus-outline-color: var(--danger);
+    --mdc-outlined-text-field-error-hover-outline-color: var(--danger);
+    --mdc-outlined-text-field-error-label-text-color: var(--danger);
 
     input.mat-mdc-input-element {
       color: var(--text-primary) !important;
@@ -178,6 +182,21 @@ code, pre, kbd, samp {
     .mat-icon {
       color: var(--text-secondary) !important;
     }
+
+    mat-error {
+      color: var(--danger) !important;
+      font-size: 0.8rem;
+    }
+  }
+
+  .mat-mdc-checkbox {
+    --mdc-checkbox-selected-checkmark-color: #ffffff;
+    --mdc-checkbox-selected-focus-icon-color: var(--primary);
+    --mdc-checkbox-selected-hover-icon-color: var(--primary);
+    --mdc-checkbox-selected-icon-color: var(--primary);
+    --mdc-checkbox-unselected-focus-icon-color: var(--text-secondary);
+    --mdc-checkbox-unselected-hover-icon-color: var(--text-primary);
+    --mdc-checkbox-unselected-icon-color: var(--border-strong);
   }
 }
 
