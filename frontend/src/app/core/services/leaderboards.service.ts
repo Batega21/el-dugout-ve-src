@@ -6,6 +6,7 @@ import {
   LeaderQueryResponse,
   StatCategory,
 } from '../models/leaderboard.model';
+import { StatRecordItem } from '../../shared/components/stats-strip/stats-strip.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -52,6 +53,13 @@ export class LeaderboardsService {
   }
 
   /**
+   * Retrieve top historical LVBP records for the stats strip marquee ticker.
+   */
+  getTopRecords(): Observable<StatRecordItem[]> {
+    return this.http.get<StatRecordItem[]>('leaderboards/top-records');
+  }
+
+  /**
    * Client-side preview of the statistical category inferred from the file name.
    */
   detectCategoryPreview(fileName: string): { label: string; category: StatCategory | 'UNKNOWN' } {
@@ -73,6 +81,9 @@ export class LeaderboardsService {
     }
     if (lower.includes('anotada') || lower.includes('carrera') || lower.includes('runs')) {
       return { label: 'Runs Scored', category: 'RUNS' };
+    }
+    if (lower.includes('inning') || lower.includes('entrada') || lower.includes('ip') || lower.includes('el')) {
+      return { label: 'Innings Pitched', category: 'INNINGS_PITCHED' };
     }
     return { label: 'Excel Dataset', category: 'UNKNOWN' };
   }

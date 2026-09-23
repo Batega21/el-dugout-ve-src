@@ -96,6 +96,7 @@ enum StatCategory {
   TRIPLES
   HOME_RUNS
   RUNS
+  INNINGS_PITCHED
 }
 
 model Season {

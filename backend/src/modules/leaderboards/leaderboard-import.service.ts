@@ -4,6 +4,7 @@ import { StatCategory } from '@prisma/client';
 import * as ExcelJS from 'exceljs';
 import { FileImportSummaryDto, ImportResultDto } from './dto/import-result.dto';
 import { GetLeadersQueryDto } from './dto/get-leaders.dto';
+import { TopRecordItemDto } from './dto/top-records.dto';
 
 export interface ParsedLeaderRow {
   seasonCode: string;
@@ -372,6 +373,101 @@ export class LeaderboardImportService {
   }
 
   /**
+   * Retrieve top historical LVBP records for the marquee stats strip ticker.
+   * Runs queries to extract the all-time top statistical record in each category:
+   * 1. Récord AVG: Highest single-season batting average (.430 — Alí Castillo 2020-21)
+   * 2. Récord Innings: Highest single-season innings pitched (208.0 — Emilio Cueche 1953-54)
+   * 3. Récord Triples: Highest single-season triples (10 — Félix Rodríguez 1976-77)
+   * 4. Más títulos bateo: Player with the most batting champion titles (6x — Luis Sojo)
+   * 5. Temporadas registradas: Hardcoded 80 Temporadas LVBP
+   */
+  async getTopRecords(): Promise<TopRecordItemDto[]> {
+    const [topAvg, topInnings, topTriples, titleCounts] = await Promise.all([
+      // 1. Highest Batting Average
+      this.prisma.seasonLeader.findFirst({
+        where: { category: StatCategory.BATTING_AVERAGE },
+        orderBy: { statValue: 'desc' },
+        include: {
+          player: { select: { fullName: true } },
+          season: { select: { code: true } },
+        },
+      }),
+
+      // 2. Highest Innings Pitched
+      this.prisma.seasonLeader.findFirst({
+        where: { category: StatCategory.INNINGS_PITCHED },
+        orderBy: { statValue: 'desc' },
+        include: {
+          player: { select: { fullName: true } },
+          season: { select: { code: true } },
+        },
+      }),
+
+      // 3. Highest Triples
+      this.prisma.seasonLeader.findFirst({
+        where: { category: StatCategory.TRIPLES },
+        orderBy: { statValue: 'desc' },
+        include: {
+          player: { select: { fullName: true } },
+          season: { select: { code: true } },
+        },
+      }),
+
+      // 4. Most Batting Titles (category = BATTING_AVERAGE)
+      this.prisma.seasonLeader.groupBy({
+        by: ['playerId'],
+        where: { category: StatCategory.BATTING_AVERAGE },
+        _count: { id: true },
+        orderBy: {
+          _count: { id: 'desc' },
+        },
+        take: 1,
+      }),
+    ]);
+
+    // Format 1: Récord AVG (.430 — Alí Castillo 2020-21)
+    let avgValue = '.430 — Alí Castillo 2020-21';
+    if (topAvg?.player && topAvg?.season) {
+      const avgFormatted = Number(topAvg.statValue).toFixed(3).replace(/^0\./, '.');
+      avgValue = `${avgFormatted} — ${topAvg.player.fullName} ${topAvg.season.code}`;
+    }
+
+    // Format 2: Récord Innings (208.0 — Emilio Cueche 1953-54)
+    let inningsValue = '208.0 — Emilio Cueche 1953-54';
+    if (topInnings?.player && topInnings?.season) {
+      const ipFormatted = Number(topInnings.statValue).toFixed(1);
+      inningsValue = `${ipFormatted} — ${topInnings.player.fullName} ${topInnings.season.code}`;
+    }
+
+    // Format 3: Récord Triples (10 — Félix Rodríguez 1976-77)
+    let triplesValue = '10 — Félix Rodríguez 1976-77';
+    if (topTriples?.player && topTriples?.season) {
+      const triplesFormatted = Math.round(Number(topTriples.statValue));
+      triplesValue = `${triplesFormatted} — ${topTriples.player.fullName} ${topTriples.season.code}`;
+    }
+
+    // Format 4: Más títulos bateo (6x — Luis Sojo)
+    let mostTitlesValue = '6x — Luis Sojo';
+    if (titleCounts.length > 0 && titleCounts[0]._count.id > 1) {
+      const topTitlePlayer = await this.prisma.player.findUnique({
+        where: { id: titleCounts[0].playerId },
+        select: { fullName: true },
+      });
+      if (topTitlePlayer) {
+        mostTitlesValue = `${titleCounts[0]._count.id}x — ${topTitlePlayer.fullName}`;
+      }
+    }
+
+    return [
+      { label: 'Récord AVG', value: avgValue },
+      { label: 'Récord Innings', value: inningsValue },
+      { label: 'Récord Triples', value: triplesValue },
+      { label: 'Más títulos bateo', value: mostTitlesValue },
+      { label: 'Temporadas registradas', value: '80 Temporadas LVBP' },
+    ];
+  }
+
+  /**
    * Intelligently infer statistical category from filename or header keys.
    */
   detectCategory(fileName: string, headers: string[]): StatCategory {
@@ -411,13 +507,23 @@ export class LeaderboardImportService {
       return StatCategory.RUNS;
     }
 
+    // 7. Innings Pitched
+    if (
+      lowerName.includes('inning') ||
+      lowerName.includes('entrada') ||
+      headers.includes('ip') ||
+      headers.includes('el')
+    ) {
+      return StatCategory.INNINGS_PITCHED;
+    }
+
     // Fallback detection from headers alone
     if (joinedHeaders.includes('total') && lowerName.includes('tripl')) {
       return StatCategory.TRIPLES;
     }
 
     throw new BadRequestException(
-      `Unrecognized statistical category for file "${fileName}". Expected one of: Batting Average, Hits, Doubles, Triples, Home Runs, or Runs.`,
+      `Unrecognized statistical category for file "${fileName}". Expected one of: Batting Average, Hits, Doubles, Triples, Home Runs, Runs, or Innings Pitched.`,
     );
   }
 

@@ -63,7 +63,7 @@ import { AuthService } from '../../core/services/auth.service';
   changeDetection: ChangeDetectionStrategy.Eager,
   styles: [`
     .home-page {
-      padding: 3rem 0;
+      padding: 0;
     }
 
     .hero {

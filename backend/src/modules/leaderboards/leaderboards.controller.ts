@@ -26,6 +26,7 @@ import { Roles } from '../../common/decorators/roles.decorator';
 import { LeaderboardImportService } from './leaderboard-import.service';
 import { ImportResultDto } from './dto/import-result.dto';
 import { GetLeadersQueryDto } from './dto/get-leaders.dto';
+import { TopRecordItemDto } from './dto/top-records.dto';
 
 @ApiTags('Leaderboards')
 @Controller('leaderboards')
@@ -108,6 +109,24 @@ export class LeaderboardsController {
       throw new BadRequestException('At least one Excel file must be uploaded under the "files" form field.');
     }
     return this.importService.processUploadedFiles(files);
+  }
+
+  /**
+   * Retrieve top historical LVBP records for the stats strip marquee ticker.
+   */
+  @Get('top-records')
+  @ApiOperation({
+    summary: 'Retrieve top historical LVBP records for the stats strip marquee',
+    description:
+      'Queries database for all-time record holders (AVG, Innings Pitched, Triples, Batting Titles) and hardcoded LVBP seasons count.',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Top records successfully retrieved.',
+    type: [TopRecordItemDto],
+  })
+  async getTopRecords(): Promise<TopRecordItemDto[]> {
+    return this.importService.getTopRecords();
   }
 
   /**

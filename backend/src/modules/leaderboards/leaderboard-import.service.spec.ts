@@ -34,6 +34,8 @@ describe('LeaderboardImportService', () => {
       }),
       seasonLeader: {
         count: jest.fn().mockResolvedValue(1),
+        findFirst: jest.fn(),
+        groupBy: jest.fn().mockResolvedValue([]),
         findMany: jest.fn().mockResolvedValue([
           {
             id: 'leader-1',
@@ -47,6 +49,9 @@ describe('LeaderboardImportService', () => {
             createdAt: new Date(),
           },
         ]),
+      },
+      player: {
+        findUnique: jest.fn(),
       },
     };
 
@@ -100,6 +105,15 @@ describe('LeaderboardImportService', () => {
     it('detects RUNS from filename or headers', () => {
       expect(service.detectCategory('lider-anotadas.xlsx', ['ano', 'jugador', 'ca'])).toBe(
         StatCategory.RUNS,
+      );
+    });
+
+    it('detects INNINGS_PITCHED from filename or headers', () => {
+      expect(service.detectCategory('lider-innings.xlsx', ['ano', 'jugador', 'ip'])).toBe(
+        StatCategory.INNINGS_PITCHED,
+      );
+      expect(service.detectCategory('entradas-lanzadas.xlsx', ['ano', 'jugador', 'el'])).toBe(
+        StatCategory.INNINGS_PITCHED,
       );
     });
 
@@ -216,6 +230,59 @@ describe('LeaderboardImportService', () => {
       expect(response.total).toBe(1);
       expect(response.records[0].player).toBe('Jesús Ramos');
       expect(response.records[0].statValue).toBe(0.403);
+    });
+  });
+
+  describe('getTopRecords', () => {
+    it('returns formatted top records from database queries', async () => {
+      prismaMock.seasonLeader.findFirst
+        .mockResolvedValueOnce({
+          statValue: 0.430,
+          player: { fullName: 'Alí Castillo' },
+          season: { code: '2020-21' },
+        })
+        .mockResolvedValueOnce({
+          statValue: 208.0,
+          player: { fullName: 'Emilio Cueche' },
+          season: { code: '1953-54' },
+        })
+        .mockResolvedValueOnce({
+          statValue: 10,
+          player: { fullName: 'Félix Rodríguez' },
+          season: { code: '1976-77' },
+        });
+
+      prismaMock.seasonLeader.groupBy.mockResolvedValueOnce([
+        { playerId: 'player-sojo', _count: { id: 6 } },
+      ]);
+      prismaMock.player.findUnique.mockResolvedValueOnce({
+        fullName: 'Luis Sojo',
+      });
+
+      const records = await service.getTopRecords();
+
+      expect(records).toEqual([
+        { label: 'Récord AVG', value: '.430 — Alí Castillo 2020-21' },
+        { label: 'Récord Innings', value: '208.0 — Emilio Cueche 1953-54' },
+        { label: 'Récord Triples', value: '10 — Félix Rodríguez 1976-77' },
+        { label: 'Más títulos bateo', value: '6x — Luis Sojo' },
+        { label: 'Temporadas registradas', value: '80 Temporadas LVBP' },
+      ]);
+    });
+
+    it('falls back to default canonical values if records are absent in database', async () => {
+      prismaMock.seasonLeader.findFirst.mockResolvedValue(null);
+      prismaMock.seasonLeader.groupBy.mockResolvedValue([]);
+
+      const records = await service.getTopRecords();
+
+      expect(records).toEqual([
+        { label: 'Récord AVG', value: '.430 — Alí Castillo 2020-21' },
+        { label: 'Récord Innings', value: '208.0 — Emilio Cueche 1953-54' },
+        { label: 'Récord Triples', value: '10 — Félix Rodríguez 1976-77' },
+        { label: 'Más títulos bateo', value: '6x — Luis Sojo' },
+        { label: 'Temporadas registradas', value: '80 Temporadas LVBP' },
+      ]);
     });
   });
 });

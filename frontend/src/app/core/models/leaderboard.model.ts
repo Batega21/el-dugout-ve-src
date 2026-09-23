@@ -4,7 +4,8 @@ export type StatCategory =
   | 'DOUBLES'
   | 'TRIPLES'
   | 'HOME_RUNS'
-  | 'RUNS';
+  | 'RUNS'
+  | 'INNINGS_PITCHED';
 
 export interface FileImportSummary {
   fileName: string;

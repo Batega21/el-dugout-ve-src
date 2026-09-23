@@ -64,6 +64,12 @@ describe('LeaderboardsService', () => {
       expect(res.label).toBe('Runs Scored');
     });
 
+    it('detects Innings Pitched from file name', () => {
+      const res = service.detectCategoryPreview('lider-innings.xlsx');
+      expect(res.category).toBe('INNINGS_PITCHED');
+      expect(res.label).toBe('Innings Pitched');
+    });
+
     it('returns unknown for generic file names', () => {
       const res = service.detectCategoryPreview('general-roster.xlsx');
       expect(res.category).toBe('UNKNOWN');
@@ -99,6 +105,21 @@ describe('LeaderboardsService', () => {
       expect(options.params.get('season')).toBe('2025-26');
       expect(options.params.get('limit')).toBe('25');
       expect(options.params.get('offset')).toBe('10');
+    });
+  });
+
+  describe('getTopRecords', () => {
+    it('calls GET leaderboards/top-records', () => {
+      const mockRecords = [
+        { label: 'Récord AVG', value: '.430 — Alí Castillo 2020-21' },
+      ];
+      mockHttpClient.get.mockReturnValue(of(mockRecords));
+
+      let result: any;
+      service.getTopRecords().subscribe((res) => (result = res));
+
+      expect(mockHttpClient.get).toHaveBeenCalledWith('leaderboards/top-records');
+      expect(result).toEqual(mockRecords);
     });
   });
 });

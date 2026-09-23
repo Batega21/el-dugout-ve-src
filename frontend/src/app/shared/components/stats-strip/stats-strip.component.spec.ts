@@ -1,14 +1,28 @@
 import '@angular/compiler';
 import { Injector, runInInjectionContext, signal } from '@angular/core';
+import { of, throwError } from 'rxjs';
 import { StatsStripComponent } from './stats-strip.component';
 import { DEFAULT_STAT_RECORDS, StatRecordItem } from './stats-strip.interface';
+import { LeaderboardsService } from '../../../core/services/leaderboards.service';
 
 describe('StatsStripComponent', () => {
   let component: StatsStripComponent;
   let injector: Injector;
+  let mockLeaderboardsService: {
+    getTopRecords: any;
+  };
 
   beforeEach(() => {
-    injector = Injector.create({ providers: [] });
+    mockLeaderboardsService = {
+      getTopRecords: vi.fn().mockReturnValue(of(DEFAULT_STAT_RECORDS)),
+    };
+
+    injector = Injector.create({
+      providers: [
+        { provide: LeaderboardsService, useValue: mockLeaderboardsService },
+      ],
+    });
+
     component = runInInjectionContext(injector, () => new StatsStripComponent());
   });
 
@@ -51,18 +65,46 @@ describe('StatsStripComponent', () => {
     expect(seasonsRecord?.value).toBe('80 Temporadas LVBP');
   });
 
-  it('should accept custom items and compute duplicatedItems correctly', () => {
+  it('should retrieve top records from LeaderboardsService on ngOnInit', () => {
+    const dbData: StatRecordItem[] = [
+      { label: 'Récord AVG', value: '.430 — Alí Castillo 2020-21' },
+      { label: 'Récord Innings', value: '208.0 — Emilio Cueche 1953-54' },
+      { label: 'Récord Triples', value: '10 — Félix Rodríguez 1976-77' },
+      { label: 'Más títulos bateo', value: '6x — Luis Sojo' },
+      { label: 'Temporadas registradas', value: '80 Temporadas LVBP' },
+    ];
+    mockLeaderboardsService.getTopRecords.mockReturnValue(of(dbData));
+
+    component.ngOnInit();
+
+    expect(mockLeaderboardsService.getTopRecords).toHaveBeenCalledTimes(1);
+    expect(component.items()).toEqual(dbData);
+  });
+
+  it('should retain DEFAULT_STAT_RECORDS when LeaderboardsService fails', () => {
+    mockLeaderboardsService.getTopRecords.mockReturnValue(
+      throwError(() => new Error('Network error')),
+    );
+
+    component.ngOnInit();
+
+    expect(component.items()).toEqual(DEFAULT_STAT_RECORDS);
+    expect(component.items().length).toBe(5);
+  });
+
+  it('should prioritize custom items input when provided', () => {
     const custom: StatRecordItem[] = [
       { label: 'Jonrones', value: '28 — Alex Cabrera 2013-14' },
     ];
-    (component as any).items = signal(custom);
+    (component as any).customItems = signal(custom);
+
+    expect(component.items()).toEqual(custom);
     expect(component.duplicatedItems().length).toBe(2);
     expect(component.duplicatedItems()[0].value).toBe('28 — Alex Cabrera 2013-14');
-    expect(component.duplicatedItems()[1].value).toBe('28 — Alex Cabrera 2013-14');
   });
 
   it('should return empty duplicatedItems when items is empty', () => {
-    (component as any).items = signal([]);
+    (component as any).customItems = signal([]);
     expect(component.duplicatedItems()).toEqual([]);
   });
 

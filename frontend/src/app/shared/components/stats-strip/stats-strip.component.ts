@@ -1,6 +1,15 @@
-import { Component, ChangeDetectionStrategy, input, computed } from '@angular/core';
+import {
+  Component,
+  ChangeDetectionStrategy,
+  input,
+  computed,
+  signal,
+  inject,
+  OnInit,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { StatRecordItem, DEFAULT_STAT_RECORDS } from './stats-strip.interface';
+import { LeaderboardsService } from '../../../core/services/leaderboards.service';
 
 @Component({
   selector: 'app-stats-strip',
@@ -105,11 +114,23 @@ import { StatRecordItem, DEFAULT_STAT_RECORDS } from './stats-strip.interface';
     }
   `],
 })
-export class StatsStripComponent {
+export class StatsStripComponent implements OnInit {
+  private readonly leaderboardsService = inject(LeaderboardsService, { optional: true });
+
   /**
-   * The list of statistical records to display in the marquee strip.
+   * Optional manual override for records. If not provided, retrieves top records from database.
    */
-  readonly items = input<StatRecordItem[]>(DEFAULT_STAT_RECORDS);
+  readonly customItems = input<StatRecordItem[] | undefined>(undefined, { alias: 'items' });
+
+  /**
+   * Database-fetched records signal, initialized to DEFAULT_STAT_RECORDS as fallback.
+   */
+  readonly dbRecords = signal<StatRecordItem[]>(DEFAULT_STAT_RECORDS);
+
+  /**
+   * Active list of statistical records (custom override takes precedence if supplied).
+   */
+  readonly items = computed(() => this.customItems() ?? this.dbRecords());
 
   /**
    * Whether to stretch the banner to full viewport width. Defaults to true.
@@ -126,4 +147,19 @@ export class StatsStripComponent {
     }
     return [...list, ...list];
   });
+
+  ngOnInit(): void {
+    if (this.leaderboardsService && !this.customItems()) {
+      this.leaderboardsService.getTopRecords().subscribe({
+        next: (records) => {
+          if (records && records.length > 0) {
+            this.dbRecords.set(records);
+          }
+        },
+        error: () => {
+          // Gracefully retain DEFAULT_STAT_RECORDS fallback
+        },
+      });
+    }
+  }
 }

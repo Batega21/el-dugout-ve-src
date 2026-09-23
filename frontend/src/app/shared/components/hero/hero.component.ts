@@ -73,21 +73,12 @@ import { ThemeService } from '../../../core/services/theme.service';
     :host {
       display: block;
       width: 100%;
-
-      &.full-width {
-        width: 100vw;
-        position: relative;
-        left: 50%;
-        right: 50%;
-        margin-left: -50vw;
-        margin-right: -50vw;
-      }
     }
 
     .hero-section {
       position: relative;
       width: 100%;
-      min-height: 520px;
+      min-height: 640px;
       padding: 5rem 0;
       display: flex;
       align-items: center;
@@ -187,15 +178,12 @@ import { ThemeService } from '../../../core/services/theme.service';
     /* 2.2 Main Heading / Title */
     .hero-title {
       font-family: var(--font-display);
-      font-size: clamp(2.25rem, 5vw, var(--font-size-4xl, 3.5rem));
+      font-size: clamp(4rem, 7vw, var(--font-size-4xl, 5rem));
       font-weight: var(--font-weight-extrabold, 800);
       line-height: var(--line-height-tight, 1.15);
       letter-spacing: -0.03em;
       color: var(--text-color, #ffffff);
       margin: 0 0 1.25rem 0;
-      background: var(--hero-title-gradient, linear-gradient(180deg, #ffffff 30%, #94a3b8 100%));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
     }
 
     /* 2.3 Copy for Company Context */
