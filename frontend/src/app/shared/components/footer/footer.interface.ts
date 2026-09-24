@@ -62,46 +62,45 @@ export interface FooterConfig {
 
 export const DEFAULT_FOOTER_CONFIG: FooterConfig = {
   brand: {
-    name: 'EL DUGOUT VE',
-    slogan: 'La Wiki del Béisbol Profesional Venezolano',
-    aboutTitle: 'Sobre El Dugout Ve',
-    aboutText:
-      'Enciclopedia y plataforma dedicada a preservar la historia, estadísticas, franquicias, temporadas y leyendas de la Liga Venezolana de Béisbol Profesional (LVBP).',
+    name: 'FOOTER.BRAND_NAME',
+    slogan: 'FOOTER.BRAND_SLOGAN',
+    aboutTitle: 'FOOTER.ABOUT_TITLE',
+    aboutText: 'FOOTER.ABOUT_TEXT',
   },
   sections: [
     {
-      title: 'Contenido',
+      title: 'FOOTER.CONTENT_TITLE',
       links: [
-        { label: 'Equipos LVBP', url: '/#teams' },
-        { label: 'Estadísticas', url: '/#stats' },
-        { label: 'Temporadas', url: '/#seasons' },
-        { label: 'Salón de la Fama', url: '/#hall-of-fame' },
+        { label: 'FOOTER.TEAMS', url: '/#teams' },
+        { label: 'FOOTER.STATS', url: '/#stats' },
+        { label: 'FOOTER.SEASONS', url: '/#seasons' },
+        { label: 'FOOTER.HALL_OF_FAME', url: '/#hall-of-fame' },
       ],
     },
     {
-      title: 'Comunidad',
+      title: 'FOOTER.COMMUNITY_TITLE',
       links: [
-        { label: 'Sobre Nosotros', url: '/about' },
-        { label: 'Suscripciones', url: '/#subscription' },
-        { label: 'Términos y Condiciones', url: '/terms' },
-        { label: 'Contacto', url: '/contact' },
+        { label: 'FOOTER.ABOUT_US', url: '/about' },
+        { label: 'FOOTER.SUBSCRIPTIONS', url: '/#subscription' },
+        { label: 'FOOTER.TERMS', url: '/terms' },
+        { label: 'FOOTER.CONTACT', url: '/contact' },
       ],
     },
   ],
   contact: {
-    title: 'Contacto',
+    title: 'FOOTER.CONTACT',
     items: [
-      { label: 'Web:', value: 'eldugoutve.com', href: 'https://eldugoutve.com' },
-      { label: 'Email:', value: 'contacto@eldugoutve.com', href: 'mailto:contacto@eldugoutve.com' },
+      { label: 'FOOTER.WEB_LABEL', value: 'eldugoutve.com', href: 'https://eldugoutve.com' },
+      { label: 'FOOTER.EMAIL_LABEL', value: 'info@eldugoutve.com', href: 'mailto:info@eldugoutve.com' },
     ],
     showAccentBar: true,
   },
   newsletter: {
-    placeholder: 'Tu correo electrónico',
-    buttonAriaLabel: 'Suscribirse al boletín',
+    placeholder: 'FOOTER.NEWSLETTER_PLACEHOLDER',
+    buttonAriaLabel: 'FOOTER.NEWSLETTER_BTN_ARIA',
   },
   social: {
-    title: 'Síguenos',
+    title: 'FOOTER.FOLLOW_US',
     items: [
       { name: 'X / Twitter', symbol: 'X', url: 'https://x.com', highlighted: true },
       { name: 'Instagram', symbol: 'IG', url: 'https://instagram.com' },
@@ -111,10 +110,10 @@ export const DEFAULT_FOOTER_CONFIG: FooterConfig = {
   },
   bottom: {
     links: [
-      { label: 'Política de Privacidad', url: '/privacy' },
-      { label: 'Términos de Servicio', url: '/terms' },
+      { label: 'FOOTER.PRIVACY', url: '/privacy' },
+      { label: 'FOOTER.TERMS_OF_SERVICE', url: '/terms' },
       { label: 'eldugoutve.com', url: 'https://eldugoutve.com', external: true },
     ],
-    copyright: '© 2026 El Dugout Ve (eldugoutve.com). Todos los derechos reservados.',
+    copyright: 'FOOTER.COPYRIGHT',
   },
 };

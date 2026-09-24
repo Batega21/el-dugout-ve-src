@@ -16,6 +16,8 @@ export const routes: Routes = [
   {
     path: 'admin',
     canActivate: [adminGuard],
+    canActivateChild: [adminGuard],
+    data: { adminOnly: true },
     children: [
       {
         path: '',
@@ -36,6 +38,7 @@ export const routes: Routes = [
   {
     path: 'users',
     canActivate: [adminGuard],
+    data: { adminOnly: true },
     loadComponent: () => import('./features/users/users.component').then((m) => m.UsersComponent),
   },
   {

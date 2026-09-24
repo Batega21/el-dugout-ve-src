@@ -209,16 +209,19 @@ import { SignUpDialogComponent } from '../sign-up-dialog/sign-up-dialog.componen
   styles: [`
     :host {
       display: block;
-      color: var(--text-color, #ffffff);
+      color: var(--text-primary, #ffffff);
     }
 
     .login-modal-wrapper {
       display: flex;
       flex-direction: column;
       max-height: 90vh;
-      background-color: var(--background-primary-color, #0b0f19);
+      background-color: var(--background-secondary-color, var(--bg-card));
+      border: 1px solid var(--border-theme-color, var(--border-color));
       border-radius: var(--radius-lg, 1.25rem);
+      box-shadow: var(--shadow-card);
       overflow: hidden;
+      color: var(--text-primary);
     }
 
     /* Modal Header */
@@ -227,10 +230,10 @@ import { SignUpDialogComponent } from '../sign-up-dialog/sign-up-dialog.componen
       justify-content: space-between;
       align-items: flex-start;
       padding: 1.75rem 2rem 1rem 2rem;
-      border-bottom: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.08));
+      border-bottom: 1px solid var(--border-theme-color, var(--border-color));
       position: sticky;
       top: 0;
-      background-color: var(--background-primary-color, #0b0f19);
+      background-color: var(--background-secondary-color, var(--bg-card));
       z-index: 10;
     }
 
@@ -240,19 +243,19 @@ import { SignUpDialogComponent } from '../sign-up-dialog/sign-up-dialog.componen
       font-weight: var(--font-weight-bold, 700);
       text-transform: uppercase;
       letter-spacing: 0.06em;
-      color: var(--ice-blue, #38bdf8);
-      background: var(--primary-light, rgba(56, 189, 248, 0.12));
+      color: var(--primary);
+      background: var(--primary-light);
       padding: 0.25rem 0.65rem;
       border-radius: var(--radius-pill, 9999px);
       margin-bottom: 0.5rem;
     }
 
     .dialog-title {
-      font-family: var(--font-display);
+      font-family: var(--font-heading, var(--font-display));
       font-size: var(--font-size-2xl, 1.65rem) !important;
       font-weight: var(--font-weight-extrabold, 800) !important;
-      letter-spacing: -0.02em;
-      color: var(--text-color, #ffffff) !important;
+      letter-spacing: 0.02em;
+      color: var(--text-primary) !important;
       margin: 0 0 0.35rem 0 !important;
       padding: 0 !important;
     }
@@ -260,17 +263,17 @@ import { SignUpDialogComponent } from '../sign-up-dialog/sign-up-dialog.componen
     .dialog-subtitle {
       font-family: var(--font-sans);
       font-size: var(--font-size-sm, 0.875rem);
-      color: var(--text-secondary-color, #94a3b8);
+      color: var(--text-secondary);
       margin: 0;
       line-height: 1.5;
     }
 
     .close-btn {
-      color: var(--text-muted-color, #94a3b8) !important;
+      color: var(--text-secondary) !important;
       transition: color 0.2s ease, transform 0.2s ease !important;
 
       &:hover {
-        color: var(--text-color, #ffffff) !important;
+        color: var(--text-primary) !important;
         transform: scale(1.05);
       }
     }
@@ -303,13 +306,13 @@ import { SignUpDialogComponent } from '../sign-up-dialog/sign-up-dialog.componen
     .alert-danger {
       background-color: rgba(239, 68, 68, 0.12);
       border: 1px solid rgba(239, 68, 68, 0.3);
-      color: #fca5a5;
+      color: var(--danger);
     }
 
     .alert-success {
       background-color: rgba(16, 185, 129, 0.12);
       border: 1px solid rgba(16, 185, 129, 0.3);
-      color: #6ee7b7;
+      color: var(--success);
     }
 
     /* Form Fields */
@@ -317,20 +320,25 @@ import { SignUpDialogComponent } from '../sign-up-dialog/sign-up-dialog.componen
       width: 100%;
       margin-bottom: 0.5rem;
 
-      --mdc-outlined-text-field-input-text-color: #f1f5f9;
-      --mdc-outlined-text-field-input-text-placeholder-color: #94a3b8;
-      --mdc-outlined-text-field-label-text-color: #94a3b8;
-      --mdc-outlined-text-field-focus-label-text-color: #38bdf8;
-      --mdc-outlined-text-field-outline-color: rgba(255, 255, 255, 0.18);
-      --mdc-outlined-text-field-focus-outline-color: #38bdf8;
-      --mdc-outlined-text-field-hover-outline-color: rgba(255, 255, 255, 0.35);
+      --mdc-outlined-text-field-input-text-color: var(--text-primary);
+      --mdc-outlined-text-field-input-text-placeholder-color: var(--text-muted);
+      --mdc-outlined-text-field-label-text-color: var(--text-secondary);
+      --mdc-outlined-text-field-focus-label-text-color: var(--primary);
+      --mdc-outlined-text-field-outline-color: var(--border-color);
+      --mdc-outlined-text-field-focus-outline-color: var(--primary);
+      --mdc-outlined-text-field-hover-outline-color: var(--border-strong);
+      --mdc-outlined-text-field-error-outline-color: var(--danger);
+      --mdc-outlined-text-field-error-focus-outline-color: var(--danger);
+      --mdc-outlined-text-field-error-hover-outline-color: var(--danger);
+      --mdc-outlined-text-field-error-label-text-color: var(--danger);
 
       input {
-        color: #f1f5f9 !important;
+        color: var(--text-primary) !important;
+        caret-color: var(--primary) !important;
         font-size: 0.95rem;
 
         &::placeholder {
-          color: #94a3b8 !important;
+          color: var(--text-muted) !important;
           opacity: 0 !important;
           transition: opacity 0.2s ease;
         }
@@ -349,13 +357,23 @@ import { SignUpDialogComponent } from '../sign-up-dialog/sign-up-dialog.componen
       }
 
       .field-icon {
-        color: #94a3b8;
+        color: var(--text-secondary);
+      }
+
+      mat-error {
+        color: var(--danger) !important;
+        font-size: 0.8rem;
       }
 
       .toggle-password-btn {
         width: 2.25rem;
         height: 2.25rem;
         padding: 0;
+        color: var(--text-secondary);
+
+        &:hover {
+          color: var(--text-primary);
+        }
       }
     }
 
@@ -374,7 +392,7 @@ import { SignUpDialogComponent } from '../sign-up-dialog/sign-up-dialog.componen
       border: none;
       padding: 0;
       font-size: 0.825rem;
-      color: #38bdf8;
+      color: var(--primary);
       cursor: pointer;
       font-weight: 500;
       text-decoration: underline;
@@ -382,7 +400,7 @@ import { SignUpDialogComponent } from '../sign-up-dialog/sign-up-dialog.componen
       transition: color 0.2s ease;
 
       &:hover {
-        color: #7dd3fc;
+        color: var(--primary-hover);
       }
     }
 
@@ -393,19 +411,20 @@ import { SignUpDialogComponent } from '../sign-up-dialog/sign-up-dialog.componen
       height: 3rem !important;
       font-size: 0.95rem !important;
       font-weight: 700 !important;
-      background: linear-gradient(135deg, #0284c7 0%, #38bdf8 100%) !important;
+      background: var(--primary) !important;
       color: #ffffff !important;
       display: flex !important;
       align-items: center !important;
       justify-content: center !important;
       gap: 0.5rem !important;
-      box-shadow: 0 4px 14px rgba(56, 189, 248, 0.4) !important;
+      box-shadow: 0 4px 14px var(--primary-glow, rgba(239, 68, 68, 0.4)) !important;
       transition: all 0.2s ease !important;
       margin-bottom: 1.5rem;
 
       &:hover:not(:disabled) {
         transform: translateY(-1px);
-        box-shadow: 0 6px 20px rgba(56, 189, 248, 0.6) !important;
+        background: var(--primary-hover) !important;
+        box-shadow: 0 6px 20px var(--primary-glow, rgba(239, 68, 68, 0.6)) !important;
       }
 
       &:disabled {
@@ -429,13 +448,13 @@ import { SignUpDialogComponent } from '../sign-up-dialog/sign-up-dialog.componen
       .divider-line {
         flex: 1;
         height: 1px;
-        background-color: rgba(255, 255, 255, 0.1);
+        background-color: var(--border-theme-color, var(--border-color));
       }
 
       .divider-text {
         padding: 0 1rem;
         font-size: 0.8rem;
-        color: #64748b;
+        color: var(--text-muted);
         text-transform: uppercase;
         letter-spacing: 0.05em;
         font-weight: 500;
@@ -453,21 +472,21 @@ import { SignUpDialogComponent } from '../sign-up-dialog/sign-up-dialog.componen
     .social-btn {
       height: 2.75rem !important;
       border-radius: 0.5rem !important;
-      border-color: rgba(255, 255, 255, 0.14) !important;
-      color: #cbd5e1 !important;
+      border-color: var(--border-theme-color, var(--border-color)) !important;
+      color: var(--text-primary) !important;
       font-size: 0.85rem !important;
       font-weight: 500 !important;
       display: inline-flex !important;
       align-items: center !important;
       justify-content: center !important;
       gap: 0.5rem !important;
-      background-color: rgba(255, 255, 255, 0.02) !important;
+      background-color: var(--background-tertiary-color, var(--bg-card-hover)) !important;
       transition: all 0.2s ease !important;
 
       &:hover {
-        background-color: rgba(255, 255, 255, 0.08) !important;
-        border-color: #38bdf8 !important;
-        color: #ffffff !important;
+        background-color: var(--background-hover-color, var(--bg-card-hover)) !important;
+        border-color: var(--primary) !important;
+        color: var(--primary) !important;
       }
     }
 
@@ -478,11 +497,11 @@ import { SignUpDialogComponent } from '../sign-up-dialog/sign-up-dialog.componen
       justify-content: center;
       gap: 0.5rem;
       padding-top: 1rem;
-      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      border-top: 1px solid var(--border-theme-color, var(--border-color));
 
       .signup-prompt {
         font-size: 0.875rem;
-        color: #94a3b8;
+        color: var(--text-secondary);
       }
 
       .signup-link-btn {
@@ -491,14 +510,14 @@ import { SignUpDialogComponent } from '../sign-up-dialog/sign-up-dialog.componen
         padding: 0;
         font-size: 0.875rem;
         font-weight: 600;
-        color: #38bdf8;
+        color: var(--primary);
         cursor: pointer;
         text-decoration: underline;
         text-underline-offset: 2px;
         transition: color 0.2s ease;
 
         &:hover {
-          color: #7dd3fc;
+          color: var(--primary-hover);
         }
       }
     }

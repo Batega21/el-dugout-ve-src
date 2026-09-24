@@ -24,9 +24,14 @@ import { NavMenuComponent } from './nav-menu/nav-menu.component';
   styles: [`
     :host {
       display: block;
-      position: sticky;
-      top: 0;
+      width: 100%;
+      position: relative;
       z-index: 1000;
+
+      @media (min-width: 768px) {
+        position: sticky;
+        top: 0;
+      }
     }
 
     .app-header {
@@ -47,7 +52,6 @@ import { NavMenuComponent } from './nav-menu/nav-menu.component';
 
     .header-container {
       width: 100%;
-      max-width: var(--wrap-max-width, 1200px);
       margin: 0 auto;
       padding: 0 var(--wrap-padding-x, 1.5rem);
       display: flex;
@@ -60,4 +64,4 @@ import { NavMenuComponent } from './nav-menu/nav-menu.component';
     }
   `],
 })
-export class HeaderComponent {}
+export class HeaderComponent { }

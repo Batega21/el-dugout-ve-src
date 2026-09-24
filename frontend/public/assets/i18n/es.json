@@ -492,9 +492,12 @@
     "SUBSCRIPTIONS": "Suscripciones",
     "TERMS": "Términos y Condiciones",
     "CONTACT": "Contacto",
+    "WEB_LABEL": "Web:",
+    "EMAIL_LABEL": "Email:",
     "NEWSLETTER_PLACEHOLDER": "Tu correo electrónico",
     "NEWSLETTER_BTN_ARIA": "Suscribirse al boletín",
     "FOLLOW_US": "Síguenos",
+    "BOTTOM_LINKS_ARIA": "Enlaces secundarios del pie de página",
     "PRIVACY": "Política de Privacidad",
     "TERMS_OF_SERVICE": "Términos de Servicio",
     "COPYRIGHT": "© 2026 El Dugout Ve (eldugoutve.com). Todos los derechos reservados."

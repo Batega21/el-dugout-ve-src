@@ -14,9 +14,6 @@ import { TranslatePipe } from '@ngx-translate/core';
       </div>
       <div class="logo-details">
         <span class="logo-title">{{ title() }}</span>
-        @if (subtitle()) {
-          <span class="logo-subtitle">{{ subtitle() | translate }}</span>
-        }
       </div>
     </a>
   `,
@@ -66,26 +63,13 @@ import { TranslatePipe } from '@ngx-translate/core';
 
     .logo-title {
       font-family: var(--font-display);
-      font-size: var(--font-size-md, 1.05rem);
+      font-size: var(--font-size-2xl, 2rem);
       font-weight: var(--font-weight-bold, 700);
       color: var(--text-color, var(--text-primary, #f9fafb));
       letter-spacing: -0.02em;
-    }
-
-    .logo-subtitle {
-      font-size: var(--font-size-xs, 0.7rem);
-      font-weight: var(--font-weight-medium, 500);
-      color: var(--text-muted-color, var(--text-muted, #9ca3af));
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-
-      @media (max-width: 860px) {
-        display: none;
-      }
     }
   `],
 })
 export class LogoComponent {
   readonly title = input<string>('El Dugout Ve');
-  readonly subtitle = input<string>('La Biblia del Béisbol Venezolano');
 }
