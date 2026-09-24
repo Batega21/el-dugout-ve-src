@@ -1,0 +1,197 @@
+<div class="import-page-container">
+  <!-- Breadcrumb Navigation -->
+  <nav class="breadcrumb-nav" aria-label="Breadcrumbs">
+    <a routerLink="/admin" class="breadcrumb-link">{{ 'IMPORT_EXCEL.HEADER.BREADCRUMB_DASHBOARD' | translate }}</a>
+    <span class="breadcrumb-sep">/</span>
+    <span class="breadcrumb-current">{{ 'IMPORT_EXCEL.HEADER.BREADCRUMB_CURRENT' | translate }}</span>
+  </nav>
+
+  <!-- Page Header -->
+  <header class="page-header">
+    <div>
+      <span class="admin-badge">{{ 'IMPORT_EXCEL.HEADER.BADGE' | translate }}</span>
+      <h1 class="page-title">{{ 'IMPORT_EXCEL.HEADER.TITLE' | translate }}</h1>
+      <p class="page-subtitle">{{ 'IMPORT_EXCEL.HEADER.SUBTITLE' | translate }}</p>
+    </div>
+    <div class="header-actions">
+      <a routerLink="/admin" class="btn btn-outline">
+        <mat-icon>arrow_back</mat-icon>
+        {{ 'IMPORT_EXCEL.ACTIONS.BACK_DASHBOARD' | translate }}
+      </a>
+    </div>
+  </header>
+
+  <!-- Non-Admin Security Notice -->
+  @if (!authService.isAdmin()) {
+    <div class="alert alert-danger" role="alert">
+      <mat-icon class="alert-icon">gpp_bad</mat-icon>
+      <div>
+        <strong>{{ 'IMPORT_EXCEL.ALERTS.ACCESS_DENIED' | translate }}:</strong>
+        <span>{{ 'IMPORT_EXCEL.ALERTS.ADMIN_REQUIRED' | translate }}</span>
+      </div>
+    </div>
+  } @else {
+    <!-- Global Error Alert -->
+    @if (errorMessage()) {
+      <div class="alert alert-danger" role="alert">
+        <mat-icon class="alert-icon">error_outline</mat-icon>
+        <div class="alert-content">
+          <strong>{{ 'IMPORT_EXCEL.ALERTS.ERROR_TITLE' | translate }}:</strong>
+          <span>{{ errorMessage() }}</span>
+        </div>
+        <button
+          type="button"
+          class="close-btn"
+          (click)="clearError()"
+          [attr.aria-label]="'IMPORT_EXCEL.ACTIONS.DISMISS' | translate">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+    }
+
+    <!-- Success Alert -->
+    @if (successMessage()) {
+      <div class="alert alert-success" role="alert">
+        <mat-icon class="alert-icon">check_circle</mat-icon>
+        <div class="alert-content">
+          <strong>{{ 'IMPORT_EXCEL.ALERTS.SUCCESS_TITLE' | translate }}:</strong>
+          <span>{{ successMessage() }}</span>
+        </div>
+        <button
+          type="button"
+          class="close-btn"
+          (click)="clearSuccess()"
+          [attr.aria-label]="'IMPORT_EXCEL.ACTIONS.DISMISS' | translate">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+    }
+
+    <!-- Active View 1: Dropzone & File Selection (Visible when not in preview mode) -->
+    @if (!previewData()) {
+      <section class="upload-section">
+        <!-- Drag & Drop Dropzone -->
+        <div
+          class="dropzone-card"
+          [class.dragging]="isDragging()"
+          [class.has-file]="file() !== null"
+          [class.loading]="isValidating() || isUploading()"
+          (dragover)="onDragOver($event)"
+          (dragleave)="onDragLeave($event)"
+          (drop)="onDrop($event)"
+          (click)="triggerFilePicker(fileInput)"
+          tabindex="0"
+          role="button"
+          (keydown.enter)="triggerFilePicker(fileInput)"
+          (keydown.space)="triggerFilePicker(fileInput)"
+          [attr.aria-label]="'IMPORT_EXCEL.DROPZONE.TITLE' | translate">
+
+          <input
+            #fileInput
+            type="file"
+            accept=".xlsx,.xls"
+            (change)="onFileSelected($event)"
+            hidden />
+
+          <div class="dropzone-content">
+            @if (isValidating()) {
+              <div class="spinner-container">
+                <mat-progress-spinner mode="indeterminate" diameter="48"></mat-progress-spinner>
+                <p class="loading-label">{{ 'IMPORT_EXCEL.DROPZONE.VALIDATING_MSG' | translate }}</p>
+              </div>
+            } @else {
+              <div class="upload-icon-wrapper" [class.pulse]="isDragging()">
+                <mat-icon class="upload-icon">cloud_upload</mat-icon>
+              </div>
+
+              <h2 class="drop-title">{{ 'IMPORT_EXCEL.DROPZONE.TITLE' | translate }}</h2>
+              <p class="drop-desc">
+                {{ 'IMPORT_EXCEL.DROPZONE.SUBTITLE' | translate }}
+              </p>
+
+              <div class="security-badges">
+                <span class="sec-chip">
+                  <mat-icon class="chip-icon">verified_user</mat-icon>
+                  {{ 'IMPORT_EXCEL.DROPZONE.CHIP_SIGNATURE' | translate }}
+                </span>
+                <span class="sec-chip">
+                  <mat-icon class="chip-icon">lock</mat-icon>
+                  {{ 'IMPORT_EXCEL.DROPZONE.CHIP_SIZE' | translate }}
+                </span>
+                <span class="sec-chip">
+                  <mat-icon class="chip-icon">security</mat-icon>
+                  {{ 'IMPORT_EXCEL.DROPZONE.CHIP_FORMULA' | translate }}
+                </span>
+              </div>
+
+              <button
+                type="button"
+                class="btn btn-browse"
+                [disabled]="isValidating() || isUploading()"
+                (click)="$event.stopPropagation(); fileInput.click()">
+                <mat-icon>folder_open</mat-icon>
+                {{ 'IMPORT_EXCEL.DROPZONE.BROWSE_BTN' | translate }}
+              </button>
+            }
+          </div>
+        </div>
+
+        <!-- Selected File Details Card -->
+        @if (file(); as selectedFile) {
+          <div class="staged-file-card">
+            <div class="staged-info">
+              <div class="excel-badge-icon">
+                <mat-icon>description</mat-icon>
+              </div>
+              <div class="file-text-group">
+                <span class="file-title-text">{{ selectedFile.name }}</span>
+                <div class="file-meta-row">
+                  <span class="file-size-tag">{{ formatBytes(selectedFile.size) }}</span>
+                  <span class="verified-tag">
+                    <mat-icon class="verified-icon">verified</mat-icon>
+                    {{ 'IMPORT_EXCEL.DROPZONE.BINARY_OK' | translate }}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div class="staged-actions">
+              <button
+                type="button"
+                class="btn btn-danger-ghost"
+                [disabled]="isValidating() || isUploading()"
+                (click)="removeSelectedFile()">
+                <mat-icon>delete_outline</mat-icon>
+                {{ 'IMPORT_EXCEL.ACTIONS.REMOVE_FILE' | translate }}
+              </button>
+
+              <button
+                type="button"
+                class="btn btn-primary"
+                [disabled]="!canValidate()"
+                (click)="validateFileOnServer()">
+                @if (isValidating()) {
+                  <mat-progress-spinner mode="indeterminate" diameter="20"></mat-progress-spinner>
+                  <span>{{ 'IMPORT_EXCEL.ACTIONS.VALIDATING' | translate }}</span>
+                } @else {
+                  <mat-icon>rule</mat-icon>
+                  <span>{{ 'IMPORT_EXCEL.ACTIONS.VALIDATE_BTN' | translate }}</span>
+                }
+              </button>
+            </div>
+          </div>
+        }
+      </section>
+    }
+
+    <!-- Active View 2: Validation Table Component (Renders once preview data arrives) -->
+    @if (previewData(); as preview) {
+      <app-validation-table
+        [preview]="preview"
+        [isCommitting]="isUploading()"
+        (commit)="onCommitRecords($event)"
+        (discard)="onDiscardPreview()">
+      </app-validation-table>
+    }
+  }
+</div>

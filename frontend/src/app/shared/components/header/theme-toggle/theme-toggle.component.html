@@ -1,0 +1,139 @@
+<button
+  type="button"
+  class="theme-toggle-btn"
+  [class.is-dark]="themeService.isDark()"
+  [class.is-light]="themeService.isLight()"
+  [class.animating]="isSpinning()"
+  [attr.aria-label]="themeService.isDark() ? 'Activar tema claro (Pelota Clásica)' : 'Activar tema oscuro (Pelota Luminosa Amarilla)'"
+  [attr.title]="themeService.isDark() ? 'Tema Oscuro: Pelota luminosa amarilla. Clic para cambiar a claro.' : 'Tema Claro: Pelota clásica. Clic para cambiar a oscuro.'"
+  [attr.aria-pressed]="themeService.isDark()"
+  role="switch"
+  [attr.aria-checked]="themeService.isDark()"
+  (click)="toggleTheme()">
+  
+  <div class="baseball-wrapper">
+    <!-- Ambient Yellow Glow Aura for Dark Theme -->
+    <div class="yellow-glow-ring" aria-hidden="true"></div>
+    <div class="yellow-light-rays" aria-hidden="true"></div>
+
+    <!-- High-Fidelity Baseball SVG -->
+    <svg
+      class="baseball-svg"
+      viewBox="0 0 100 100"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true">
+      
+      <defs>
+        <!-- Normal Baseball Gradient (Light Mode) -->
+        <radialGradient id="normalBaseballGrad" cx="38%" cy="32%" r="65%">
+          <stop offset="0%" stop-color="#ffffff" />
+          <stop offset="65%" stop-color="#f8fafc" />
+          <stop offset="90%" stop-color="#e2e8f0" />
+          <stop offset="100%" stop-color="#cbd5e1" />
+        </radialGradient>
+
+        <!-- Bright Yellow Baseball Gradient (Dark Mode) -->
+        <radialGradient id="brightYellowGrad" cx="38%" cy="32%" r="65%">
+          <stop offset="0%" stop-color="#ffffff" />
+          <stop offset="25%" stop-color="#fef08a" />
+          <stop offset="65%" stop-color="#facc15" />
+          <stop offset="90%" stop-color="#eab308" />
+          <stop offset="100%" stop-color="#ca8a04" />
+        </radialGradient>
+
+        <!-- Ball Depth Shadow -->
+        <radialGradient id="ballShading" cx="50%" cy="50%" r="50%">
+          <stop offset="85%" stop-color="transparent" />
+          <stop offset="100%" stop-color="rgba(0, 0, 0, 0.28)" />
+        </radialGradient>
+      </defs>
+
+      <!-- Baseball Sphere -->
+      <circle
+        class="baseball-sphere"
+        cx="50"
+        cy="50"
+        r="44"
+      />
+
+      <!-- 3D Spherical Edge Shadow Overlay -->
+      <circle
+        cx="50"
+        cy="50"
+        r="44"
+        fill="url(#ballShading)"
+        pointer-events="none"
+      />
+
+      <!-- Left Seam Arc -->
+      <path
+        class="baseball-seam"
+        d="M 27 12 C 41 34 41 66 27 88"
+        stroke-width="2.5"
+        stroke-linecap="round"
+        fill="none"
+      />
+
+      <!-- Right Seam Arc -->
+      <path
+        class="baseball-seam"
+        d="M 73 12 C 59 34 59 66 73 88"
+        stroke-width="2.5"
+        stroke-linecap="round"
+        fill="none"
+      />
+
+      <!-- Left Seam Chevron Stitches -->
+      <g class="baseball-stitches left-stitches" stroke-width="2" stroke-linecap="round">
+        <line x1="28" y1="18" x2="33" y2="21" />
+        <line x1="28" y1="18" x2="23" y2="21" />
+
+        <line x1="32" y1="28" x2="37" y2="31" />
+        <line x1="32" y1="28" x2="27" y2="31" />
+
+        <line x1="34" y1="39" x2="40" y2="41" />
+        <line x1="34" y1="39" x2="29" y2="41" />
+
+        <line x1="35" y1="50" x2="41" y2="50" />
+        <line x1="35" y1="50" x2="29" y2="50" />
+
+        <line x1="34" y1="61" x2="40" y2="59" />
+        <line x1="34" y1="61" x2="29" y2="59" />
+
+        <line x1="32" y1="72" x2="37" y2="69" />
+        <line x1="32" y1="72" x2="27" y2="69" />
+
+        <line x1="28" y1="82" x2="33" y2="79" />
+        <line x1="28" y1="82" x2="23" y2="79" />
+      </g>
+
+      <!-- Right Seam Chevron Stitches -->
+      <g class="baseball-stitches right-stitches" stroke-width="2" stroke-linecap="round">
+        <line x1="72" y1="18" x2="67" y2="21" />
+        <line x1="72" y1="18" x2="77" y2="21" />
+
+        <line x1="68" y1="28" x2="63" y2="31" />
+        <line x1="68" y1="28" x2="73" y2="31" />
+
+        <line x1="66" y1="39" x2="60" y2="41" />
+        <line x1="66" y1="39" x2="71" y2="41" />
+
+        <line x1="65" y1="50" x2="59" y2="50" />
+        <line x1="65" y1="50" x2="71" y2="50" />
+
+        <line x1="66" y1="61" x2="60" y2="59" />
+        <line x1="66" y1="61" x2="71" y2="59" />
+
+        <line x1="68" y1="72" x2="63" y2="69" />
+        <line x1="68" y1="72" x2="73" y2="69" />
+
+        <line x1="72" y1="82" x2="67" y2="79" />
+        <line x1="72" y1="82" x2="77" y2="79" />
+      </g>
+
+      <!-- Luminous Light Flare on the Upper Left (Only visible when glowing) -->
+      <circle class="baseball-glint" cx="36" cy="30" r="4.5" fill="#ffffff" />
+    </svg>
+  </div>
+</button>

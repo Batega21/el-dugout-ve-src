@@ -1,0 +1,56 @@
+@if (canView()) {
+  <div class="section-cards-container">
+    @if (effectiveConfig().indicatorText; as indicator) {
+      <div class="admin-indicator">
+        <span class="admin-badge">
+          <span class="admin-badge-dot"></span>
+          {{ indicator | translate }}
+        </span>
+      </div>
+    }
+
+    <section class="status-grid">
+      @for (card of effectiveConfig().cards; track card.id || card.title) {
+        <div class="card status-card">
+          <div class="card-header">
+            <h3>{{ card.title | translate }}</h3>
+            @if (getCardBadge(card); as badge) {
+              <app-status-badge
+                [text]="badge.text | translate"
+                [type]="badge.type || 'neutral'">
+              </app-status-badge>
+            }
+          </div>
+
+          @if (card.description) {
+            <p class="card-desc">
+              {{ card.description | translate }}
+            </p>
+          }
+
+          @if (card.footerCode || card.footerButton || card.footerText) {
+            <div class="card-footer">
+              @if (card.footerCode) {
+                <code>{{ card.footerCode | translate }}</code>
+              }
+
+              @if (card.footerButton) {
+                <button
+                  type="button"
+                  (click)="onCardButtonClick(card)"
+                  class="btn-refresh"
+                  [disabled]="isCardButtonDisabled(card)">
+                  {{ getCardButtonLabel(card) | translate }}
+                </button>
+              }
+
+              @if (card.footerText) {
+                <span class="footer-text">{{ card.footerText | translate }}</span>
+              }
+            </div>
+          }
+        </div>
+      }
+    </section>
+  </div>
+}

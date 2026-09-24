@@ -1,0 +1,67 @@
+<div class="avatar-container">
+  <button
+    type="button"
+    [matMenuTriggerFor]="avatarMenu"
+    class="avatar-trigger-btn"
+    [attr.aria-label]="userAriaLabel()"
+    [title]="authService.currentUser()?.email || ('COMMON.TIERS.USER' | translate)">
+    <div class="avatar-circle">
+      @if (avatarUrl()) {
+        <img
+          [src]="avatarUrl()"
+          alt="User avatar"
+          class="avatar-img"
+          (error)="onImgError()"
+        />
+      } @else {
+        <mat-icon class="fallback-icon">person</mat-icon>
+      }
+    </div>
+
+    @if (authService.currentTier() !== 'FREE') {
+      <span class="tier-pill">{{ authService.currentTier() }}</span>
+    }
+  </button>
+
+  <mat-menu #avatarMenu="matMenu" class="avatar-mat-menu" xPosition="before">
+    <div class="menu-header" (click)="$event.stopPropagation()">
+      <span class="user-display-name">{{ userName() }}</span>
+      <span class="user-email-text">{{ authService.currentUser()?.email }}</span>
+      <span class="user-tier-tag" [class.paid]="authService.hasActiveSubscription()">
+        {{ tierTagLabel() | translate }}
+      </span>
+    </div>
+
+    <mat-divider></mat-divider>
+
+    <!-- Profile option -->
+    <a mat-menu-item routerLink="/profile" class="avatar-menu-item">
+      <mat-icon class="menu-icon">person</mat-icon>
+      <span>{{ 'COMMON.NAV.PROFILE' | translate }}</span>
+    </a>
+
+    <!-- Subscribe option (Only for Free Tier User without paid plan) -->
+    @if (!authService.hasActiveSubscription() && !authService.isAdmin()) {
+      <button mat-menu-item (click)="onSubscribeClick()" class="avatar-menu-item subscribe-option">
+        <mat-icon class="menu-icon gold">star</mat-icon>
+        <span>{{ 'COMMON.NAV.SUBSCRIBE' | translate }}</span>
+      </button>
+    }
+
+    <!-- Admin System Matrix option -->
+    @if (authService.isAdmin()) {
+      <a mat-menu-item routerLink="/admin" class="avatar-menu-item">
+        <mat-icon class="menu-icon">admin_panel_settings</mat-icon>
+        <span>{{ 'COMMON.NAV.SYSTEM_MATRIX' | translate }}</span>
+      </a>
+    }
+
+    <mat-divider></mat-divider>
+
+    <!-- Logout option -->
+    <button mat-menu-item (click)="onLogoutClick()" class="avatar-menu-item logout-option">
+      <mat-icon class="menu-icon">logout</mat-icon>
+      <span>{{ 'COMMON.NAV.LOGOUT' | translate }}</span>
+    </button>
+  </mat-menu>
+</div>

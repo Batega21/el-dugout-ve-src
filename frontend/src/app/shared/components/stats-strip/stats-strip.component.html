@@ -1,0 +1,11 @@
+<!-- STATS STRIP -->
+<div class="stats-strip" role="region" [attr.aria-label]="'STATS.TICKER_TITLE' | translate">
+  <div class="strip-inner" id="strip">
+    @for (item of duplicatedItems(); track $index) {
+      <div class="strip-item">
+        <span class="si-label">{{ item.label | translate }}</span>
+        <span class="si-val">{{ item.value | translate }}</span>
+      </div>
+    }
+  </div>
+</div>

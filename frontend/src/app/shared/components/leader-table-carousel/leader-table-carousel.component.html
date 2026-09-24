@@ -1,0 +1,159 @@
+<section
+  class="carousel-section"
+  role="region"
+  [attr.aria-label]="effectiveConfig().title | translate"
+  tabindex="0"
+  (keydown)="onKeyDown($event)"
+  (touchstart)="onTouchStart($event)"
+  (touchmove)="onTouchMove($event)"
+  (touchend)="onTouchEnd()">
+
+  <!-- Section Header -->
+  <div class="carousel-header">
+    @if (effectiveConfig().badge; as badgeText) {
+      <div class="badge-label">
+        <span class="badge-dash">—</span>
+        <span class="badge-text">{{ badgeText | translate }}</span>
+      </div>
+    }
+
+    <h2 class="carousel-title">{{ effectiveConfig().title | translate }}</h2>
+
+    @if (effectiveConfig().subtitle; as subtitleText) {
+      <p class="carousel-subtitle">{{ subtitleText | translate }}</p>
+    }
+  </div>
+
+  <!-- Carousel Stage Viewport -->
+  <div class="carousel-stage">
+    <!-- Left Edge Gradient Mask -->
+    <div class="edge-gradient edge-gradient-left" aria-hidden="true"></div>
+
+    <!-- Right Edge Gradient Mask -->
+    <div class="edge-gradient edge-gradient-right" aria-hidden="true"></div>
+
+    <!-- Previous Button (Home Plate SVG pointing Left) -->
+    <button
+      type="button"
+      class="carousel-nav-btn prev"
+      (click)="prev()"
+      [disabled]="!canGoPrev()"
+      [attr.aria-label]="'LEADERS_CAROUSEL.PREV_TABLE' | translate">
+      <img
+        src="images/svg/home_plate_btn.svg"
+        alt=""
+        aria-hidden="true"
+        class="hp-svg-icon" />
+    </button>
+
+    <!-- Next Button (Home Plate SVG pointing Right) -->
+    <button
+      type="button"
+      class="carousel-nav-btn next"
+      (click)="next()"
+      [disabled]="!canGoNext()"
+      [attr.aria-label]="'LEADERS_CAROUSEL.NEXT_TABLE' | translate">
+      <img
+        src="images/svg/home_plate_btn.svg"
+        alt=""
+        aria-hidden="true"
+        class="hp-svg-icon" />
+    </button>
+
+    <!-- Sliding Track Container -->
+    <div class="track-wrapper" #trackWrapper>
+      <div
+        class="carousel-track"
+        [class.no-transition]="!enableTransition()"
+        [style.transform]="trackTransform()"
+        (transitionend)="onTransitionEnd()">
+        @for (slide of slides(); track $index) {
+          <div
+            class="card-slide"
+            [class.active]="isSlideActive($index)"
+            [attr.aria-hidden]="!isSlideActive($index)">
+            <div class="leader-card">
+              <!-- Card Header: Title with Icon & Optional Badge -->
+              <div class="card-header">
+                <div class="header-title">
+                  @if (slide.table.icon) {
+                    <span class="header-icon" aria-hidden="true">{{ slide.table.icon }}</span>
+                  }
+                  <h3>{{ slide.table.categoryKey ? (slide.table.categoryKey | translate) : slide.table.categoryTitle }}</h3>
+                </div>
+
+                @if (slide.table.badgeText) {
+                  <span class="card-badge">{{ slide.table.badgeText | translate }}</span>
+                }
+              </div>
+
+              <!-- Table Content (Progressively rendered for active & adjacent slides) -->
+              @if (isSlideVisible($index)) {
+                <div class="table-container">
+                  <table class="leader-table">
+                    <thead>
+                      <tr>
+                        <th class="col-year">{{ 'LEADERS_CAROUSEL.COL_YEAR' | translate }}</th>
+                        <th class="col-player">{{ 'LEADERS_CAROUSEL.COL_PLAYER' | translate }}</th>
+                        <th class="col-team">{{ 'LEADERS_CAROUSEL.COL_TEAM' | translate }}</th>
+                        <th class="col-stat">{{ slide.table.statColumn }}</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      @for (item of slide.table.items.slice(0, 5); track item.player + item.yearOrSpan) {
+                        <tr>
+                          <td class="col-year">{{ item.yearOrSpan }}</td>
+                          <td class="col-player">
+                            <span class="player-name">{{ item.player }}</span>
+                            <span class="player-team-mobile">{{ item.team }}</span>
+                          </td>
+                          <td class="col-team">{{ item.team }}</td>
+                          <td class="col-stat">
+                            <span class="stat-value">{{ item.statValue }}</span>
+                          </td>
+                        </tr>
+                      }
+                    </tbody>
+                  </table>
+                </div>
+              } @else {
+                <div class="table-placeholder">
+                  <div class="skeleton-row header-skel"></div>
+                  <div class="skeleton-row"></div>
+                  <div class="skeleton-row"></div>
+                  <div class="skeleton-row"></div>
+                  <div class="skeleton-row"></div>
+                  <div class="skeleton-row"></div>
+                </div>
+              }
+
+              <!-- Card Footer Link -->
+              <div class="card-footer">
+                <a
+                  [routerLink]="slide.table.fullHistoryUrl || effectiveConfig().fullHistoryUrl || '/stats'"
+                  class="history-link">
+                  {{ 'LEADERS_CAROUSEL.VIEW_FULL_HISTORY' | translate }}
+                </a>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+
+  <!-- Carousel Pagination Indicator Dots -->
+  <div class="carousel-indicators" role="tablist">
+    @for (tbl of effectiveConfig().tables; track tbl.id; let idx = $index) {
+      <button
+        type="button"
+        role="tab"
+        class="indicator-dot"
+        [class.active]="currentIndex() === idx"
+        [attr.aria-selected]="currentIndex() === idx"
+        [attr.aria-label]="(tbl.categoryKey ? (tbl.categoryKey | translate) : tbl.categoryTitle)"
+        (click)="goTo(idx)">
+      </button>
+    }
+  </div>
+</section>
