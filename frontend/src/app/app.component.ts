@@ -10,29 +10,9 @@ import { LanguageService } from './core/services/language.service';
   selector: 'app-root',
   standalone: true,
   imports: [RouterOutlet, HeaderComponent, FooterComponent],
-  template: `
-    <div class="app-layout">
-      <app-header></app-header>
-      <main class="main-content">
-        <div class="container">
-          <router-outlet></router-outlet>
-        </div>
-      </main>
-      <app-footer [config]="footerData"></app-footer>
-    </div>
-  `,
+  templateUrl: './app.component.html',
   changeDetection: ChangeDetectionStrategy.Eager,
-  styles: [`
-    .app-layout {
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .main-content {
-      flex: 1;
-    }
-  `],
+  styleUrl: './app.component.scss',
 })
 export class AppComponent {
   /**

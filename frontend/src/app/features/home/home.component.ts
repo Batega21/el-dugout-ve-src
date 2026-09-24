@@ -26,89 +26,9 @@ import { AuthService } from '../../core/services/auth.service';
     LeaderTableCarouselComponent,
     SectionComponent,
   ],
-  template: `
-    <div class="home-page">
-      <!-- Hero Component matching wireframe reference -->
-      <app-hero
-        (primaryAction)="onSubscribe()"
-        (secondaryAction)="onCall()">
-      </app-hero>
-
-      <!-- 1. Stats Strip Component: Top Records of Each Category -->
-      <app-stats-strip></app-stats-strip>
-
-      <!-- 2. First Section of Home Page: Historical Records with Lazy On-Viewport Fetching -->
-      @defer (on viewport) {
-        <app-historical-records></app-historical-records>
-      } @placeholder {
-        <div class="records-viewport-placeholder min-h-[360px]" aria-hidden="true"></div>
-      }
-
-      <!-- 3. Instance 1: All-Time Career Batting Records Carousel with Edge Gradients & SVG Controls -->
-      <app-leader-table-carousel [config]="battingRecordsConfig"></app-leader-table-carousel>
-
-      <!-- 4. Section Components (Config-Driven 60/40 Split, Alignment & Layered Media) -->
-      <app-section [config]="section1Config"></app-section>
-
-      <!-- 5. Instance 2: All-Time Career Pitching Records Carousel with Edge Gradients & SVG Controls -->
-      <app-leader-table-carousel [config]="pitchingRecordsConfig"></app-leader-table-carousel>
-
-      <!-- 6. Section Components (Config-Driven 60/40 Split, Alignment & Layered Media) -->
-      <app-section [config]="section2Config"></app-section>
-    </div>
-  `,
+  templateUrl: './home.component.html',
   changeDetection: ChangeDetectionStrategy.Eager,
-  styles: [`
-    .home-page {
-      padding: 0;
-    }
-
-    .hero {
-      text-align: center;
-      max-width: 800px;
-      margin: 0 auto 4rem auto;
-
-      .badge-pill {
-        display: inline-block;
-        padding: 0.35rem 0.9rem;
-        background: var(--primary-light, rgba(239, 68, 68, 0.15));
-        color: var(--primary-color, var(--primary));
-        border: 1px solid var(--border-theme-color, rgba(239, 68, 68, 0.3));
-        border-radius: var(--radius-pill, 9999px);
-        font-size: var(--font-size-xs, 0.8rem);
-        font-weight: var(--font-weight-semibold, 600);
-        margin-bottom: 1.5rem;
-      }
-
-      h1 {
-        font-family: var(--font-display);
-        font-size: var(--font-size-4xl, 3rem);
-        font-weight: var(--font-weight-extrabold, 800);
-        letter-spacing: -0.025em;
-        line-height: var(--line-height-tight, 1.15);
-        margin-bottom: 1.25rem;
-        color: var(--hero-title-color, var(--text-color, var(--text-primary)));
-      }
-
-      .subtitle {
-        font-family: var(--font-sans);
-        font-size: var(--font-size-lg, 1.15rem);
-        color: var(--text-secondary-color, var(--text-secondary));
-        margin-bottom: 2rem;
-        line-height: var(--line-height-relaxed, 1.6);
-
-        strong {
-          color: var(--text-color, var(--text-primary));
-        }
-      }
-
-      .hero-actions {
-        display: flex;
-        justify-content: center;
-        gap: 1rem;
-      }
-    }
-  `],
+  styleUrl: './home.component.scss',
 })
 export class HomeComponent {
   private readonly router = inject(Router);

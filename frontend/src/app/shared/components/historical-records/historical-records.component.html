@@ -1,0 +1,55 @@
+<section id="records" class="records-section" #recordsViewport>
+  <div class="container mx-auto px-4 py-12">
+    <!-- Section Label / Tagline -->
+    <div class="flex items-center gap-3 mb-2">
+      <div class="records-tag-bar"></div>
+      <span class="records-tag">
+        {{ 'RECORDS.TAG' | translate }}
+      </span>
+    </div>
+
+    <!-- Section Title & Subtitle -->
+    <h2 class="records-title">
+      {{ 'RECORDS.TITLE' | translate }}
+    </h2>
+    <p class="records-subtitle">
+      {{ 'RECORDS.SUBTITLE' | translate }}
+    </p>
+
+    <!-- Records Grid Container -->
+    @if (isLoading()) {
+      <div class="records-grid">
+        @for (item of [1, 2, 3, 4, 5, 6, 7, 8]; track item) {
+          <div class="animate-pulse bg-[#121216] border border-[#1f2937] rounded-lg p-6 h-44"></div>
+        }
+      </div>
+    } @else if (records().length > 0) {
+      <div class="records-grid">
+        @for (record of records(); track record.id) {
+          <div class="rec-card group relative">
+            <!-- Numeric Record Value -->
+            <span class="record-value">
+              {{ record.value }}
+            </span>
+            <!-- Metric Name / Label -->
+            <div class="record-label">
+              {{ record.label }}
+            </div>
+            <!-- Record Holder Name -->
+            <div class="record-holder">
+              {{ record.holder }}
+            </div>
+            <!-- Year / Season -->
+            <div class="record-year">
+              {{ record.year }}
+            </div>
+          </div>
+        }
+      </div>
+    } @else {
+      <div class="records-empty">
+        {{ 'RECORDS.EMPTY' | translate }}
+      </div>
+    }
+  </div>
+</section>

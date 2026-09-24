@@ -1,0 +1,118 @@
+:host {
+  display: block;
+  width: 100%;
+}
+
+.section-cards-container {
+  width: 100%;
+  margin: 2rem 0;
+}
+
+.admin-indicator {
+  display: flex;
+  justify-content: flex-start;
+  margin-bottom: 1rem;
+}
+
+.admin-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.35rem 0.85rem;
+  border-radius: var(--radius-pill, 9999px);
+  font-size: var(--font-size-xs, 0.75rem);
+  font-weight: var(--font-weight-semibold, 600);
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  background: var(--primary-light, rgba(14, 165, 233, 0.12));
+  border: 1px solid var(--border-subtle, rgba(14, 165, 233, 0.25));
+  color: var(--ice-blue, #38bdf8);
+
+  .admin-badge-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: var(--ice-blue, #38bdf8);
+    box-shadow: 0 0 6px var(--ice-blue, #38bdf8);
+  }
+}
+
+.status-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+.card {
+  background-color: var(--background-card-color, #1e293b);
+  border: 1px solid var(--border-theme-color, rgba(255, 255, 255, 0.1));
+  border-radius: var(--radius-md, 0.75rem);
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: border-color 0.2s ease, transform 0.2s ease;
+
+  &:hover {
+    border-color: var(--border-strong, #64748b);
+    transform: translateY(-2px);
+  }
+
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+
+    h3 {
+      font-family: var(--font-display);
+      font-size: var(--font-size-md, 1.05rem);
+      font-weight: var(--font-weight-semibold, 600);
+      color: var(--text-color, #ffffff);
+      margin: 0;
+    }
+  }
+
+  .card-desc {
+    font-family: var(--font-sans);
+    color: var(--text-secondary-color, #94a3b8);
+    font-size: var(--font-size-sm, 0.875rem);
+    margin-bottom: 1.25rem;
+    line-height: 1.5;
+  }
+
+  .card-footer {
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.1));
+
+    code {
+      font-size: var(--font-size-xs, 0.75rem);
+      color: var(--text-muted-color, #64748b);
+    }
+
+    .footer-text {
+      font-size: var(--font-size-xs, 0.75rem);
+      color: var(--text-muted-color, #64748b);
+    }
+
+    .btn-refresh {
+      background: none;
+      border: none;
+      color: var(--primary-color, #3b82f6);
+      font-size: var(--font-size-xs, 0.8rem);
+      cursor: pointer;
+      font-weight: 500;
+      padding: 0;
+      transition: color 0.2s ease;
+
+      &:hover:not(:disabled) {
+        color: var(--primary-hover, #60a5fa);
+      }
+
+      &:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+    }
+  }
+}

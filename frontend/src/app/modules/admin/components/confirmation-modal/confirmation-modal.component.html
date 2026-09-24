@@ -1,0 +1,108 @@
+<div
+  class="confirmation-modal-wrapper"
+  [class.is-success]="data.success"
+  [class.is-error]="!data.success">
+  <!-- Modal Header -->
+  <div class="modal-header">
+    <div class="header-main">
+      <div
+        class="status-icon-wrapper"
+        [class.icon-success]="data.success"
+        [class.icon-error]="!data.success">
+        <mat-icon class="status-icon">
+          {{ data.success ? 'check_circle' : 'error' }}
+        </mat-icon>
+      </div>
+      <div class="header-text">
+        <span
+          class="status-badge"
+          [class.badge-success]="data.success"
+          [class.badge-error]="!data.success">
+          {{ (data.success ? 'IMPORT_EXCEL.MODAL.SUCCESS_BADGE' : 'IMPORT_EXCEL.MODAL.ERROR_BADGE') | translate }}
+        </span>
+        <h2 mat-dialog-title class="dialog-title">
+          {{ (data.success ? 'IMPORT_EXCEL.MODAL.SUCCESS_TITLE' : 'IMPORT_EXCEL.MODAL.ERROR_TITLE') | translate }}
+        </h2>
+      </div>
+    </div>
+
+    <button
+      mat-icon-button
+      type="button"
+      [attr.aria-label]="'COMMON.ACTIONS.CLOSE' | translate"
+      class="close-btn"
+      (click)="onClose()">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <!-- Modal Body Content -->
+  <mat-dialog-content class="modal-body custom-scrollbar">
+    <!-- Message Box -->
+    <div
+      class="message-box"
+      [class.msg-success]="data.success"
+      [class.msg-error]="!data.success">
+      <mat-icon class="msg-icon">
+        {{ data.success ? 'task_alt' : 'warning_amber' }}
+      </mat-icon>
+      <p class="message-text">
+        @if (data.success) {
+          {{ 'IMPORT_EXCEL.MODAL.SUCCESS_MESSAGE' | translate: { total: data.totalProcessed ?? 0, inserted: data.insertedCount ?? 0, updated: data.updatedCount ?? 0 } }}
+        } @else {
+          {{ data.message || ('IMPORT_EXCEL.MODAL.ERROR_MESSAGE' | translate) }}
+        }
+      </p>
+    </div>
+
+    <!-- Metrics Counters Grid (Shown when success or totalProcessed is reported) -->
+    @if (data.success || (data.totalProcessed !== undefined && data.totalProcessed > 0)) {
+      <div class="metrics-grid">
+        <div class="metric-card metric-total">
+          <span class="metric-label">
+            {{ 'IMPORT_EXCEL.MODAL.TOTAL_LABEL' | translate }}
+          </span>
+          <span class="metric-value font-mono">
+            {{ data.totalProcessed ?? 0 }}
+          </span>
+        </div>
+
+        <div class="metric-card metric-inserted">
+          <span class="metric-label">
+            {{ 'IMPORT_EXCEL.MODAL.INSERTED_LABEL' | translate }}
+          </span>
+          <span class="metric-value font-mono val-inserted">
+            +{{ data.insertedCount ?? 0 }}
+          </span>
+        </div>
+
+        <div class="metric-card metric-updated">
+          <span class="metric-label">
+            {{ 'IMPORT_EXCEL.MODAL.UPDATED_LABEL' | translate }}
+          </span>
+          <span class="metric-value font-mono val-updated">
+            {{ data.updatedCount ?? 0 }}
+          </span>
+        </div>
+      </div>
+    }
+  </mat-dialog-content>
+
+  <!-- Modal Actions -->
+  <mat-dialog-actions class="modal-actions">
+    <button
+      mat-flat-button
+      type="button"
+      class="cta-action-btn"
+      [class.cta-success]="data.success"
+      [class.cta-error]="!data.success"
+      (click)="onClose()">
+      <mat-icon class="action-icon">
+        {{ data.success ? 'check' : 'close' }}
+      </mat-icon>
+      <span>
+        {{ (data.success ? 'IMPORT_EXCEL.MODAL.CONFIRM_BTN' : 'IMPORT_EXCEL.MODAL.CLOSE_BTN') | translate }}
+      </span>
+    </button>
+  </mat-dialog-actions>
+</div>

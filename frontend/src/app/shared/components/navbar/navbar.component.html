@@ -1,0 +1,16 @@
+<header class="navbar">
+  <div class="container nav-content">
+    <a routerLink="/" class="logo">
+      <span class="logo-mark">⚾</span>
+      <span class="logo-text">El Dugout Ve</span>
+    </a>
+
+    <nav class="nav-links">
+      <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Dashboard</a>
+      <a routerLink="/users" routerLinkActive="active">Users</a>
+      <a href="http://localhost:3000/api/docs" target="_blank" rel="noopener" class="external-link">
+        API Docs ↗
+      </a>
+    </nav>
+  </div>
+</header>

@@ -1,0 +1,49 @@
+<section
+  class="hero-section"
+  [style.background-image]="'url(' + currentImage() + ')'"
+  role="banner"
+  [attr.aria-label]="imageAlt() | translate">
+  <!-- Subtle backdrop scrim overlay for text legibility and contrast -->
+  <div class="hero-backdrop-overlay" aria-hidden="true"></div>
+
+  <div class="hero-container">
+    <!-- Content Column overlaying background (Left aligned) -->
+    <div class="hero-content">
+      <!-- 2.1 Main Heading or Title -->
+      <h1 class="hero-title">{{ title() | translate }}</h1>
+
+      <!-- 2.2 Tagline Text (Pill / Badge) -->
+      <div class="tagline-badge font-special">
+        <span class="tagline-text font-special">{{ tagline() | translate }}</span>
+      </div>
+
+      <!-- 2.3 Copy for Company Context -->
+      <p class="hero-description">{{ description() | translate }}</p>
+
+      <!-- CTA Buttons Group (Dual Pill Buttons matching wireframe) -->
+      <div class="hero-actions">
+        <!-- 2.4 Secondary CTA Button -->
+        <button
+          mat-stroked-button
+          type="button"
+          class="pill-btn secondary-btn"
+          [attr.aria-label]="secondaryCta() | translate"
+          (click)="onSecondaryClick()">
+          <mat-icon class="btn-icon">phone_in_talk</mat-icon>
+          <span>{{ secondaryCta() | translate }}</span>
+        </button>
+
+        <!-- 2.5 Primary CTA Button -->
+        <button
+          mat-flat-button
+          type="button"
+          class="pill-btn primary-btn"
+          [attr.aria-label]="primaryCta() | translate"
+          (click)="onPrimaryClick()">
+          <mat-icon class="btn-icon">mark_email_read</mat-icon>
+          <span>{{ primaryCta() | translate }}</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</section>

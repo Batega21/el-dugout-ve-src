@@ -1,0 +1,126 @@
+<nav class="desktop-nav" [attr.aria-label]="'COMMON.NAV.MAIN_NAVIGATION' | translate">
+  <ul class="nav-list">
+    @for (item of effectiveNavItems(); track item.link) {
+      <li class="nav-item">
+        @if (item.external) {
+          <a [href]="item.link" target="_blank" rel="noopener" class="nav-link">
+            {{ item.labelKey ? (item.labelKey | translate) : item.label }}
+          </a>
+        } @else {
+          <a [routerLink]="item.link" routerLinkActive="active" class="nav-link">
+            {{ item.labelKey ? (item.labelKey | translate) : item.label }}
+          </a>
+        }
+      </li>
+    }
+  </ul>
+
+  <div class="cta-group">
+    <!-- Baseball Ball Theme Toggle -->
+    <app-theme-toggle></app-theme-toggle>
+
+    <!-- Dynamic Language Switcher (Venezuela & USA Flags) -->
+    <app-language-toggle></app-language-toggle>
+
+    <!-- 1. Not Logged In: Display "Login" and "Sign up" buttons -->
+    @if (!authService.isLoggedIn()) {
+      <button
+        mat-button
+        type="button"
+        class="cta-secondary"
+        (click)="onLoginClick()">
+        {{ 'COMMON.NAV.LOGIN' | translate }}
+      </button>
+
+      <button
+        mat-flat-button
+        type="button"
+        class="cta-primary-pill"
+        (click)="onSignUpClick()">
+        {{ 'COMMON.NAV.SIGN_UP' | translate }}
+      </button>
+    }
+
+    <!-- 2. Logged In (Free Tier User or Paid Subscriber): Display Avatar with mat-menu -->
+    @else {
+      <app-avatar></app-avatar>
+    }
+  </div>
+</nav>
+
+<!-- Mobile Navigation Toggle -->
+<div class="mobile-nav">
+  @if (authService.isLoggedIn()) {
+    <app-avatar></app-avatar>
+  }
+
+  <button
+    mat-icon-button
+    [matMenuTriggerFor]="mobileMenu"
+    [attr.aria-label]="'COMMON.NAV.OPEN_MENU' | translate"
+    class="mobile-menu-btn">
+    <mat-icon>menu</mat-icon>
+  </button>
+
+  <mat-menu #mobileMenu="matMenu" class="app-mobile-menu">
+    @for (item of effectiveNavItems(); track item.link) {
+      @if (item.external) {
+        <a mat-menu-item [href]="item.link" target="_blank" rel="noopener">
+          {{ item.labelKey ? (item.labelKey | translate) : item.label }}
+        </a>
+      } @else {
+        <a mat-menu-item [routerLink]="item.link">
+          {{ item.labelKey ? (item.labelKey | translate) : item.label }}
+        </a>
+      }
+    }
+    <mat-divider></mat-divider>
+
+    @if (!authService.isLoggedIn()) {
+      <button mat-menu-item (click)="onLoginClick()">
+        <mat-icon>login</mat-icon>
+        <span>{{ 'COMMON.NAV.LOGIN' | translate }}</span>
+      </button>
+      <button mat-menu-item (click)="onSignUpClick()">
+        <mat-icon>person_add</mat-icon>
+        <span>{{ 'COMMON.NAV.SIGN_UP' | translate }}</span>
+      </button>
+    } @else {
+      <a mat-menu-item routerLink="/profile">
+        <mat-icon>person</mat-icon>
+        <span>{{ 'COMMON.NAV.PROFILE' | translate }}</span>
+      </a>
+
+      @if (!authService.hasActiveSubscription() && !authService.isAdmin()) {
+        <button mat-menu-item (click)="onSubscribeClick()">
+          <mat-icon>star</mat-icon>
+          <span>{{ 'COMMON.NAV.SUBSCRIBE' | translate }}</span>
+        </button>
+      }
+
+      @if (authService.isAdmin()) {
+        <a mat-menu-item routerLink="/admin">
+          <mat-icon>admin_panel_settings</mat-icon>
+          <span>{{ 'COMMON.NAV.SYSTEM_MATRIX' | translate }}</span>
+        </a>
+        <a mat-menu-item routerLink="/admin/imports">
+          <mat-icon>upload_file</mat-icon>
+          <span>{{ 'COMMON.NAV.IMPORT_EXCEL' | translate }}</span>
+        </a>
+      }
+
+      <button mat-menu-item (click)="onLogoutClick()">
+        <mat-icon>logout</mat-icon>
+        <span>{{ 'COMMON.NAV.LOGOUT' | translate }}</span>
+      </button>
+    }
+
+    <mat-divider></mat-divider>
+
+    <!-- Theme & Language Toggles inside Mobile Menu -->
+    <div class="mobile-menu-toggles" (click)="$event.stopPropagation()">
+      <app-theme-toggle></app-theme-toggle>
+      <app-language-toggle></app-language-toggle>
+    </div>
+  </mat-menu>
+</div>

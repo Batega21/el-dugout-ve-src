@@ -1,0 +1,48 @@
+<section
+  class="section-container"
+  [ngStyle]="sectionStyle()"
+  [class.parallax-active]="isParallaxActive()"
+  [class.has-custom-bg]="hasCustomBg()">
+  <div
+    class="section-wrapper"
+    [class.align-right]="resolvedAlign() === 'right'">
+    <!-- 60% Div: Section Title & Description -->
+    <div class="section-portion portion-60">
+      @if (resolvedTitle()) {
+        <h2 class="section-title">{{ resolvedTitle() | translate }}</h2>
+      }
+      @if (resolvedDescription()) {
+        <p class="section-description">{{ resolvedDescription() | translate }}</p>
+      }
+      <div class="section-extra-content">
+        <ng-content select="[section-body],:not([media-content])"></ng-content>
+      </div>
+    </div>
+
+    <!-- 40% Div: Layered Media with Background Image (z-index: 1) & Text Content (z-index: 2) -->
+    <div class="section-portion portion-40">
+      <div class="media-card">
+        <!-- Element 1: Image as background (z-index: 1) -->
+        @if (resolvedMediaImage()) {
+          <img
+            [src]="resolvedMediaImage()"
+            [alt]="resolvedMediaAlt() | translate"
+            class="media-bg-image"
+            loading="lazy"
+          />
+        } @else {
+          <div class="media-bg-placeholder"></div>
+        }
+        <div class="media-gradient-scrim"></div>
+
+        <!-- Element 2: Text content over the image (z-index: 2) -->
+        <div class="media-text-content">
+          @if (resolvedMediaText()) {
+            <p class="media-caption">{{ resolvedMediaText() | translate }}</p>
+          }
+          <ng-content select="[media-content]"></ng-content>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

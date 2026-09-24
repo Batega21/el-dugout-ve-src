@@ -1,0 +1,39 @@
+<div class="premium-feature-page">
+  <div class="page-header">
+    <span class="premium-badge">{{ 'PREMIUM.BADGE' | translate }}</span>
+    <h1>{{ 'PREMIUM.TITLE' | translate }}</h1>
+    <p class="subtitle">{{ 'PREMIUM.SUBTITLE' | translate }}</p>
+  </div>
+
+  <div class="feature-card">
+    <h2>{{ 'PREMIUM.CARD_TITLE' | translate }}</h2>
+    <p class="desc">
+      {{ 'PREMIUM.CARD_DESC' | translate }}
+    </p>
+
+    @if (featureData()) {
+      <div class="feature-output">
+        <div class="output-item">
+          <span class="label">{{ 'PREMIUM.FEATURE_LEVEL' | translate }}</span>
+          <span class="val highlight">{{ featureData().tier }}</span>
+        </div>
+        <div class="output-item">
+          <span class="label">{{ 'PREMIUM.FEATURE_CAPABILITY' | translate }}</span>
+          <span class="val">{{ featureData().featureName }}</span>
+        </div>
+        <div class="output-item">
+          <span class="label">{{ 'PREMIUM.STATUS' | translate }}</span>
+          <span class="val status-ok">{{ 'PREMIUM.STATUS_OK' | translate }}</span>
+        </div>
+      </div>
+    } @else if (loading()) {
+      <p class="loading-text">{{ 'PREMIUM.LOADING' | translate }}</p>
+    } @else if (errorMessage()) {
+      <div class="alert alert-danger">{{ errorMessage() }}</div>
+    }
+
+    <div class="action-row">
+      <a routerLink="/" class="btn btn-outline">{{ 'PREMIUM.BACK_HOME' | translate }}</a>
+    </div>
+  </div>
+</div>
