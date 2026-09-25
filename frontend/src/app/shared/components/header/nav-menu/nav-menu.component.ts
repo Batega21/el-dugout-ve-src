@@ -47,9 +47,12 @@ export class NavMenuComponent {
 
   // Base navigation links
   readonly navItems = input<NavItem[]>([
-    { label: 'About Us', labelKey: 'COMMON.NAV.ABOUT', link: '/#about' },
-    { label: 'Products', labelKey: 'COMMON.NAV.PRODUCTS', link: '/#products' },
-    { label: 'Service', labelKey: 'COMMON.NAV.SERVICE', link: '/#service' },
+    { label: 'Statistics', labelKey: 'COMMON.NAV.STATISTICS', link: '/statistics' },
+    { label: 'Records', labelKey: 'COMMON.NAV.RECORDS', link: '/#records' },
+    { label: 'Decades', labelKey: 'COMMON.NAV.DECADES', link: '/#decades' },
+    { label: 'Teams', labelKey: 'COMMON.NAV.TEAMS', link: '/#teams' },
+    { label: 'Players', labelKey: 'COMMON.NAV.PLAYERS', link: '/#players' },
+    { label: 'History', labelKey: 'COMMON.NAV.HISTORY', link: '/#history' },
   ]);
 
   // Dynamically compute nav items based on user role and state

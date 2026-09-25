@@ -51,6 +51,11 @@ export interface FooterBrandConfig {
   aboutText?: string;
 }
 
+export interface FooterBackgroundConfig {
+  dark?: string;
+  light?: string;
+}
+
 export interface FooterConfig {
   brand: FooterBrandConfig;
   sections?: FooterLinkSection[];
@@ -58,6 +63,7 @@ export interface FooterConfig {
   newsletter?: FooterNewsletterConfig;
   social?: FooterSocialSection;
   bottom?: FooterBottomConfig;
+  background?: FooterBackgroundConfig;
 }
 
 export const DEFAULT_FOOTER_CONFIG: FooterConfig = {

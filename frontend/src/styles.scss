@@ -22,6 +22,8 @@ html {
   color-scheme: dark light;
   @include mat.all-component-themes($app-theme);
   overflow-x: clip;
+  scroll-behavior: smooth;
+  scroll-padding-top: var(--header-height, 4.5rem);
 }
 
 * {

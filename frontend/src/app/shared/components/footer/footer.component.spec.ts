@@ -1,5 +1,6 @@
 import '@angular/compiler';
 import { Injector, runInInjectionContext, signal } from '@angular/core';
+import { ThemeService } from '../../../core/services/theme.service';
 import { FooterComponent } from './footer.component';
 import { DEFAULT_FOOTER_CONFIG, FooterConfig } from './footer.interface';
 
@@ -84,5 +85,79 @@ describe('FooterComponent', () => {
     (component as any).onNewsletterSubmit();
 
     expect(emitted).toBe(false);
+  });
+
+  describe('Background images & theme integration', () => {
+    let mockThemeService: { theme: any; isDark: any };
+
+    beforeEach(() => {
+      const isDarkSig = signal(true);
+      mockThemeService = {
+        theme: signal('dark'),
+        isDark: isDarkSig,
+      };
+      injector = Injector.create({
+        providers: [{ provide: ThemeService, useValue: mockThemeService }],
+      });
+      component = runInInjectionContext(injector, () => new FooterComponent());
+    });
+
+    it('should default to dark background image and full black (#000000) background color when dark theme is active', () => {
+      expect(component.darkImage()).toBe('/public/images/background-3-dark-version');
+      expect(component.lightImage()).toBe('/public/images/background-3-light-version');
+      expect(component.currentImage()).toBe('/public/images/background-3-dark-version');
+      expect(component.currentBgColor()).toBe('#000000');
+      expect(component.footerBgStyle()).toEqual({
+        'background-image': "url('/public/images/background-3-dark-version')",
+        'background-color': '#000000',
+      });
+    });
+
+    it('should switch to light background image and full white (#FFFFFF) background color when light theme is active', () => {
+      mockThemeService.isDark.set(false);
+      expect(component.currentImage()).toBe('/public/images/background-3-light-version');
+      expect(component.currentBgColor()).toBe('#FFFFFF');
+      expect(component.footerBgStyle()).toEqual({
+        'background-image': "url('/public/images/background-3-light-version')",
+        'background-color': '#FFFFFF',
+      });
+    });
+
+    it('should allow custom dark and light images via signal inputs while maintaining theme background colors', () => {
+      (component as any).darkImage = signal('/custom/dark.png');
+      (component as any).lightImage = signal('/custom/light.jpeg');
+
+      mockThemeService.isDark.set(true);
+      expect(component.currentImage()).toBe('/custom/dark.png');
+      expect(component.currentBgColor()).toBe('#000000');
+      expect(component.footerBgStyle()).toEqual({
+        'background-image': "url('/custom/dark.png')",
+        'background-color': '#000000',
+      });
+
+      mockThemeService.isDark.set(false);
+      expect(component.currentImage()).toBe('/custom/light.jpeg');
+      expect(component.currentBgColor()).toBe('#FFFFFF');
+      expect(component.footerBgStyle()).toEqual({
+        'background-image': "url('/custom/light.jpeg')",
+        'background-color': '#FFFFFF',
+      });
+    });
+
+    it('should prioritize background config inside FooterConfig when provided', () => {
+      (component as any).config = signal({
+        ...DEFAULT_FOOTER_CONFIG,
+        background: {
+          dark: '/override/dark.png',
+          light: '/override/light.jpg',
+        },
+      });
+
+      mockThemeService.isDark.set(true);
+      expect(component.currentImage()).toBe('/override/dark.png');
+
+      mockThemeService.isDark.set(false);
+      expect(component.currentImage()).toBe('/override/light.jpg');
+    });
   });
 });

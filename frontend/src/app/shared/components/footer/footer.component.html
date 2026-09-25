@@ -1,122 +1,110 @@
-<footer class="site-footer">
+<footer class="site-footer" [style.background-image]="'url(' + currentImage() + ')'">
   <!-- Upper Section: Main Content Grid -->
   <div class="footer-main">
     <div class="footer-container main-grid">
       <!-- Column 1: Brand & Slogan + About Us -->
       @if (config().brand; as brand) {
-        <div class="footer-col brand-col">
-          <div class="brand-block">
-            <h2 class="brand-name">{{ brand.name | translate }}</h2>
-            @if (brand.slogan) {
-              <p class="brand-slogan">{{ brand.slogan | translate }}</p>
-            }
-          </div>
-
-          @if (brand.aboutTitle || brand.aboutText) {
-            <div class="about-block">
-              @if (brand.aboutTitle) {
-                <h3 class="col-title">{{ brand.aboutTitle | translate }}</h3>
-              }
-              @if (brand.aboutText) {
-                <p class="about-text">{{ brand.aboutText | translate }}</p>
-              }
-            </div>
+      <div class="footer-col brand-col">
+        <div class="brand-block">
+          <h2 class="brand-name">{{ brand.name | translate }}</h2>
+          @if (brand.slogan) {
+          <p class="brand-slogan">{{ brand.slogan | translate }}</p>
           }
         </div>
+
+        @if (brand.aboutTitle || brand.aboutText) {
+        <div class="about-block">
+          @if (brand.aboutTitle) {
+          <h3 class="col-title">{{ brand.aboutTitle | translate }}</h3>
+          }
+          @if (brand.aboutText) {
+          <p class="about-text">{{ brand.aboutText | translate }}</p>
+          }
+        </div>
+        }
+      </div>
       }
 
       <!-- Column 2 & 3: Link Sections (e.g. Services, Company) -->
       @if (config().sections; as sections) {
-        @for (section of sections; track section.title) {
-          <div class="footer-col links-col">
-            <h3 class="col-title">{{ section.title | translate }}</h3>
-            <ul class="bullet-list">
-              @for (link of section.links; track link.label) {
-                <li class="bullet-item">
-                  @if (link.external) {
-                    <a [href]="link.url" target="_blank" rel="noopener" class="footer-link">
-                      {{ link.label | translate }}
-                    </a>
-                  } @else {
-                    <a [routerLink]="link.url" class="footer-link">
-                      {{ link.label | translate }}
-                    </a>
-                  }
-                </li>
-              }
-            </ul>
-          </div>
-        }
+      @for (section of sections; track section.title) {
+      <div class="footer-col links-col">
+        <h3 class="col-title">{{ section.title | translate }}</h3>
+        <ul class="bullet-list">
+          @for (link of section.links; track link.label) {
+          <li class="bullet-item">
+            @if (link.external) {
+            <a [href]="link.url" target="_blank" rel="noopener" class="footer-link">
+              {{ link.label | translate }}
+            </a>
+            } @else {
+            <a [routerLink]="link.url" class="footer-link">
+              {{ link.label | translate }}
+            </a>
+            }
+          </li>
+          }
+        </ul>
+      </div>
+      }
       }
 
       <!-- Column 4: Contact Information -->
       @if (config().contact; as contact) {
-        <div class="footer-col contact-col">
-          <h3 class="col-title">{{ contact.title | translate }}</h3>
-          <div class="contact-items">
-            @for (item of contact.items; track item.label) {
-              <div class="contact-entry">
-                <span class="contact-label">{{ item.label | translate }} </span>
-                @if (item.href) {
-                  <a [href]="item.href" class="contact-value link">{{ item.value }}</a>
-                } @else {
-                  <span class="contact-value">{{ item.value }}</span>
-                }
-              </div>
+      <div class="footer-col contact-col">
+        <h3 class="col-title">{{ contact.title | translate }}</h3>
+        <div class="contact-items">
+          @for (item of contact.items; track item.label) {
+          <div class="contact-entry">
+            <span class="contact-label">{{ item.label | translate }} </span>
+            @if (item.href) {
+            <a [href]="item.href" class="contact-value link">{{ item.value }}</a>
+            } @else {
+            <span class="contact-value">{{ item.value }}</span>
             }
           </div>
-          @if (contact.showAccentBar) {
-            <div class="contact-accent-bar"></div>
           }
         </div>
+        @if (contact.showAccentBar) {
+        <div class="contact-accent-bar"></div>
+        }
+      </div>
       }
 
       <!-- Column 5: Newsletter & Social -->
       <div class="footer-col action-col">
         @if (config().newsletter; as newsletter) {
-          <div class="newsletter-box">
-            <input
-              type="email"
-              class="newsletter-input"
-              [placeholder]="(newsletter.placeholder || 'FOOTER.NEWSLETTER_PLACEHOLDER') | translate"
-              [value]="newsletterEmail()"
-              (input)="onEmailInput($event)"
-              (keydown.enter)="onNewsletterSubmit()"
-              [attr.aria-label]="(newsletter.placeholder || 'FOOTER.NEWSLETTER_PLACEHOLDER') | translate"
-            />
-            <button
-              type="button"
-              class="newsletter-submit-btn"
-              [attr.aria-label]="(newsletter.buttonAriaLabel || 'FOOTER.NEWSLETTER_BTN_ARIA') | translate"
-              (click)="onNewsletterSubmit()">
-              <mat-icon class="submit-icon">arrow_forward</mat-icon>
-            </button>
-          </div>
+        <div class="newsletter-box">
+          <input type="email" class="newsletter-input"
+            [placeholder]="(newsletter.placeholder || 'FOOTER.NEWSLETTER_PLACEHOLDER') | translate"
+            [value]="newsletterEmail()" (input)="onEmailInput($event)" (keydown.enter)="onNewsletterSubmit()"
+            [attr.aria-label]="(newsletter.placeholder || 'FOOTER.NEWSLETTER_PLACEHOLDER') | translate" />
+          <button type="button" class="newsletter-submit-btn"
+            [attr.aria-label]="(newsletter.buttonAriaLabel || 'FOOTER.NEWSLETTER_BTN_ARIA') | translate"
+            (click)="onNewsletterSubmit()">
+            <mat-icon class="submit-icon">arrow_forward</mat-icon>
+          </button>
+        </div>
         }
 
         @if (config().social; as social) {
-          <div class="social-block">
-            <div class="social-circles">
-              @for (item of social.items; track item.name) {
-                <a
-                  [href]="item.url"
-                  target="_blank"
-                  rel="noopener"
-                  class="social-circle"
-                  [class.highlighted]="item.highlighted"
-                  [attr.aria-label]="item.name">
-                  @if (item.icon) {
-                    <mat-icon class="social-icon">{{ item.icon }}</mat-icon>
-                  } @else {
-                    <span class="social-symbol">{{ item.symbol }}</span>
-                  }
-                </a>
+        <div class="social-block">
+          <div class="social-circles">
+            @for (item of social.items; track item.name) {
+            <a [href]="item.url" target="_blank" rel="noopener" class="social-circle"
+              [class.highlighted]="item.highlighted" [attr.aria-label]="item.name">
+              @if (item.icon) {
+              <mat-icon class="social-icon">{{ item.icon }}</mat-icon>
+              } @else {
+              <span class="social-symbol">{{ item.symbol }}</span>
               }
-            </div>
-            @if (social.title) {
-              <h3 class="social-title">{{ social.title | translate }}</h3>
+            </a>
             }
           </div>
+          @if (social.title) {
+          <h3 class="social-title">{{ social.title | translate }}</h3>
+          }
+        </div>
         }
       </div>
     </div>
@@ -124,29 +112,29 @@
 
   <!-- Bottom Bar: Links & Copyright -->
   @if (config().bottom; as bottom) {
-    <div class="footer-bottom">
-      <div class="footer-container bottom-bar">
-        <nav class="bottom-links" [attr.aria-label]="'FOOTER.BOTTOM_LINKS_ARIA' | translate">
-          @for (link of bottom.links; track link.label; let last = $last) {
-            @if (link.external) {
-              <a [href]="link.url" target="_blank" rel="noopener" class="bottom-link">
-                {{ link.label | translate }}
-              </a>
-            } @else {
-              <a [routerLink]="link.url" class="bottom-link">
-                {{ link.label | translate }}
-              </a>
-            }
-            @if (!last) {
-              <span class="pipe-separator">|</span>
-            }
-          }
-        </nav>
+  <div class="footer-bottom">
+    <div class="footer-container bottom-bar">
+      <nav class="bottom-links" [attr.aria-label]="'FOOTER.BOTTOM_LINKS_ARIA' | translate">
+        @for (link of bottom.links; track link.label; let last = $last) {
+        @if (link.external) {
+        <a [href]="link.url" target="_blank" rel="noopener" class="bottom-link">
+          {{ link.label | translate }}
+        </a>
+        } @else {
+        <a [routerLink]="link.url" class="bottom-link">
+          {{ link.label | translate }}
+        </a>
+        }
+        @if (!last) {
+        <span class="pipe-separator">|</span>
+        }
+        }
+      </nav>
 
-        <div class="copyright-notice">
-          {{ bottom.copyright | translate }}
-        </div>
+      <div class="copyright-notice">
+        {{ bottom.copyright | translate }}
       </div>
     </div>
+  </div>
   }
 </footer>

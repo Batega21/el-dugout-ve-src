@@ -1,0 +1,597 @@
+<div class="statistics-page-container">
+  <!-- =========================================================================
+       PAGE HEADER & HERO TITLE
+       ========================================================================= -->
+  <header class="page-header" role="banner">
+    <div class="eyebrow-container">
+      <span class="eyebrow-badge" aria-label="Sección de estadísticas">
+        <span class="eyebrow-dot" aria-hidden="true"></span>
+        {{ 'STATISTICS_PAGE.EYEBROW' | translate }}
+      </span>
+    </div>
+
+    <h1 class="page-title">
+      {{ 'STATISTICS_PAGE.TITLE' | translate }}
+    </h1>
+
+    <p class="page-subtitle">
+      {{ 'STATISTICS_PAGE.SUBTITLE' | translate }}
+    </p>
+  </header>
+
+  <!-- =========================================================================
+       SECTION 1: ALL-TIME CAREER BATTING RECORDS
+       ========================================================================= -->
+  <section class="records-section batting-section" aria-labelledby="batting-section-title">
+    <div class="section-top-bar">
+      <div class="section-title-group">
+        <h2 id="batting-section-title" class="section-title">
+          {{ 'STATISTICS_PAGE.BATTING_SECTION_TITLE' | translate }}
+        </h2>
+        <p class="section-desc">
+          {{ 'STATISTICS_PAGE.BATTING_SECTION_SUBTITLE' | translate }}
+        </p>
+      </div>
+
+      <!-- Navigation Bar (Pill/Tab button navigation with active red indicator) -->
+      <nav class="pill-tabs-nav" aria-label="Categorías de bateo" role="tablist">
+        @for (tab of battingTabs; track tab.id) {
+          <button
+            type="button"
+            role="tab"
+            class="pill-tab-btn"
+            [class.active]="selectedBattingCategory() === tab.id"
+            [attr.aria-selected]="selectedBattingCategory() === tab.id"
+            (click)="setBattingCategory(tab.id)"
+          >
+            <span class="tab-label">{{ tab.labelKey | translate }}</span>
+            <span class="tab-code font-mono">{{ tab.shortCode }}</span>
+          </button>
+        }
+      </nav>
+    </div>
+
+    <!-- Table Card Container -->
+    <div class="table-card-container">
+      <div class="table-responsive-wrapper custom-scrollbar" tabindex="0" aria-label="Tabla de récords de bateo">
+        <table class="sports-table" role="table">
+          <thead>
+            <tr role="row">
+              <!-- Pos (Sticky on mobile) -->
+              <th scope="col" class="th-cell th-pos sticky-col-pos">
+                {{ 'STATISTICS_PAGE.COLUMNS.POS' | translate }}
+              </th>
+
+              <!-- Jugador / Player (Sortable, Sticky on mobile) -->
+              <th scope="col" class="th-cell th-player sortable-th sticky-col-player" (click)="toggleBattingSort('player')">
+                <div class="th-content">
+                  <span>{{ 'STATISTICS_PAGE.COLUMNS.PLAYER' | translate }}</span>
+                  <span class="sort-icon-indicator" [attr.aria-label]="battingSortColumn() === 'player' ? (battingSortDirection() === 'asc' ? ('STATISTICS_PAGE.SORT_ASC' | translate) : ('STATISTICS_PAGE.SORT_DESC' | translate)) : ''">
+                    @if (battingSortColumn() === 'player') {
+                      @if (battingSortDirection() === 'asc') {
+                        <svg class="sort-arrow" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z" clip-rule="evenodd"/></svg>
+                      } @else {
+                        <svg class="sort-arrow" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+                      }
+                    } @else {
+                      <svg class="sort-arrow sort-neutral" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M10 3a1 1 0 01.707.293l3 3a1 1 0 01-1.414 1.414L10 5.414 7.707 7.707a1 1 0 01-1.414-1.414l3-3A1 1 0 0110 3zm-3.707 9.293a1 1 0 011.414 0L10 14.586l2.293-2.293a1 1 0 011.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+                    }
+                  </span>
+                </div>
+              </th>
+
+              <!-- Temporadas / Seasons (Sortable) -->
+              <th scope="col" class="th-cell th-seasons sortable-th" (click)="toggleBattingSort('seasons')">
+                <div class="th-content">
+                  <span>{{ 'STATISTICS_PAGE.COLUMNS.SEASONS' | translate }}</span>
+                  <span class="sort-icon-indicator">
+                    @if (battingSortColumn() === 'seasons') {
+                      @if (battingSortDirection() === 'asc') {
+                        <svg class="sort-arrow" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z" clip-rule="evenodd"/></svg>
+                      } @else {
+                        <svg class="sort-arrow" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+                      }
+                    } @else {
+                      <svg class="sort-arrow sort-neutral" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M10 3a1 1 0 01.707.293l3 3a1 1 0 01-1.414 1.414L10 5.414 7.707 7.707a1 1 0 01-1.414-1.414l3-3A1 1 0 0110 3zm-3.707 9.293a1 1 0 011.414 0L10 14.586l2.293-2.293a1 1 0 011.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+                    }
+                  </span>
+                </div>
+              </th>
+
+              <!-- Equipos / Teams -->
+              <th scope="col" class="th-cell th-teams">
+                {{ 'STATISTICS_PAGE.COLUMNS.TEAMS' | translate }}
+              </th>
+
+              <!-- JJ / G (Games played) -->
+              <th scope="col" class="th-cell th-numeric sortable-th" (click)="toggleBattingSort('games')">
+                <div class="th-content th-content-num">
+                  <span [title]="'STATISTICS_PAGE.COLUMNS.GAMES_TITLE' | translate">{{ 'STATISTICS_PAGE.COLUMNS.GAMES' | translate }}</span>
+                  @if (battingSortColumn() === 'games') {
+                    <span class="sort-icon-indicator">
+                      @if (battingSortDirection() === 'asc') {
+                        <svg class="sort-arrow" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z" clip-rule="evenodd"/></svg>
+                      } @else {
+                        <svg class="sort-arrow" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+                      }
+                    </span>
+                  }
+                </div>
+              </th>
+
+              <!-- VB / AB (At Bats) -->
+              <th scope="col" class="th-cell th-numeric sortable-th" (click)="toggleBattingSort('atBats')">
+                <div class="th-content th-content-num">
+                  <span [title]="'STATISTICS_PAGE.COLUMNS.AT_BATS_TITLE' | translate">{{ 'STATISTICS_PAGE.COLUMNS.AT_BATS' | translate }}</span>
+                  @if (battingSortColumn() === 'atBats') {
+                    <span class="sort-icon-indicator">
+                      @if (battingSortDirection() === 'asc') {
+                        <svg class="sort-arrow" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z" clip-rule="evenodd"/></svg>
+                      } @else {
+                        <svg class="sort-arrow" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+                      }
+                    </span>
+                  }
+                </div>
+              </th>
+
+              <!-- [Active Metric Column]: Sortable (asc/desc) with High Contrast Red Monospace -->
+              <th scope="col" class="th-cell th-numeric th-active-metric sortable-th" (click)="toggleBattingSort('value')">
+                <div class="th-content th-content-num">
+                  <span class="active-metric-heading font-mono text-red-500 font-bold">
+                    {{ activeBattingTab().metricLabelKey | translate }}
+                  </span>
+                  <span class="sort-icon-indicator">
+                    @if (battingSortColumn() === 'value') {
+                      @if (battingSortDirection() === 'asc') {
+                        <svg class="sort-arrow text-red-500" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z" clip-rule="evenodd"/></svg>
+                      } @else {
+                        <svg class="sort-arrow text-red-500" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+                      }
+                    } @else {
+                      <svg class="sort-arrow sort-neutral" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M10 3a1 1 0 01.707.293l3 3a1 1 0 01-1.414 1.414L10 5.414 7.707 7.707a1 1 0 01-1.414-1.414l3-3A1 1 0 0110 3zm-3.707 9.293a1 1 0 011.414 0L10 14.586l2.293-2.293a1 1 0 011.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+                    }
+                  </span>
+                </div>
+              </th>
+            </tr>
+          </thead>
+
+          <tbody role="rowgroup">
+            <!-- Skeleton Loader Rows (Animated Pulse) -->
+            @if (isBattingLoading()) {
+              @for (row of skeletonRows; track row) {
+                <tr class="table-row skeleton-row animate-pulse" role="row">
+                  <td class="td-cell td-pos sticky-col-pos">
+                    <div class="skeleton-box skeleton-pos"></div>
+                  </td>
+                  <td class="td-cell td-player sticky-col-player">
+                    <div class="skeleton-box skeleton-name"></div>
+                  </td>
+                  <td class="td-cell td-seasons">
+                    <div class="skeleton-box skeleton-seasons"></div>
+                  </td>
+                  <td class="td-cell td-teams">
+                    <div class="skeleton-box skeleton-badges"></div>
+                  </td>
+                  <td class="td-cell td-numeric">
+                    <div class="skeleton-box skeleton-num"></div>
+                  </td>
+                  <td class="td-cell td-numeric">
+                    <div class="skeleton-box skeleton-num"></div>
+                  </td>
+                  <td class="td-cell td-numeric">
+                    <div class="skeleton-box skeleton-metric"></div>
+                  </td>
+                </tr>
+              }
+            } @else {
+              <!-- Data Rows -->
+              @for (player of paginatedBattingPlayers(); track player.id) {
+                <tr class="table-row" role="row">
+                  <!-- Pos (Sticky) -->
+                  <td class="td-cell td-pos sticky-col-pos font-mono font-bold" [class.rank-gold]="player.rank === 1" [class.rank-silver]="player.rank === 2" [class.rank-bronze]="player.rank === 3">
+                    {{ player.rank }}
+                  </td>
+
+                  <!-- Jugador / Player (Sticky) -->
+                  <td class="td-cell td-player sticky-col-player">
+                    <span class="player-name">{{ player.player }}</span>
+                  </td>
+
+                  <!-- Temporadas / Seasons -->
+                  <td class="td-cell td-seasons font-mono text-muted">
+                    {{ player.seasons }}
+                  </td>
+
+                  <!-- Equipos / Teams -->
+                  <td class="td-cell td-teams">
+                    <div class="teams-badges-container">
+                      @for (team of player.teams; track team) {
+                        <span class="team-badge" [ngClass]="getTeamBadgeClass(team)">
+                          {{ team }}
+                        </span>
+                      }
+                    </div>
+                  </td>
+
+                  <!-- JJ / G -->
+                  <td class="td-cell td-numeric font-mono">
+                    {{ player.games | number }}
+                  </td>
+
+                  <!-- VB / AB -->
+                  <td class="td-cell td-numeric font-mono">
+                    {{ player.atBats | number }}
+                  </td>
+
+                  <!-- Active Metric Column: High-contrast Red Monospace Numbers -->
+                  <td class="td-cell td-numeric td-active-metric">
+                    <span class="font-mono text-red-500 font-bold active-metric-value">
+                      {{ player.formattedValue }}
+                    </span>
+                  </td>
+                </tr>
+              } @empty {
+                <tr>
+                  <td colspan="7" class="empty-state-cell">
+                    {{ 'STATISTICS_PAGE.EMPTY_STATE' | translate }}
+                  </td>
+                </tr>
+              }
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination & Page Size Control (Bottom-Right) -->
+      <footer class="table-pagination-footer" role="navigation" aria-label="Controles de paginación de bateo">
+        <div class="pagination-left-info">
+          <span class="pagination-range-text">
+            {{ 'STATISTICS_PAGE.PAGINATION.SHOWING_RANGE' | translate: { start: battingStartIndex(), end: battingEndIndex(), total: totalBattingCount() } }}
+          </span>
+        </div>
+
+        <div class="pagination-right-controls">
+          <!-- Page Size Selector -->
+          <div class="page-size-selector">
+            <label for="batting-page-size" class="page-size-label">
+              {{ 'STATISTICS_PAGE.PAGINATION.PER_PAGE' | translate }}:
+            </label>
+            <div class="page-size-pills">
+              @for (size of pageSizeOptions; track size) {
+                <button
+                  type="button"
+                  class="size-pill-btn"
+                  [class.active]="battingPageSize() === size"
+                  (click)="setBattingPageSize(size)"
+                >
+                  {{ size }}
+                </button>
+              }
+            </div>
+          </div>
+
+          <!-- Navigation Controls: Page indicator + Prev/Next buttons -->
+          <div class="pagination-nav-group">
+            <span class="page-indicator">
+              {{ 'STATISTICS_PAGE.PAGINATION.PAGE_INDICATOR' | translate: { current: battingPage(), total: battingTotalPages() } }}
+            </span>
+
+            <button
+              type="button"
+              class="nav-btn prev-btn"
+              [disabled]="battingPage() <= 1"
+              [attr.aria-label]="'STATISTICS_PAGE.PAGINATION.PREV_PAGE' | translate"
+              (click)="prevBattingPage()"
+            >
+              <svg viewBox="0 0 20 20" fill="currentColor" class="nav-arrow-icon" aria-hidden="true">
+                <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd"/>
+              </svg>
+            </button>
+
+            <button
+              type="button"
+              class="nav-btn next-btn"
+              [disabled]="battingPage() >= battingTotalPages()"
+              [attr.aria-label]="'STATISTICS_PAGE.PAGINATION.NEXT_PAGE' | translate"
+              (click)="nextBattingPage()"
+            >
+              <svg viewBox="0 0 20 20" fill="currentColor" class="nav-arrow-icon" aria-hidden="true">
+                <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </footer>
+    </div>
+  </section>
+
+  <!-- =========================================================================
+       SECTION 2: ALL-TIME CAREER PITCHING RECORDS
+       ========================================================================= -->
+  <section class="records-section pitching-section" aria-labelledby="pitching-section-title">
+    <div class="section-top-bar">
+      <div class="section-title-group">
+        <h2 id="pitching-section-title" class="section-title">
+          {{ 'STATISTICS_PAGE.PITCHING_SECTION_TITLE' | translate }}
+        </h2>
+        <p class="section-desc">
+          {{ 'STATISTICS_PAGE.PITCHING_SECTION_SUBTITLE' | translate }}
+        </p>
+      </div>
+
+      <!-- Navigation Bar (Pill/Tab button navigation with active red indicator) -->
+      <nav class="pill-tabs-nav" aria-label="Categorías de pitcheo" role="tablist">
+        @for (tab of pitchingTabs; track tab.id) {
+          <button
+            type="button"
+            role="tab"
+            class="pill-tab-btn"
+            [class.active]="selectedPitchingCategory() === tab.id"
+            [attr.aria-selected]="selectedPitchingCategory() === tab.id"
+            (click)="setPitchingCategory(tab.id)"
+          >
+            <span class="tab-label">{{ tab.labelKey | translate }}</span>
+            <span class="tab-code font-mono">{{ tab.shortCode }}</span>
+          </button>
+        }
+      </nav>
+    </div>
+
+    <!-- Table Card Container -->
+    <div class="table-card-container">
+      <div class="table-responsive-wrapper custom-scrollbar" tabindex="0" aria-label="Tabla de récords de pitcheo">
+        <table class="sports-table" role="table">
+          <thead>
+            <tr role="row">
+              <!-- Pos (Sticky on mobile) -->
+              <th scope="col" class="th-cell th-pos sticky-col-pos">
+                {{ 'STATISTICS_PAGE.COLUMNS.POS' | translate }}
+              </th>
+
+              <!-- Lanzador / Pitcher (Sortable, Sticky on mobile) -->
+              <th scope="col" class="th-cell th-player sortable-th sticky-col-player" (click)="togglePitchingSort('player')">
+                <div class="th-content">
+                  <span>{{ 'STATISTICS_PAGE.COLUMNS.PITCHER' | translate }}</span>
+                  <span class="sort-icon-indicator" [attr.aria-label]="pitchingSortColumn() === 'player' ? (pitchingSortDirection() === 'asc' ? ('STATISTICS_PAGE.SORT_ASC' | translate) : ('STATISTICS_PAGE.SORT_DESC' | translate)) : ''">
+                    @if (pitchingSortColumn() === 'player') {
+                      @if (pitchingSortDirection() === 'asc') {
+                        <svg class="sort-arrow" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z" clip-rule="evenodd"/></svg>
+                      } @else {
+                        <svg class="sort-arrow" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+                      }
+                    } @else {
+                      <svg class="sort-arrow sort-neutral" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M10 3a1 1 0 01.707.293l3 3a1 1 0 01-1.414 1.414L10 5.414 7.707 7.707a1 1 0 01-1.414-1.414l3-3A1 1 0 0110 3zm-3.707 9.293a1 1 0 011.414 0L10 14.586l2.293-2.293a1 1 0 011.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+                    }
+                  </span>
+                </div>
+              </th>
+
+              <!-- Temporadas / Seasons (Sortable) -->
+              <th scope="col" class="th-cell th-seasons sortable-th" (click)="togglePitchingSort('seasons')">
+                <div class="th-content">
+                  <span>{{ 'STATISTICS_PAGE.COLUMNS.SEASONS' | translate }}</span>
+                  <span class="sort-icon-indicator">
+                    @if (pitchingSortColumn() === 'seasons') {
+                      @if (pitchingSortDirection() === 'asc') {
+                        <svg class="sort-arrow" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z" clip-rule="evenodd"/></svg>
+                      } @else {
+                        <svg class="sort-arrow" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+                      }
+                    } @else {
+                      <svg class="sort-arrow sort-neutral" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M10 3a1 1 0 01.707.293l3 3a1 1 0 01-1.414 1.414L10 5.414 7.707 7.707a1 1 0 01-1.414-1.414l3-3A1 1 0 0110 3zm-3.707 9.293a1 1 0 011.414 0L10 14.586l2.293-2.293a1 1 0 011.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+                    }
+                  </span>
+                </div>
+              </th>
+
+              <!-- Equipos / Teams -->
+              <th scope="col" class="th-cell th-teams">
+                {{ 'STATISTICS_PAGE.COLUMNS.TEAMS' | translate }}
+              </th>
+
+              <!-- EL / IP (Innings Pitched) -->
+              <th scope="col" class="th-cell th-numeric sortable-th" (click)="togglePitchingSort('ip')">
+                <div class="th-content th-content-num">
+                  <span [title]="'STATISTICS_PAGE.COLUMNS.INNINGS_TITLE' | translate">{{ 'STATISTICS_PAGE.COLUMNS.INNINGS' | translate }}</span>
+                  @if (pitchingSortColumn() === 'ip') {
+                    <span class="sort-icon-indicator">
+                      @if (pitchingSortDirection() === 'asc') {
+                        <svg class="sort-arrow" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z" clip-rule="evenodd"/></svg>
+                      } @else {
+                        <svg class="sort-arrow" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+                      }
+                    </span>
+                  }
+                </div>
+              </th>
+
+              <!-- EFE / ERA (Earned Run Average) -->
+              <th scope="col" class="th-cell th-numeric sortable-th" (click)="togglePitchingSort('era')">
+                <div class="th-content th-content-num">
+                  <span [title]="'STATISTICS_PAGE.COLUMNS.ERA_TITLE' | translate">{{ 'STATISTICS_PAGE.COLUMNS.ERA' | translate }}</span>
+                  @if (pitchingSortColumn() === 'era') {
+                    <span class="sort-icon-indicator">
+                      @if (pitchingSortDirection() === 'asc') {
+                        <svg class="sort-arrow" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z" clip-rule="evenodd"/></svg>
+                      } @else {
+                        <svg class="sort-arrow" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+                      }
+                    </span>
+                  }
+                </div>
+              </th>
+
+              <!-- [Active Metric Column]: Sortable (asc/desc) with High Contrast Red Monospace -->
+              <th scope="col" class="th-cell th-numeric th-active-metric sortable-th" (click)="togglePitchingSort('value')">
+                <div class="th-content th-content-num">
+                  <span class="active-metric-heading font-mono text-red-500 font-bold">
+                    {{ activePitchingTab().metricLabelKey | translate }}
+                  </span>
+                  <span class="sort-icon-indicator">
+                    @if (pitchingSortColumn() === 'value') {
+                      @if (pitchingSortDirection() === 'asc') {
+                        <svg class="sort-arrow text-red-500" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z" clip-rule="evenodd"/></svg>
+                      } @else {
+                        <svg class="sort-arrow text-red-500" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+                      }
+                    } @else {
+                      <svg class="sort-arrow sort-neutral" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M10 3a1 1 0 01.707.293l3 3a1 1 0 01-1.414 1.414L10 5.414 7.707 7.707a1 1 0 01-1.414-1.414l3-3A1 1 0 0110 3zm-3.707 9.293a1 1 0 011.414 0L10 14.586l2.293-2.293a1 1 0 011.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+                    }
+                  </span>
+                </div>
+              </th>
+            </tr>
+          </thead>
+
+          <tbody role="rowgroup">
+            <!-- Skeleton Loader Rows (Animated Pulse) -->
+            @if (isPitchingLoading()) {
+              @for (row of skeletonRows; track row) {
+                <tr class="table-row skeleton-row animate-pulse" role="row">
+                  <td class="td-cell td-pos sticky-col-pos">
+                    <div class="skeleton-box skeleton-pos"></div>
+                  </td>
+                  <td class="td-cell td-player sticky-col-player">
+                    <div class="skeleton-box skeleton-name"></div>
+                  </td>
+                  <td class="td-cell td-seasons">
+                    <div class="skeleton-box skeleton-seasons"></div>
+                  </td>
+                  <td class="td-cell td-teams">
+                    <div class="skeleton-box skeleton-badges"></div>
+                  </td>
+                  <td class="td-cell td-numeric">
+                    <div class="skeleton-box skeleton-num"></div>
+                  </td>
+                  <td class="td-cell td-numeric">
+                    <div class="skeleton-box skeleton-num"></div>
+                  </td>
+                  <td class="td-cell td-numeric">
+                    <div class="skeleton-box skeleton-metric"></div>
+                  </td>
+                </tr>
+              }
+            } @else {
+              <!-- Data Rows -->
+              @for (player of paginatedPitchingPlayers(); track player.id) {
+                <tr class="table-row" role="row">
+                  <!-- Pos (Sticky) -->
+                  <td class="td-cell td-pos sticky-col-pos font-mono font-bold" [class.rank-gold]="player.rank === 1" [class.rank-silver]="player.rank === 2" [class.rank-bronze]="player.rank === 3">
+                    {{ player.rank }}
+                  </td>
+
+                  <!-- Lanzador / Pitcher (Sticky) -->
+                  <td class="td-cell td-player sticky-col-player">
+                    <span class="player-name">{{ player.player }}</span>
+                  </td>
+
+                  <!-- Temporadas / Seasons -->
+                  <td class="td-cell td-seasons font-mono text-muted">
+                    {{ player.seasons }}
+                  </td>
+
+                  <!-- Equipos / Teams -->
+                  <td class="td-cell td-teams">
+                    <div class="teams-badges-container">
+                      @for (team of player.teams; track team) {
+                        <span class="team-badge" [ngClass]="getTeamBadgeClass(team)">
+                          {{ team }}
+                        </span>
+                      }
+                    </div>
+                  </td>
+
+                  <!-- EL / IP -->
+                  <td class="td-cell td-numeric font-mono">
+                    {{ player.inningsPitched }}
+                  </td>
+
+                  <!-- EFE / ERA -->
+                  <td class="td-cell td-numeric font-mono">
+                    {{ player.era }}
+                  </td>
+
+                  <!-- Active Metric Column: High-contrast Red Monospace Numbers -->
+                  <td class="td-cell td-numeric td-active-metric">
+                    <span class="font-mono text-red-500 font-bold active-metric-value">
+                      {{ player.formattedValue }}
+                    </span>
+                  </td>
+                </tr>
+              } @empty {
+                <tr>
+                  <td colspan="7" class="empty-state-cell">
+                    {{ 'STATISTICS_PAGE.EMPTY_STATE' | translate }}
+                  </td>
+                </tr>
+              }
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination & Page Size Control (Bottom-Right) -->
+      <footer class="table-pagination-footer" role="navigation" aria-label="Controles de paginación de pitcheo">
+        <div class="pagination-left-info">
+          <span class="pagination-range-text">
+            {{ 'STATISTICS_PAGE.PAGINATION.SHOWING_RANGE' | translate: { start: pitchingStartIndex(), end: pitchingEndIndex(), total: totalPitchingCount() } }}
+          </span>
+        </div>
+
+        <div class="pagination-right-controls">
+          <!-- Page Size Selector -->
+          <div class="page-size-selector">
+            <label for="pitching-page-size" class="page-size-label">
+              {{ 'STATISTICS_PAGE.PAGINATION.PER_PAGE' | translate }}:
+            </label>
+            <div class="page-size-pills">
+              @for (size of pageSizeOptions; track size) {
+                <button
+                  type="button"
+                  class="size-pill-btn"
+                  [class.active]="pitchingPageSize() === size"
+                  (click)="setPitchingPageSize(size)"
+                >
+                  {{ size }}
+                </button>
+              }
+            </div>
+          </div>
+
+          <!-- Navigation Controls: Page indicator + Prev/Next buttons -->
+          <div class="pagination-nav-group">
+            <span class="page-indicator">
+              {{ 'STATISTICS_PAGE.PAGINATION.PAGE_INDICATOR' | translate: { current: pitchingPage(), total: pitchingTotalPages() } }}
+            </span>
+
+            <button
+              type="button"
+              class="nav-btn prev-btn"
+              [disabled]="pitchingPage() <= 1"
+              [attr.aria-label]="'STATISTICS_PAGE.PAGINATION.PREV_PAGE' | translate"
+              (click)="prevPitchingPage()"
+            >
+              <svg viewBox="0 0 20 20" fill="currentColor" class="nav-arrow-icon" aria-hidden="true">
+                <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/>
+              </svg>
+            </button>
+
+            <button
+              type="button"
+              class="nav-btn next-btn"
+              [disabled]="pitchingPage() >= pitchingTotalPages()"
+              [attr.aria-label]="'STATISTICS_PAGE.PAGINATION.NEXT_PAGE' | translate"
+              (click)="nextPitchingPage()"
+            >
+              <svg viewBox="0 0 20 20" fill="currentColor" class="nav-arrow-icon" aria-hidden="true">
+                <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </footer>
+    </div>
+  </section>
+</div>

@@ -47,6 +47,27 @@ describe('NavMenuComponent', () => {
     expect(component).toBeTruthy();
   });
 
+  it('should contain the 6 required site navigation items', () => {
+    const items = component.navItems();
+    expect(items.length).toBe(6);
+
+    const expectedItems = [
+      { label: 'Statistics', labelKey: 'COMMON.NAV.STATISTICS', link: '/statistics' },
+      { label: 'Records', labelKey: 'COMMON.NAV.RECORDS', link: '/#records' },
+      { label: 'Decades', labelKey: 'COMMON.NAV.DECADES', link: '/#decades' },
+      { label: 'Teams', labelKey: 'COMMON.NAV.TEAMS', link: '/#teams' },
+      { label: 'Players', labelKey: 'COMMON.NAV.PLAYERS', link: '/#players' },
+      { label: 'History', labelKey: 'COMMON.NAV.HISTORY', link: '/#history' },
+    ];
+
+    expectedItems.forEach((expected) => {
+      const match = items.find((item) => item.labelKey === expected.labelKey);
+      expect(match).toBeDefined();
+      expect(match?.label).toBe(expected.label);
+      expect(match?.link).toBe(expected.link);
+    });
+  });
+
   it('should include Premium Pro item for non-admin user', () => {
     const items = component.effectiveNavItems();
     const premiumItem = items.find((i) => i.link === '/premium');

@@ -1,0 +1,694 @@
+
+// =============================================================================
+// STATISTICS PAGE - COMPONENT STYLES
+// Dual Theme Support: Dark (#08090c canvas, #111827 surface) & Light (#f8fafc / #fff)
+// Mobile Sticky Columns: Frozen Pos & Player/Pitcher on < 768px
+// =============================================================================
+
+:host {
+  display: block;
+  width: 100%;
+}
+
+.statistics-page-container {
+  width: 100%;
+  max-width: var(--wrap-max-width, 1200px);
+  margin: 0 auto;
+  padding: 2rem 1rem 5rem 1rem;
+
+  @media (min-width: 768px) {
+    padding: 2.5rem 1.5rem 6rem 1.5rem;
+  }
+}
+
+// =============================================================================
+// 1. PAGE HEADER
+// =============================================================================
+.page-header {
+  text-align: center;
+  margin-bottom: 3.5rem;
+  position: relative;
+
+  .eyebrow-container {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 0.875rem;
+  }
+
+  .eyebrow-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.35rem 0.85rem;
+    background: var(--primary-light, rgba(239, 68, 68, 0.12));
+    border: 1px solid rgba(239, 68, 68, 0.28);
+    border-radius: var(--radius-pill, 9999px);
+    color: var(--primary, #ef4444);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    box-shadow: 0 2px 8px rgba(239, 68, 68, 0.15);
+
+    .eyebrow-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background-color: var(--primary, #ef4444);
+      animation: pulse-dot 2s infinite ease-in-out;
+    }
+  }
+
+  .page-title {
+    font-family: var(--font-heading, 'Bebas Neue', sans-serif);
+    font-size: clamp(2.5rem, 5.5vw, 4.25rem);
+    line-height: 1.05;
+    letter-spacing: 0.02em;
+    color: var(--text-primary);
+    margin: 0 0 1rem 0;
+    text-transform: uppercase;
+  }
+
+  .page-subtitle {
+    max-width: 720px;
+    margin: 0 auto;
+    font-size: clamp(0.95rem, 2vw, 1.125rem);
+    color: var(--text-secondary);
+    line-height: 1.6;
+  }
+}
+
+@keyframes pulse-dot {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.8;
+  }
+  50% {
+    transform: scale(1.4);
+    opacity: 1;
+  }
+}
+
+// =============================================================================
+// 2. SECTIONS & PILL/TAB NAVIGATION
+// =============================================================================
+.records-section {
+  margin-bottom: 4rem;
+
+  &:last-child {
+    margin-bottom: 2rem;
+  }
+}
+
+.section-top-bar {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  margin-bottom: 1.5rem;
+
+  @media (min-width: 1024px) {
+    flex-direction: row;
+    align-items: flex-end;
+    justify-content: space-between;
+  }
+}
+
+.section-title-group {
+  .section-title {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    font-family: var(--font-heading, 'Bebas Neue', sans-serif);
+    font-size: clamp(1.75rem, 3.5vw, 2.5rem);
+    letter-spacing: 0.02em;
+    color: var(--text-primary);
+    margin: 0 0 0.35rem 0;
+    text-transform: uppercase;
+  }
+
+  .section-desc {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    margin: 0;
+  }
+}
+
+// Pill/Tab button navigation
+.pill-tabs-nav {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  overflow-x: auto;
+  padding-bottom: 0.35rem;
+  -webkit-overflow-scrolling: touch;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.pill-tab-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.55rem 1rem;
+  border-radius: var(--radius-pill, 9999px);
+  font-family: var(--font-sans);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  background-color: var(--background-secondary-color, #111827);
+  border: 1px solid var(--border-color, #1f2937);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all var(--transition-fast, 150ms cubic-bezier(0.4, 0, 0.2, 1));
+  user-select: none;
+
+  .tab-code {
+    display: inline-block;
+    padding: 0.1rem 0.4rem;
+    border-radius: var(--radius-xs, 4px);
+    background: rgba(0, 0, 0, 0.2);
+    font-size: 0.72rem;
+    letter-spacing: 0.05em;
+  }
+
+  &:hover:not(.active) {
+    background-color: var(--background-tertiary-color, #161f30);
+    color: var(--text-primary);
+    border-color: var(--border-strong, rgba(255, 255, 255, 0.2));
+  }
+
+  &.active {
+    background-color: var(--primary, #ef4444);
+    border-color: var(--primary, #ef4444);
+    color: #ffffff;
+    box-shadow: 0 4px 14px var(--primary-glow, rgba(239, 68, 68, 0.35));
+
+    .tab-code {
+      background: rgba(0, 0, 0, 0.25);
+      color: #ffffff;
+    }
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+  }
+}
+
+// =============================================================================
+// 3. TABLE CARD CONTAINER & SPORTS TABLE
+// =============================================================================
+.table-card-container {
+  background-color: var(--background-secondary-color, #111827);
+  border: 1px solid var(--border-color, #1f2937);
+  border-radius: var(--radius-lg, 16px);
+  box-shadow: var(--shadow-card, 0 20px 40px -15px rgba(0, 0, 0, 0.6));
+  overflow: hidden;
+  transition: border-color var(--transition-normal);
+}
+
+.table-responsive-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  position: relative;
+
+  &:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: -2px;
+  }
+}
+
+.sports-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  text-align: left;
+  font-size: 0.875rem;
+
+  thead {
+    background-color: var(--background-tertiary-color, #161f30);
+    border-bottom: 1px solid var(--border-color, #1f2937);
+
+    tr {
+      border-bottom: 1px solid var(--border-color, #1f2937);
+    }
+  }
+
+  // Header Cells
+  .th-cell {
+    padding: 0.875rem 1rem;
+    font-size: 0.775rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    border-bottom: 1px solid var(--border-color, #1f2937);
+    white-space: nowrap;
+    user-select: none;
+
+    &.sortable-th {
+      cursor: pointer;
+      transition: color var(--transition-fast), background-color var(--transition-fast);
+
+      &:hover {
+        color: var(--text-primary);
+        background-color: rgba(255, 255, 255, 0.04);
+      }
+    }
+
+    .th-content {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+
+      &.th-content-num {
+        justify-content: flex-end;
+      }
+    }
+
+    &.th-pos {
+      width: 3.25rem;
+      min-width: 3.25rem;
+      text-align: center;
+    }
+
+    &.th-player {
+      min-width: 12rem;
+    }
+
+    &.th-seasons {
+      min-width: 7.5rem;
+    }
+
+    &.th-teams {
+      min-width: 10rem;
+    }
+
+    &.th-numeric {
+      text-align: right;
+      min-width: 4.5rem;
+    }
+
+    &.th-active-metric {
+      min-width: 5.5rem;
+      text-align: right;
+    }
+  }
+
+  // Sort Arrow Icons
+  .sort-icon-indicator {
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .sort-arrow {
+    width: 14px;
+    height: 14px;
+    color: var(--primary, #ef4444);
+    transition: transform 0.2s ease;
+
+    &.sort-neutral {
+      color: var(--text-muted, #6b7280);
+      opacity: 0.45;
+    }
+  }
+
+  // Body Cells
+  tbody {
+    tr.table-row {
+      background-color: var(--background-secondary-color, #111827);
+      transition: background-color var(--transition-fast);
+      border-bottom: 1px solid var(--border-color, #1f2937);
+
+      &:hover {
+        background-color: var(--background-tertiary-color, #161f30);
+
+        // Maintain hover background on sticky columns
+        .sticky-col-pos,
+        .sticky-col-player {
+          background-color: var(--background-tertiary-color, #161f30);
+        }
+      }
+
+      &:last-child td {
+        border-bottom: none;
+      }
+    }
+  }
+
+  .td-cell {
+    padding: 0.85rem 1rem;
+    color: var(--text-primary);
+    border-bottom: 1px solid var(--border-color, #1f2937);
+    vertical-align: middle;
+    white-space: nowrap;
+
+    &.td-pos {
+      text-align: center;
+      color: var(--text-secondary);
+
+      &.rank-gold {
+        color: #f59e0b;
+        text-shadow: 0 0 10px rgba(245, 158, 11, 0.4);
+      }
+      &.rank-silver {
+        color: #94a3b8;
+      }
+      &.rank-bronze {
+        color: #d97706;
+      }
+    }
+
+    &.td-player {
+      font-weight: 600;
+      color: var(--text-primary);
+
+      .player-name {
+        letter-spacing: 0.01em;
+      }
+    }
+
+    &.td-seasons {
+      font-size: 0.82rem;
+    }
+
+    &.td-numeric {
+      text-align: right;
+    }
+
+    &.td-active-metric {
+      text-align: right;
+
+      .active-metric-value {
+        display: inline-block;
+        font-size: 1rem;
+        letter-spacing: -0.02em;
+      }
+    }
+  }
+
+  .empty-state-cell {
+    padding: 3rem 1.5rem;
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 0.95rem;
+  }
+}
+
+// =============================================================================
+// 4. FROZEN / STICKY COLUMNS ON MOBILE (< 768px)
+// =============================================================================
+@media (max-width: 767px) {
+  .sticky-col-pos {
+    position: sticky !important;
+    left: 0 !important;
+    z-index: 10 !important;
+    background-color: var(--background-secondary-color, #111827) !important;
+    box-shadow: 1px 0 0 var(--border-color, #1f2937);
+  }
+
+  .sticky-col-player {
+    position: sticky !important;
+    left: 3.25rem !important; // Positioned immediately after Pos column (3.25rem width)
+    z-index: 10 !important;
+    background-color: var(--background-secondary-color, #111827) !important;
+    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.25), 1px 0 0 var(--border-color, #1f2937);
+  }
+
+  thead .th-cell.sticky-col-pos,
+  thead .th-cell.sticky-col-player {
+    z-index: 20 !important;
+    background-color: var(--background-tertiary-color, #161f30) !important;
+  }
+}
+
+// =============================================================================
+// 5. TEAM BADGES
+// =============================================================================
+.teams-badges-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  align-items: center;
+}
+
+.team-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.15rem 0.45rem;
+  border-radius: var(--radius-xs, 4px);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  background-color: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: var(--text-secondary);
+
+  &.badge-team-caracas {
+    background-color: rgba(217, 119, 6, 0.15);
+    border-color: rgba(217, 119, 6, 0.35);
+    color: #fbbf24;
+  }
+
+  &.badge-team-magallanes {
+    background-color: rgba(37, 99, 235, 0.15);
+    border-color: rgba(37, 99, 235, 0.35);
+    color: #60a5fa;
+  }
+
+  &.badge-team-tiburones {
+    background-color: rgba(239, 68, 68, 0.15);
+    border-color: rgba(239, 68, 68, 0.35);
+    color: #f87171;
+  }
+
+  &.badge-team-tigres {
+    background-color: rgba(30, 58, 138, 0.25);
+    border-color: rgba(59, 130, 246, 0.35);
+    color: #93c5fd;
+  }
+
+  &.badge-team-cardenales {
+    background-color: rgba(220, 38, 38, 0.2);
+    border-color: rgba(220, 38, 38, 0.4);
+    color: #fca5a5;
+  }
+
+  &.badge-team-aguilas {
+    background-color: rgba(234, 88, 12, 0.15);
+    border-color: rgba(234, 88, 12, 0.35);
+    color: #fb923c;
+  }
+
+  &.badge-team-caribes {
+    background-color: rgba(249, 115, 22, 0.15);
+    border-color: rgba(249, 115, 22, 0.35);
+    color: #fdba74;
+  }
+
+  &.badge-team-bravos {
+    background-color: rgba(13, 148, 136, 0.15);
+    border-color: rgba(13, 148, 136, 0.35);
+    color: #2dd4bf;
+  }
+
+  &.badge-team-pastora {
+    background-color: rgba(147, 51, 234, 0.15);
+    border-color: rgba(147, 51, 234, 0.35);
+    color: #c084fc;
+  }
+}
+
+// =============================================================================
+// 6. SKELETON LOADER (ZERO LAYOUT SHIFT)
+// =============================================================================
+.skeleton-row {
+  .skeleton-box {
+    background: linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.04) 25%,
+      rgba(255, 255, 255, 0.1) 50%,
+      rgba(255, 255, 255, 0.04) 75%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+    border-radius: var(--radius-xs, 4px);
+    height: 1.15rem;
+  }
+
+  .skeleton-pos {
+    width: 1.5rem;
+    margin: 0 auto;
+  }
+
+  .skeleton-name {
+    width: 75%;
+    max-width: 160px;
+  }
+
+  .skeleton-seasons {
+    width: 65px;
+  }
+
+  .skeleton-badges {
+    width: 110px;
+  }
+
+  .skeleton-num {
+    width: 45px;
+    margin-left: auto;
+  }
+
+  .skeleton-metric {
+    width: 40px;
+    margin-left: auto;
+    background: linear-gradient(
+      90deg,
+      rgba(239, 68, 68, 0.1) 25%,
+      rgba(239, 68, 68, 0.22) 50%,
+      rgba(239, 68, 68, 0.1) 75%
+    );
+    background-size: 200% 100%;
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+// =============================================================================
+// 7. PAGINATION & PAGE SIZE CONTROL (BOTTOM-RIGHT)
+// =============================================================================
+.table-pagination-footer {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 0.85rem 1.25rem;
+  border-top: 1px solid var(--border-color, #1f2937);
+  background-color: var(--background-secondary-color, #111827);
+
+  @media (min-width: 768px) {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+.pagination-left-info {
+  .pagination-range-text {
+    font-size: 0.825rem;
+    color: var(--text-secondary);
+  }
+}
+
+.pagination-right-controls {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1.25rem;
+  margin-left: auto;
+}
+
+// Page Size Selector
+.page-size-selector {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+
+  .page-size-label {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    user-select: none;
+  }
+
+  .page-size-pills {
+    display: inline-flex;
+    align-items: center;
+    background: var(--background-tertiary-color, #161f30);
+    border: 1px solid var(--border-color, #1f2937);
+    border-radius: var(--radius-sm, 6px);
+    padding: 2px;
+  }
+
+  .size-pill-btn {
+    padding: 0.2rem 0.6rem;
+    font-size: 0.775rem;
+    font-weight: 600;
+    font-family: var(--font-sans);
+    color: var(--text-secondary);
+    background: transparent;
+    border: none;
+    border-radius: var(--radius-xs, 4px);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+
+    &:hover:not(.active) {
+      color: var(--text-primary);
+    }
+
+    &.active {
+      background-color: var(--primary, #ef4444);
+      color: #ffffff;
+      box-shadow: 0 1px 4px rgba(239, 68, 68, 0.4);
+    }
+  }
+}
+
+// Navigation Controls
+.pagination-nav-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+
+  .page-indicator {
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    user-select: none;
+    white-space: nowrap;
+  }
+
+  .nav-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: var(--radius-sm, 6px);
+    background-color: var(--background-tertiary-color, #161f30);
+    border: 1px solid var(--border-color, #1f2937);
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+
+    .nav-arrow-icon {
+      width: 16px;
+      height: 16px;
+    }
+
+    &:hover:not(:disabled) {
+      background-color: var(--primary, #ef4444);
+      border-color: var(--primary, #ef4444);
+      color: #ffffff;
+      box-shadow: 0 2px 6px rgba(239, 68, 68, 0.35);
+    }
+
+    &:disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--primary);
+      outline-offset: 1px;
+    }
+  }
+}

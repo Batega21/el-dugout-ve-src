@@ -9,6 +9,18 @@ export const routes: Routes = [
     loadComponent: () => import('./features/home/home.component').then((m) => m.HomeComponent),
   },
   {
+    path: 'statistics',
+    loadComponent: () =>
+      import('./features/statistics/statistics-page.component').then(
+        (m) => m.StatisticsPageComponent,
+      ),
+  },
+  {
+    path: 'estadisticas',
+    redirectTo: 'statistics',
+    pathMatch: 'full',
+  },
+  {
     path: 'profile',
     canActivate: [authGuard],
     loadComponent: () => import('./features/profile/profile.component').then((m) => m.ProfileComponent),

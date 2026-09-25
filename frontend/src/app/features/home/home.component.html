@@ -6,24 +6,24 @@
   </app-hero>
 
   <!-- 1. Stats Strip Component: Top Records of Each Category -->
-  <app-stats-strip></app-stats-strip>
+  <app-stats-strip id="statistics"></app-stats-strip>
 
   <!-- 2. First Section of Home Page: Historical Records with Lazy On-Viewport Fetching -->
   @defer (on viewport) {
-    <app-historical-records></app-historical-records>
+    <app-historical-records id="records"></app-historical-records>
   } @placeholder {
     <div class="records-viewport-placeholder min-h-[360px]" aria-hidden="true"></div>
   }
 
   <!-- 3. Instance 1: All-Time Career Batting Records Carousel with Edge Gradients & SVG Controls -->
-  <app-leader-table-carousel [config]="battingRecordsConfig"></app-leader-table-carousel>
+  <app-leader-table-carousel id="decades" [config]="battingRecordsConfig"></app-leader-table-carousel>
 
   <!-- 4. Section Components (Config-Driven 60/40 Split, Alignment & Layered Media) -->
-  <app-section [config]="section1Config"></app-section>
+  <app-section id="teams" [config]="section1Config"></app-section>
 
   <!-- 5. Instance 2: All-Time Career Pitching Records Carousel with Edge Gradients & SVG Controls -->
-  <app-leader-table-carousel [config]="pitchingRecordsConfig"></app-leader-table-carousel>
+  <app-leader-table-carousel id="players" [config]="pitchingRecordsConfig"></app-leader-table-carousel>
 
   <!-- 6. Section Components (Config-Driven 60/40 Split, Alignment & Layered Media) -->
-  <app-section [config]="section2Config"></app-section>
+  <app-section id="history" [config]="section2Config"></app-section>
 </div>
